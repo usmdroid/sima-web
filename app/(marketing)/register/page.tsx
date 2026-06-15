@@ -5,10 +5,28 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register, saveSession } from "@/lib/api";
 
+/**
+ * Telefon mask: default +998, O'zbekiston formati "+998 90 123 45 67".
+ * Agar foydalanuvchi +998 ni o'chirib boshqa kod yozsa — erkin (faqat "+" va raqamlar).
+ */
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (!digits.startsWith("998")) {
+    return digits ? "+" + digits : "";
+  }
+  const rest = digits.slice(3, 12); // 998 dan keyin 9 raqam
+  let out = "+998";
+  if (rest.length > 0) out += " " + rest.slice(0, 2);
+  if (rest.length > 2) out += " " + rest.slice(2, 5);
+  if (rest.length > 5) out += " " + rest.slice(5, 7);
+  if (rest.length > 7) out += " " + rest.slice(7, 9);
+  return out;
+}
+
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("+998 ");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -20,6 +38,10 @@ export default function RegisterPage() {
     setError(null);
     if (!name.trim() || !phone.trim() || !password) {
       setError("Do'kon nomi, telefon va parol to'ldirilishi shart.");
+      return;
+    }
+    if (phone.replace(/\D/g, "").length < 9) {
+      setError("Telefon raqamni to'liq kiriting.");
       return;
     }
     if (password.length < 6) {
@@ -49,7 +71,7 @@ export default function RegisterPage() {
 
       <form onSubmit={onSubmit} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <Field label="Do'kon nomi" value={name} onChange={setName} placeholder="ATLAS Store" />
-        <Field label="Telefon raqam" value={phone} onChange={setPhone} placeholder="+998 90 123 45 67" type="tel" />
+        <Field label="Telefon raqam" value={phone} onChange={(v) => setPhone(formatPhone(v))} placeholder="+998 90 123 45 67" type="tel" />
         <Field label="Email (ixtiyoriy)" value={email} onChange={setEmail} placeholder="siz@dokon.uz" type="email" required={false} />
         <Field label="Parol" value={password} onChange={setPassword} placeholder="••••••••" type="password" />
         <Field label="Parolni takrorlang" value={confirm} onChange={setConfirm} placeholder="••••••••" type="password" />
