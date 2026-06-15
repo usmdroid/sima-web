@@ -3,18 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { register, saveSession } from "@/lib/api";
+import { register, sendOtp, saveSession } from "@/lib/api";
 
-/**
- * Telefon mask: default +998, O'zbekiston formati "+998 90 123 45 67".
- * Agar foydalanuvchi +998 ni o'chirib boshqa kod yozsa — erkin (faqat "+" va raqamlar).
- */
+/** Telefon mask: default +998, "+998 90 123 45 67". Boshqa kod yozilsa — erkin. */
 function formatPhone(value: string): string {
   const digits = value.replace(/\D/g, "");
-  if (!digits.startsWith("998")) {
-    return digits ? "+" + digits : "";
-  }
-  const rest = digits.slice(3, 12); // 998 dan keyin 9 raqam
+  if (!digits.startsWith("998")) return digits ? "+" + digits : "";
+  const rest = digits.slice(3, 12);
   let out = "+998";
   if (rest.length > 0) out += " " + rest.slice(0, 2);
   if (rest.length > 2) out += " " + rest.slice(2, 5);
@@ -25,15 +20,17 @@ function formatPhone(value: string): string {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("+998 ");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onContinue(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     if (!name.trim() || !phone.trim() || !password) {
@@ -54,7 +51,25 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      const res = await register({ name, phone, email: email.trim() || undefined, password });
+      await sendOtp(phone);
+      setStep(2);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Xatolik");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function onVerify(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (code.trim().length < 4) {
+      setError("Tasdiqlash kodini kiriting.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await register({ name, phone, email: email.trim() || undefined, password, code: code.trim() });
       saveSession(res);
       router.push("/dashboard");
     } catch (err) {
@@ -64,33 +79,59 @@ export default function RegisterPage() {
     }
   }
 
+  async function onResend() {
+    setError(null);
+    try {
+      await sendOtp(phone);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Kod yuborilmadi");
+    }
+  }
+
   return (
     <section className="mx-auto flex max-w-md flex-col px-6 py-16">
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hamkor bo&apos;lish</h1>
-      <p className="mt-2 text-sm text-slate-500">Do&apos;koningizni ro&apos;yxatdan o&apos;tkazing.</p>
+      <p className="mt-2 text-sm text-slate-500">
+        {step === 1 ? "Do'koningizni ro'yxatdan o'tkazing." : "Telefoningizga yuborilgan kodni kiriting."}
+      </p>
 
-      <form onSubmit={onSubmit} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <Field label="Do'kon nomi" value={name} onChange={setName} placeholder="ATLAS Store" />
-        <Field label="Telefon raqam" value={phone} onChange={(v) => setPhone(formatPhone(v))} placeholder="+998 90 123 45 67" type="tel" />
-        <Field label="Email (ixtiyoriy)" value={email} onChange={setEmail} placeholder="siz@dokon.uz" type="email" required={false} />
-        <Field label="Parol" value={password} onChange={setPassword} placeholder="••••••••" type="password" />
-        <Field label="Parolni takrorlang" value={confirm} onChange={setConfirm} placeholder="••••••••" type="password" />
+      {step === 1 ? (
+        <form onSubmit={onContinue} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <Field label="Do'kon nomi" value={name} onChange={setName} placeholder="ATLAS Store" />
+          <Field label="Telefon raqam" value={phone} onChange={(v) => setPhone(formatPhone(v))} placeholder="+998 90 123 45 67" type="tel" />
+          <Field label="Email (ixtiyoriy)" value={email} onChange={setEmail} placeholder="siz@dokon.uz" type="email" required={false} />
+          <Field label="Parol" value={password} onChange={setPassword} placeholder="••••••••" type="password" />
+          <Field label="Parolni takrorlang" value={confirm} onChange={setConfirm} placeholder="••••••••" type="password" />
 
-        {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
+          {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50"
-        >
-          {loading ? "Yuborilmoqda…" : "Ro'yxatdan o'tish"}
-        </button>
+          <button type="submit" disabled={loading}
+            className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50">
+            {loading ? "Yuborilmoqda…" : "Davom etish"}
+          </button>
+          <p className="text-center text-sm text-slate-500">
+            Akkauntingiz bormi? <Link href="/login" className="font-medium text-indigo-600 hover:underline">Kirish</Link>
+          </p>
+        </form>
+      ) : (
+        <form onSubmit={onVerify} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <p className="text-sm text-slate-600">
+            <span className="font-medium text-slate-900">{phone}</span> raqamiga tasdiqlash kodi yuborildi.
+          </p>
+          <Field label="Tasdiqlash kodi" value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" type="text" />
 
-        <p className="text-center text-sm text-slate-500">
-          Akkauntingiz bormi?{" "}
-          <Link href="/login" className="font-medium text-indigo-600 hover:underline">Kirish</Link>
-        </p>
-      </form>
+          {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
+
+          <button type="submit" disabled={loading}
+            className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50">
+            {loading ? "Tekshirilmoqda…" : "Tasdiqlash va ro'yxatdan o'tish"}
+          </button>
+          <div className="flex justify-between text-sm">
+            <button type="button" onClick={() => { setStep(1); setError(null); }} className="text-slate-500 hover:text-slate-900">← Orqaga</button>
+            <button type="button" onClick={onResend} className="text-indigo-600 hover:underline">Kodni qayta yuborish</button>
+          </div>
+        </form>
+      )}
     </section>
   );
 }

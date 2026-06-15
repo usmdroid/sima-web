@@ -30,11 +30,25 @@ async function postJson(path: string, body: unknown): Promise<AuthResult> {
   return json as AuthResult;
 }
 
+/** Telefonga OTP yuboradi (registratsiyadan oldin). */
+export async function sendOtp(phone: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/auth/send-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ phone }),
+  });
+  if (!res.ok) {
+    const json = await res.json().catch(() => ({}));
+    throw new Error(json.error || "Kod yuborib bo'lmadi.");
+  }
+}
+
 export function register(data: {
   name: string;
   phone: string;
   email?: string;
   password: string;
+  code: string;
 }): Promise<AuthResult> {
   return postJson("/auth/register", data);
 }
