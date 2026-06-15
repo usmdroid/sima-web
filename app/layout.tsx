@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kiyibol — Virtual kiyib ko'rish xizmati",
+  title: "Sima — Virtual kiyib ko'rish xizmati",
   description:
     "Mijozlaringiz kiyimni o'z rasmida sinab ko'radi. Saytingizga bir qatorda ulang.",
 };

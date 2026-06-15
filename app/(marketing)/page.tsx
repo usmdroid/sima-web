@@ -37,7 +37,7 @@ export default function LandingPage() {
           Mijozlaringiz kiyimni <span className="text-indigo-600">o&apos;z rasmida</span> sinab ko&apos;rsin
         </h1>
         <p className="mx-auto mt-6 max-w-xl text-lg text-slate-600">
-          Kiyibol — onlayn kiyim do&apos;konlari uchun virtual kiyib ko&apos;rish xizmati.
+          Sima — onlayn kiyim do&apos;konlari uchun virtual kiyib ko&apos;rish xizmati.
           Saytingizga bir qatorda ulang, mijozlar tasavvur qilmasdan ko&apos;rsin.
         </p>
         <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
@@ -60,7 +60,7 @@ export default function LandingPage() {
       <section id="features" className="border-t border-slate-200 bg-slate-50 py-20">
         <div className="mx-auto max-w-6xl px-6">
           <h2 className="text-center text-3xl font-bold tracking-tight text-slate-900">
-            Nima uchun Kiyibol
+            Nima uchun Sima
           </h2>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map((f) => (
@@ -99,7 +99,7 @@ export default function LandingPage() {
           <div>
             <h2 className="text-3xl font-bold tracking-tight text-slate-900">Hamkorlik</h2>
             <p className="mt-4 text-slate-600">
-              Do&apos;koningizni Kiyibol&apos;ga ulang. Ro&apos;yxatdan o&apos;ting,
+              Do&apos;koningizni Sima&apos;ga ulang. Ro&apos;yxatdan o&apos;ting,
               kalitingizni oling va xizmatni saytingizda ishga tushiring.
             </p>
             <ul className="mt-6 space-y-3 text-sm text-slate-600">
