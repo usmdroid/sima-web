@@ -1,8 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { BRAND } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Kirish — Sima",
+  title: `Kirish — ${BRAND}`,
 };
 
 export default function LoginPage() {
