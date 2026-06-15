@@ -1,24 +1,49 @@
-import Link from "next/link";
-import type { Metadata } from "next";
-import { BRAND } from "@/lib/brand";
+"use client";
 
-export const metadata: Metadata = {
-  title: `Kirish — ${BRAND}`,
-};
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { login, saveSession } from "@/lib/api";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!identifier.trim() || !password) {
+      setError("Telefon/email va parol to'ldirilishi shart.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await login(identifier, password);
+      saveSession(res);
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Xatolik");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <section className="mx-auto flex max-w-md flex-col px-6 py-20">
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hamkor kabinetiga kirish</h1>
-      <p className="mt-2 text-sm text-slate-500">Do&apos;kon akkauntingiz bilan kiring.</p>
+      <p className="mt-2 text-sm text-slate-500">Telefon yoki email bilan kiring.</p>
 
-      {/* Dummy login formasi — hozircha ishlamaydi, keyin auth ulanadi */}
-      <form className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+      <form onSubmit={onSubmit} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Email</label>
+          <label className="mb-1 block text-sm font-medium text-slate-700">Telefon yoki email</label>
           <input
-            type="email"
-            placeholder="siz@dokon.uz"
+            type="text"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="+998 90 123 45 67 yoki siz@dokon.uz"
             className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           />
         </div>
@@ -26,23 +51,27 @@ export default function LoginPage() {
           <label className="mb-1 block text-sm font-medium text-slate-700">Parol</label>
           <input
             type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           />
         </div>
+
+        {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
+
         <button
-          type="button"
-          className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-medium text-white transition hover:bg-indigo-700"
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50"
         >
-          Kirish
+          {loading ? "Kirilmoqda…" : "Kirish"}
         </button>
       </form>
 
       <p className="mt-6 text-center text-sm text-slate-500">
         Hamkor emasmisiz?{" "}
-        <Link href="/#partner" className="font-medium text-indigo-600 hover:underline">
-          Ro&apos;yxatdan o&apos;tish
-        </Link>
+        <Link href="/register" className="font-medium text-indigo-600 hover:underline">Ro&apos;yxatdan o&apos;tish</Link>
       </p>
     </section>
   );

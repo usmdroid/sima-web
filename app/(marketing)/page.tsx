@@ -110,48 +110,22 @@ export default function LandingPage() {
             </ul>
           </div>
 
-          {/* Dummy registratsiya formasi — hozircha ishlamaydi, keyin ulaymiz */}
+          {/* Ro'yxatdan o'tish — alohida sahifaga CTA */}
           <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h3 className="text-xl font-semibold text-slate-900">Hamkor bo&apos;lish</h3>
-            <p className="mt-1 text-sm text-slate-500">Ro&apos;yxatdan o&apos;tish (tez orada)</p>
-            <form className="mt-6 space-y-4">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Do&apos;kon nomi</label>
-                <input
-                  type="text"
-                  placeholder="Masalan: ATLAS Store"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Email</label>
-                <input
-                  type="email"
-                  placeholder="siz@dokon.uz"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Parol</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                />
-              </div>
-              <button
-                type="button"
-                className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-medium text-white transition hover:bg-indigo-700"
-              >
-                Ro&apos;yxatdan o&apos;tish
-              </button>
-              <p className="text-center text-sm text-slate-500">
-                Akkauntingiz bormi?{" "}
-                <Link href="/login" className="font-medium text-indigo-600 hover:underline">
-                  Kirish
-                </Link>
-              </p>
-            </form>
+            <h3 className="text-xl font-semibold text-slate-900">Hoziroq boshlang</h3>
+            <p className="mt-2 text-sm text-slate-500">
+              Bir necha daqiqada ro&apos;yxatdan o&apos;tib, do&apos;koningizni ulang.
+            </p>
+            <Link
+              href="/register"
+              className="mt-6 block rounded-lg bg-indigo-600 px-4 py-3 text-center font-medium text-white transition hover:bg-indigo-700"
+            >
+              Ro&apos;yxatdan o&apos;tish
+            </Link>
+            <p className="mt-4 text-center text-sm text-slate-500">
+              Akkauntingiz bormi?{" "}
+              <Link href="/login" className="font-medium text-indigo-600 hover:underline">Kirish</Link>
+            </p>
           </div>
         </div>
       </section>
