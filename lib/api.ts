@@ -30,17 +30,18 @@ async function postJson(path: string, body: unknown): Promise<AuthResult> {
   return json as AuthResult;
 }
 
-/** Telefonga OTP yuboradi (registratsiyadan oldin). */
-export async function sendOtp(phone: string): Promise<void> {
+/** Telefonga OTP yuboradi. Dev rejimida javobda devCode qaytishi mumkin (toast uchun). */
+export async function sendOtp(phone: string): Promise<{ devCode?: string }> {
   const res = await fetch(`${API_BASE}/auth/send-otp`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ phone }),
   });
+  const json = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const json = await res.json().catch(() => ({}));
     throw new Error(json.error || "Kod yuborib bo'lmadi.");
   }
+  return json;
 }
 
 export function register(data: {

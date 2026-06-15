@@ -29,6 +29,14 @@ export default function RegisterPage() {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  // Dev: kod kelsa ~8s toast qilib ko'rsatamiz (TRYON_OTP_EXPOSE_CODE yoqilganda)
+  function showCode(devCode?: string) {
+    if (!devCode) return;
+    setToast("OTP kod: " + devCode);
+    setTimeout(() => setToast(null), 8000);
+  }
 
   async function onContinue(e: React.FormEvent) {
     e.preventDefault();
@@ -51,7 +59,8 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      await sendOtp(phone);
+      const r = await sendOtp(phone);
+      showCode(r.devCode);
       setStep(2);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Xatolik");
@@ -82,7 +91,8 @@ export default function RegisterPage() {
   async function onResend() {
     setError(null);
     try {
-      await sendOtp(phone);
+      const r = await sendOtp(phone);
+      showCode(r.devCode);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kod yuborilmadi");
     }
@@ -90,6 +100,11 @@ export default function RegisterPage() {
 
   return (
     <section className="mx-auto flex max-w-md flex-col px-6 py-16">
+      {toast && (
+        <div className="fixed right-5 top-5 z-50 rounded-lg bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-lg">
+          {toast}
+        </div>
+      )}
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hamkor bo&apos;lish</h1>
       <p className="mt-2 text-sm text-slate-500">
         {step === 1 ? "Do'koningizni ro'yxatdan o'tkazing." : "Telefoningizga yuborilgan kodni kiriting."}
