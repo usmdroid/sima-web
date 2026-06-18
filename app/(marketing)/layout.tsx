@@ -20,9 +20,10 @@ function Header() {
           <BrandLogo />
         </Link>
         <nav className="hidden items-center gap-8 text-sm text-slate-600 md:flex">
-          <a href="#features" className="hover:text-slate-900">Imkoniyatlar</a>
-          <a href="#how" className="hover:text-slate-900">Qanday ishlaydi</a>
-          <a href="#partner" className="hover:text-slate-900">Hamkorlik</a>
+          <a href="/#features" className="hover:text-slate-900">Imkoniyatlar</a>
+          <a href="/#how" className="hover:text-slate-900">Qanday ishlaydi</a>
+          <a href="/#partner" className="hover:text-slate-900">Hamkorlik</a>
+          <Link href="/example" className="font-medium text-indigo-600 hover:text-indigo-700">Example</Link>
         </nav>
         <Link
           href="/login"
