@@ -79,3 +79,54 @@ export function getSession(): AuthResult | null {
 export function clearSession() {
   if (typeof window !== "undefined") localStorage.removeItem(KEY);
 }
+
+// ---- API Kalitlar ----
+
+export interface ApiKey {
+  id: string;
+  name: string;
+  keyPrefix: string;
+  createdAt: string;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+}
+
+export interface CreatedApiKey {
+  id: string;
+  name: string;
+  key: string;
+  keyPrefix: string;
+  createdAt: string;
+}
+
+export async function listApiKeys(token: string): Promise<ApiKey[]> {
+  const res = await fetch(`${API_BASE}/api-keys`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+  return json as ApiKey[];
+}
+
+export async function createApiKey(token: string, name: string): Promise<CreatedApiKey> {
+  const res = await fetch(`${API_BASE}/api-keys`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ name }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+  return json as CreatedApiKey;
+}
+
+export async function revokeApiKey(token: string, id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/api-keys/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+}
