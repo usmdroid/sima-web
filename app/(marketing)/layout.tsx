@@ -23,7 +23,7 @@ function Header() {
           <a href="/#features" className="hover:text-slate-900">Imkoniyatlar</a>
           <a href="/#how" className="hover:text-slate-900">Qanday ishlaydi</a>
           <a href="/#partner" className="hover:text-slate-900">Hamkorlik</a>
-          <Link href="/example" className="font-medium text-indigo-600 hover:text-indigo-700">Example</Link>
+          <Link href="/example" className="font-medium text-indigo-600 hover:text-indigo-700">Namuna</Link>
         </nav>
         <Link
           href="/login"
