@@ -86,6 +86,7 @@ export interface ApiKey {
   id: string;
   name: string;
   keyPrefix: string;
+  key: string | null;
   createdAt: string;
   lastUsedAt: string | null;
   revokedAt: string | null;

@@ -29,6 +29,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
   const [revealed, setRevealed] = useState<CreatedApiKey | null>(null);
   const [revoking, setRevoking] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const fetchKeys = useCallback(async () => {
     setError(null);
@@ -92,6 +93,13 @@ export default function ApiKeysSection({ token }: { token: string }) {
     });
   }
 
+  function copyRow(id: string, key: string) {
+    navigator.clipboard.writeText(key).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId((c) => (c === id ? null : c)), 2000);
+    });
+  }
+
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6">
       <div className="flex items-center justify-between">
@@ -140,7 +148,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
       {revealed && (
         <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
           <p className="text-sm font-medium text-amber-800">
-            ⚠️ Ushbu kalit faqat bir marta ko&apos;rsatiladi. Uni hoziroq nusxalab saqlang!
+            ✅ Kalit yaratildi. Uni xohlagan vaqtda quyidagi ro&apos;yxatdan ham nusxalashingiz mumkin.
           </p>
           <div className="mt-2 flex items-center gap-2">
             <code className="flex-1 break-all rounded border border-amber-200 bg-white px-3 py-2 font-mono text-sm text-slate-900">
@@ -187,13 +195,23 @@ export default function ApiKeysSection({ token }: { token: string }) {
                   </p>
                 </div>
                 {!k.revokedAt && (
-                  <button
-                    onClick={() => handleRevoke(k.id, k.name)}
-                    disabled={revoking === k.id}
-                    className="ml-4 shrink-0 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
-                  >
-                    {revoking === k.id ? "…" : "Bekor qilish"}
-                  </button>
+                  <div className="ml-4 flex shrink-0 items-center gap-2">
+                    {k.key && (
+                      <button
+                        onClick={() => copyRow(k.id, k.key!)}
+                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                      >
+                        {copiedId === k.id ? "Nusxalandi!" : "Nusxalash"}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleRevoke(k.id, k.name)}
+                      disabled={revoking === k.id}
+                      className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                    >
+                      {revoking === k.id ? "…" : "Bekor qilish"}
+                    </button>
+                  </div>
                 )}
               </div>
             ))}
