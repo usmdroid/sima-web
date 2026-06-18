@@ -87,8 +87,6 @@ export interface ApiKey {
   name: string;
   keyPrefix: string;
   key: string | null;
-  type: "secret" | "publishable";
-  allowedDomains: string | null;
   createdAt: string;
   lastUsedAt: string | null;
   revokedAt: string | null;
@@ -99,8 +97,6 @@ export interface CreatedApiKey {
   name: string;
   key: string;
   keyPrefix: string;
-  type: "secret" | "publishable";
-  allowedDomains: string | null;
   createdAt: string;
 }
 
@@ -113,19 +109,14 @@ export async function listApiKeys(token: string): Promise<ApiKey[]> {
   return json as ApiKey[];
 }
 
-export async function createApiKey(
-  token: string,
-  name: string,
-  type: "secret" | "publishable" = "secret",
-  allowedDomains?: string
-): Promise<CreatedApiKey> {
+export async function createApiKey(token: string, name: string): Promise<CreatedApiKey> {
   const res = await fetch(`${API_BASE}/api-keys`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ name, type, allowedDomains }),
+    body: JSON.stringify({ name }),
   });
   const json = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");

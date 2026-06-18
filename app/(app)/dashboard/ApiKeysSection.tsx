@@ -24,8 +24,6 @@ export default function ApiKeysSection({ token }: { token: string }) {
   const [error, setError] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState("");
-  const [newType, setNewType] = useState<"secret" | "publishable">("secret");
-  const [newDomains, setNewDomains] = useState("");
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [revealed, setRevealed] = useState<CreatedApiKey | null>(null);
@@ -54,24 +52,13 @@ export default function ApiKeysSection({ token }: { token: string }) {
       setCreateError("Kalit nomi kiritilishi shart.");
       return;
     }
-    if (newType === "publishable" && !newDomains.trim()) {
-      setCreateError("Publishable (pk_) kalit uchun kamida bitta domen kiriting.");
-      return;
-    }
     setCreateLoading(true);
     setCreateError(null);
     try {
-      const created = await createApiKey(
-        token,
-        newName.trim(),
-        newType,
-        newType === "publishable" ? newDomains.trim() : undefined
-      );
+      const created = await createApiKey(token, newName.trim());
       setRevealed(created);
       setShowCreate(false);
       setNewName("");
-      setNewType("secret");
-      setNewDomains("");
       fetchKeys();
     } catch (e) {
       setCreateError(e instanceof Error ? e.message : "Xatolik yuz berdi.");
@@ -131,66 +118,29 @@ export default function ApiKeysSection({ token }: { token: string }) {
       </div>
 
       {showCreate && (
-        <form onSubmit={handleCreate} className="mt-4 space-y-3">
+        <form onSubmit={handleCreate} className="mt-4 flex gap-2">
           <input
             type="text"
             placeholder="Kalit nomi (masalan, Asosiy sayt)"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             autoFocus
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setNewType("secret")}
-              className={`flex-1 rounded-lg border px-3 py-2 text-left text-sm ${
-                newType === "secret"
-                  ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <span className="font-medium">Secret (sk_)</span>
-              <span className="block text-xs text-slate-400">Server uchun, maxfiy</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setNewType("publishable")}
-              className={`flex-1 rounded-lg border px-3 py-2 text-left text-sm ${
-                newType === "publishable"
-                  ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <span className="font-medium">Publishable (pk_)</span>
-              <span className="block text-xs text-slate-400">Brauzer uchun, domen bilan</span>
-            </button>
-          </div>
-          {newType === "publishable" && (
-            <input
-              type="text"
-              placeholder="Ruxsat etilgan domen(lar): terra.uz, shop.terra.uz"
-              value={newDomains}
-              onChange={(e) => setNewDomains(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          )}
-          <div className="flex gap-2">
-            <button
-              type="submit"
-              disabled={createLoading}
-              className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {createLoading ? "Yaratilmoqda…" : "Yaratish"}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowCreate(false)}
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
-            >
-              Bekor
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={createLoading}
+            className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {createLoading ? "Yaratilmoqda…" : "Yaratish"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowCreate(false)}
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+          >
+            Bekor
+          </button>
         </form>
       )}
       {createError && <p className="mt-2 text-sm text-red-500">{createError}</p>}
@@ -231,18 +181,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
             {keys.map((k) => (
               <div key={k.id} className="flex items-center justify-between py-3">
                 <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-2 truncate text-sm font-medium text-slate-900">
-                    {k.name}
-                    <span
-                      className={`rounded px-1.5 py-0.5 text-xs font-medium ${
-                        k.type === "publishable"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-slate-100 text-slate-600"
-                      }`}
-                    >
-                      {k.type === "publishable" ? "pk_" : "sk_"}
-                    </span>
-                  </p>
+                  <p className="truncate text-sm font-medium text-slate-900">{k.name}</p>
                   <p className="mt-0.5 font-mono text-xs text-slate-400">
                     {k.keyPrefix}…
                     {k.revokedAt && (
@@ -251,11 +190,6 @@ export default function ApiKeysSection({ token }: { token: string }) {
                       </span>
                     )}
                   </p>
-                  {k.type === "publishable" && k.allowedDomains && (
-                    <p className="mt-0.5 text-xs text-slate-400">
-                      Domen: {k.allowedDomains}
-                    </p>
-                  )}
                   <p className="mt-0.5 text-xs text-slate-400">
                     Yaratilgan: {fmt(k.createdAt)} · So&apos;nggi: {fmt(k.lastUsedAt)}
                   </p>
