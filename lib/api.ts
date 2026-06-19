@@ -131,3 +131,76 @@ export async function revokeApiKey(token: string, id: string): Promise<void> {
   const json = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
 }
+
+// ---- Hamyon (Wallet) ----
+
+export interface WalletInfo {
+  balanceSim: number;
+  balanceMsim: number;
+  totalRequests: number;
+  freeGrantSim: number;
+}
+
+export interface WalletTransaction {
+  id: string;
+  amountSim: number;
+  type: string;
+  balanceAfterSim: number;
+  createdAt: string;
+}
+
+export interface PricingTier {
+  uptoRequests: number | null;
+  simPerRequest: number;
+}
+
+export interface PricingInfo {
+  usdToSim: number;
+  freeGrantSim: number;
+  tiers: PricingTier[];
+}
+
+export async function getPricing(): Promise<PricingInfo> {
+  const res = await fetch(`${API_BASE}/pricing`);
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Narxlarni yuklab bo'lmadi.");
+  return json as PricingInfo;
+}
+
+export async function getWallet(token: string): Promise<WalletInfo> {
+  const res = await fetch(`${API_BASE}/wallet`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Hamyonni yuklab bo'lmadi.");
+  return json as WalletInfo;
+}
+
+export async function getWalletTransactions(
+  token: string,
+  limit = 50
+): Promise<WalletTransaction[]> {
+  const res = await fetch(`${API_BASE}/wallet/transactions?limit=${limit}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Tranzaksiyalarni yuklab bo'lmadi.");
+  return json as WalletTransaction[];
+}
+
+export async function purchaseCredits(
+  token: string,
+  amountUsd: number
+): Promise<WalletInfo> {
+  const res = await fetch(`${API_BASE}/wallet/purchase`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ amountUsd }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Sim sotib olishda xatolik.");
+  return json as WalletInfo;
+}

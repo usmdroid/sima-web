@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getSession, clearSession, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import ApiKeysSection from "./ApiKeysSection";
+import WalletSection from "./WalletSection";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -48,15 +49,8 @@ export default function DashboardPage() {
         <p className="mt-2 text-slate-600">{client.phone}{client.email ? ` · ${client.email}` : ""}</p>
 
         <div className="mt-8 space-y-4">
+          {token && <WalletSection token={token} />}
           {token && <ApiKeysSection token={token} />}
-          <div className="grid gap-4 sm:grid-cols-2">
-            {["Foydalanish (counter)", "Tarix (history)"].map((t) => (
-              <div key={t} className="rounded-2xl border border-slate-200 bg-white p-6">
-                <h3 className="font-semibold text-slate-900">{t}</h3>
-                <p className="mt-2 text-sm text-slate-400">Tez orada</p>
-              </div>
-            ))}
-          </div>
         </div>
       </main>
     </div>
