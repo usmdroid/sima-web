@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { getSession, clearSession, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import ApiKeysSection from "./ApiKeysSection";
-import WalletSection from "./WalletSection";
+import CreditBadge from "./CreditBadge";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -38,9 +38,12 @@ export default function DashboardPage() {
           <div className="text-lg font-bold text-slate-900">
             {BRAND} <span className="text-sm font-normal text-slate-400">dashboard</span>
           </div>
-          <button onClick={logout} className="text-sm text-slate-600 hover:text-slate-900">
-            Chiqish
-          </button>
+          <div className="flex items-center gap-4">
+            {token && <CreditBadge token={token} />}
+            <button onClick={logout} className="text-sm text-slate-600 hover:text-slate-900">
+              Chiqish
+            </button>
+          </div>
         </div>
       </header>
 
@@ -49,7 +52,6 @@ export default function DashboardPage() {
         <p className="mt-2 text-slate-600">{client.phone}{client.email ? ` · ${client.email}` : ""}</p>
 
         <div className="mt-8 space-y-4">
-          {token && <WalletSection token={token} />}
           {token && <ApiKeysSection token={token} />}
         </div>
       </main>

@@ -24,7 +24,6 @@ function Header() {
           <a href="/#how" className="hover:text-slate-900">Qanday ishlaydi</a>
           <a href="/#partner" className="hover:text-slate-900">Hamkorlik</a>
           <Link href="/example" className="font-medium text-indigo-600 hover:text-indigo-700">Namuna</Link>
-          <Link href="/narxlar" className="hover:text-slate-900">Narxlar</Link>
         </nav>
         <Link
           href="/login"
