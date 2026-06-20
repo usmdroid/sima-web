@@ -204,3 +204,72 @@ export async function purchaseCredits(
   if (!res.ok) throw new Error(json.error || "Sim sotib olishda xatolik.");
   return json as WalletInfo;
 }
+
+// ---- Monitoring ----
+
+export interface MonitoringSummary {
+  totalRequests: number;
+  totalSpentSim: number;
+  balanceSim: number;
+  keysCount: number;
+}
+
+export interface MonitoringByKey {
+  apiKeyId: string | null;
+  name: string;
+  keyPrefix: string | null;
+  requests: number;
+  spentSim: number;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+}
+
+export type MonitoringRange = "hourly" | "daily" | "weekly" | "monthly";
+
+export interface MonitoringBucket {
+  ts: string;
+  count: number;
+  spentSim: number;
+}
+
+export interface MonitoringTimeseries {
+  range: string;
+  buckets: MonitoringBucket[];
+}
+
+export async function getMonitoringSummary(
+  token: string
+): Promise<MonitoringSummary> {
+  const res = await fetch(`${API_BASE}/monitoring/summary`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Monitoringni yuklab bo'lmadi.");
+  return json as MonitoringSummary;
+}
+
+export async function getMonitoringByKey(
+  token: string
+): Promise<MonitoringByKey[]> {
+  const res = await fetch(`${API_BASE}/monitoring/by-key`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Monitoringni yuklab bo'lmadi.");
+  return json as MonitoringByKey[];
+}
+
+export async function getMonitoringTimeseries(
+  token: string,
+  range: MonitoringRange,
+  apiKeyId?: string | null
+): Promise<MonitoringTimeseries> {
+  const params = new URLSearchParams({ range });
+  if (apiKeyId) params.set("apiKeyId", apiKeyId);
+  const res = await fetch(`${API_BASE}/monitoring/timeseries?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Diagrammani yuklab bo'lmadi.");
+  return json as MonitoringTimeseries;
+}

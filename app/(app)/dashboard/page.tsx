@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { getSession, clearSession, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import ApiKeysSection from "./ApiKeysSection";
@@ -39,6 +40,12 @@ export default function DashboardPage() {
             {BRAND} <span className="text-sm font-normal text-slate-400">dashboard</span>
           </div>
           <div className="flex items-center gap-4">
+            <Link
+              href="/dashboard/monitoring"
+              className="text-sm text-slate-600 hover:text-indigo-600"
+            >
+              Monitoring
+            </Link>
             {token && <CreditBadge token={token} />}
             <button onClick={logout} className="text-sm text-slate-600 hover:text-slate-900">
               Chiqish
