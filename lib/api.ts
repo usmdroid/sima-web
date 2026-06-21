@@ -273,3 +273,39 @@ export async function getMonitoringTimeseries(
   if (!res.ok) throw new Error(json.error || "Diagrammani yuklab bo'lmadi.");
   return json as MonitoringTimeseries;
 }
+
+// ---- Tarix (history) ----
+
+export interface MonitoringHistoryItem {
+  id: string;
+  createdAt: string;
+  apiKeyId: string | null;
+  keyName: string | null;
+  keyPrefix: string | null;
+  result: string;
+  spentSim: number;
+}
+
+export interface MonitoringHistory {
+  items: MonitoringHistoryItem[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export async function getMonitoringHistory(
+  token: string,
+  opts?: { apiKeyId?: string | null; limit?: number; offset?: number }
+): Promise<MonitoringHistory> {
+  const params = new URLSearchParams();
+  if (opts?.apiKeyId) params.set("apiKeyId", opts.apiKeyId);
+  if (opts?.limit != null) params.set("limit", String(opts.limit));
+  if (opts?.offset != null) params.set("offset", String(opts.offset));
+  const qs = params.toString();
+  const res = await fetch(`${API_BASE}/monitoring/history${qs ? `?${qs}` : ""}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Tarixni yuklab bo'lmadi.");
+  return json as MonitoringHistory;
+}

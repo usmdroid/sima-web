@@ -12,6 +12,7 @@ import {
 } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import ApiKeysSection from "./ApiKeysSection";
+import HistorySection from "./HistorySection";
 import CreditBadge from "./CreditBadge";
 
 export default function DashboardPage() {
@@ -119,6 +120,7 @@ export default function DashboardPage() {
 
         <div className="mt-8 space-y-4">
           {token && <ApiKeysSection token={token} />}
+          {token && <HistorySection token={token} />}
         </div>
       </main>
     </div>
