@@ -8,6 +8,7 @@ import {
   type ApiKey,
   type CreatedApiKey,
 } from "@/lib/api";
+import ExpansionPanel from "./ExpansionPanel";
 
 function fmt(iso: string | null) {
   if (!iso) return "—";
@@ -101,9 +102,16 @@ export default function ApiKeysSection({ token }: { token: string }) {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-slate-900">API Kalitlar</h3>
+    <ExpansionPanel
+      title="API kalitlar"
+      defaultOpen
+      leading={
+        <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-sm font-medium text-slate-600">
+          {keys.length}
+        </span>
+      }
+    >
+      <div className="flex items-center justify-end">
         <button
           onClick={() => {
             setShowCreate(true);
@@ -218,6 +226,6 @@ export default function ApiKeysSection({ token }: { token: string }) {
           </div>
         )}
       </div>
-    </div>
+    </ExpansionPanel>
   );
 }
