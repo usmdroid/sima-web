@@ -10,6 +10,7 @@ export interface ClientInfo {
   name: string;
   phone: string;
   email?: string | null;
+  role: "CLIENT" | "SUPER_ADMIN";
 }
 
 export interface AuthResult {
@@ -47,7 +48,7 @@ export async function sendOtp(phone: string): Promise<{ devCode?: string }> {
 export function register(data: {
   name: string;
   phone: string;
-  email?: string;
+  email: string;
   password: string;
   code: string;
 }): Promise<AuthResult> {
@@ -90,6 +91,7 @@ export interface ApiKey {
   createdAt: string;
   lastUsedAt: string | null;
   revokedAt: string | null;
+  revealable: boolean;
 }
 
 export interface CreatedApiKey {
@@ -130,6 +132,29 @@ export async function revokeApiKey(token: string, id: string): Promise<void> {
   });
   const json = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+}
+
+// ---- Connect (OAuth-uslubida kalit ulash) ----
+
+export interface ConnectAuthorizeResult {
+  code: string;
+}
+
+export async function connectAuthorize(
+  token: string,
+  payload: { apiKeyId: string; redirectUri: string; state: string | null }
+): Promise<ConnectAuthorizeResult> {
+  const res = await fetch(`${API_BASE}/connect/authorize`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Ulanishda xatolik yuz berdi.");
+  return json as ConnectAuthorizeResult;
 }
 
 // ---- Hamyon (Wallet) ----
@@ -308,4 +333,119 @@ export async function getMonitoringHistory(
   const json = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(json.error || "Tarixni yuklab bo'lmadi.");
   return json as MonitoringHistory;
+}
+
+// ---- Admin (Super-Admin + RBAC) ----
+
+export interface AdminClient {
+  id: string;
+  name: string;
+  phone: string;
+  balanceSim: number;
+  totalRequests: number;
+  status: "ACTIVE" | "SUSPENDED";
+  role: "CLIENT" | "SUPER_ADMIN";
+  createdAt: string;
+}
+
+export interface AdminClientTransaction {
+  id: string;
+  amountSim: number;
+  type: string;
+  balanceAfterSim: number;
+  createdAt: string;
+}
+
+export interface AdminClientDetail {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string | null;
+  role: "CLIENT" | "SUPER_ADMIN";
+  status: "ACTIVE" | "SUSPENDED";
+  createdAt: string;
+  balanceSim: number;
+  totalRequests: number;
+  totalSpentSim: number;
+  transactions: AdminClientTransaction[];
+}
+
+export interface AdminStats {
+  totalClients: number;
+  totalRequests: number;
+  totalRevenueSim: number;
+}
+
+export async function getAdminClients(token: string): Promise<AdminClient[]> {
+  const res = await fetch(`${API_BASE}/admin/clients`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Mijozlarni yuklab bo'lmadi.");
+  return json as AdminClient[];
+}
+
+export async function getAdminClient(
+  token: string,
+  id: string
+): Promise<AdminClientDetail> {
+  const res = await fetch(`${API_BASE}/admin/clients/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Mijozni yuklab bo'lmadi.");
+  return json as AdminClientDetail;
+}
+
+export async function creditAdminClient(
+  token: string,
+  id: string,
+  amountSim: number
+): Promise<{ balanceSim: number }> {
+  const res = await fetch(`${API_BASE}/admin/clients/${id}/credit`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ amountSim }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Balansni to'ldirib bo'lmadi.");
+  return json as { balanceSim: number };
+}
+
+export async function suspendAdminClient(
+  token: string,
+  id: string
+): Promise<{ status: "SUSPENDED" }> {
+  const res = await fetch(`${API_BASE}/admin/clients/${id}/suspend`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Mijozni bloklab bo'lmadi.");
+  return json as { status: "SUSPENDED" };
+}
+
+export async function activateAdminClient(
+  token: string,
+  id: string
+): Promise<{ status: "ACTIVE" }> {
+  const res = await fetch(`${API_BASE}/admin/clients/${id}/activate`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Mijozni faollashtirib bo'lmadi.");
+  return json as { status: "ACTIVE" };
+}
+
+export async function getAdminStats(token: string): Promise<AdminStats> {
+  const res = await fetch(`${API_BASE}/admin/stats`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Statistikani yuklab bo'lmadi.");
+  return json as AdminStats;
 }

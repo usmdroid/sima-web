@@ -71,6 +71,14 @@ export default function DashboardPage() {
             >
               Monitoring
             </Link>
+            {client.role === "SUPER_ADMIN" && (
+              <Link
+                href="/admin"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
+              >
+                Admin
+              </Link>
+            )}
             {token && <CreditBadge token={token} />}
             <button onClick={logout} className="text-sm text-slate-600 hover:text-slate-900">
               Chiqish

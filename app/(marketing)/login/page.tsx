@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { login, saveSession } from "@/lib/api";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +24,13 @@ export default function LoginPage() {
     try {
       const res = await login(identifier, password);
       saveSession(res);
-      router.push("/dashboard");
+      // ?redirect= bo'lsa shu yerga qaytamiz (faqat nisbiy yo'l ruxsat)
+      const redirect = searchParams.get("redirect");
+      if (redirect && redirect.startsWith("/")) {
+        router.push(redirect);
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Xatolik");
     } finally {
@@ -74,5 +81,13 @@ export default function LoginPage() {
         <Link href="/register" className="font-medium text-indigo-600 hover:underline">Ro&apos;yxatdan o&apos;tish</Link>
       </p>
     </section>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   );
 }

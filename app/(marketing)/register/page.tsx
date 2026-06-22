@@ -49,6 +49,15 @@ export default function RegisterPage() {
       setError("Telefon raqamni to'liq kiriting.");
       return;
     }
+    if (!email.trim()) {
+      setError("Email to'ldirilishi shart.");
+      return;
+    }
+    // Email formati: lokal@domen.tld
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) {
+      setError("Email formati noto'g'ri.");
+      return;
+    }
     if (password.length < 6) {
       setError("Parol kamida 6 belgidan iborat bo'lsin.");
       return;
@@ -78,7 +87,7 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      const res = await register({ name, phone, email: email.trim() || undefined, password, code: code.trim() });
+      const res = await register({ name, phone, email: email.trim(), password, code: code.trim() });
       saveSession(res);
       router.push("/dashboard");
     } catch (err) {
@@ -114,7 +123,7 @@ export default function RegisterPage() {
         <form onSubmit={onContinue} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <Field label="Do'kon nomi" value={name} onChange={setName} placeholder="ATLAS Store" />
           <Field label="Telefon raqam" value={phone} onChange={(v) => setPhone(formatPhone(v))} placeholder="+998 90 123 45 67" type="tel" />
-          <Field label="Email (ixtiyoriy)" value={email} onChange={setEmail} placeholder="siz@dokon.uz" type="email" required={false} />
+          <Field label="Email" value={email} onChange={setEmail} placeholder="siz@dokon.uz" type="email" />
           <Field label="Parol" value={password} onChange={setPassword} placeholder="••••••••" type="password" />
           <Field label="Parolni takrorlang" value={confirm} onChange={setConfirm} placeholder="••••••••" type="password" />
 
