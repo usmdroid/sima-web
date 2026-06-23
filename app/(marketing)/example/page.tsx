@@ -78,7 +78,7 @@ export default function ExamplePage() {
               {p.tag && (
                 <span
                   className={`absolute left-2 top-2 z-10 rounded-full px-2 py-0.5 text-xs font-medium ${
-                    p.isNew ? "bg-accent text-white" : "bg-[#B08D57]/80 text-white"
+                    p.isNew ? "bg-accent text-white" : "bg-accent/80 text-white"
                   }`}
                 >
                   {p.tag}
