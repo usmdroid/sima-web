@@ -68,7 +68,7 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      const r = await sendOtp(phone);
+      const r = await sendOtp(email.trim());
       showCode(r.devCode);
       setStep(2);
     } catch (err) {
@@ -100,7 +100,7 @@ export default function RegisterPage() {
   async function onResend() {
     setError(null);
     try {
-      const r = await sendOtp(phone);
+      const r = await sendOtp(email.trim());
       showCode(r.devCode);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kod yuborilmadi");
@@ -116,7 +116,7 @@ export default function RegisterPage() {
       )}
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hamkor bo&apos;lish</h1>
       <p className="mt-2 text-sm text-slate-500">
-        {step === 1 ? "Do'koningizni ro'yxatdan o'tkazing." : "Telefoningizga yuborilgan kodni kiriting."}
+        {step === 1 ? "Do'koningizni ro'yxatdan o'tkazing." : "Email manzilingizga yuborilgan kodni kiriting."}
       </p>
 
       {step === 1 ? (
@@ -140,7 +140,7 @@ export default function RegisterPage() {
       ) : (
         <form onSubmit={onVerify} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <p className="text-sm text-slate-600">
-            <span className="font-medium text-slate-900">{phone}</span> raqamiga tasdiqlash kodi yuborildi.
+            <span className="font-medium text-slate-900">{email}</span> manziliga tasdiqlash kodi yuborildi.
           </p>
           <Field label="Tasdiqlash kodi" value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" type="text" />
 
