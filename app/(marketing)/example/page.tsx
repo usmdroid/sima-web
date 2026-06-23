@@ -57,11 +57,11 @@ export default function ExamplePage() {
       <Script src="/widget.js" strategy="afterInteractive" onReady={configureWidget} />
 
       <div className="mb-8">
-        <p className="text-sm font-medium text-indigo-600">Demo do&apos;kon</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
+        <p className="text-sm font-medium text-accent">Demo do&apos;kon</p>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-primary font-serif">
           Atlas — namuna integratsiya
         </h1>
-        <p className="mt-2 max-w-2xl text-slate-600">
+        <p className="mt-2 max-w-2xl text-muted">
           Bu sahifa Sima vidjeti do&apos;kon saytiga qanday ulanishini ko&apos;rsatadi.
           &quot;Sinab ko&apos;rish&quot; tugmasi vidjetni ochadi; token Sima serveridan
           (sk_ brauzerga chiqmaydi) olinadi.
@@ -72,13 +72,13 @@ export default function ExamplePage() {
         {PRODUCTS.map((p) => (
           <div
             key={p.name}
-            className="group overflow-hidden rounded-xl border border-slate-200 bg-white"
+            className="group overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(29,29,29,0.04)]"
           >
-            <div className="relative aspect-[3/4] overflow-hidden bg-slate-100">
+            <div className="relative aspect-[3/4] overflow-hidden bg-beige">
               {p.tag && (
                 <span
-                  className={`absolute left-2 top-2 z-10 rounded px-2 py-0.5 text-xs font-medium ${
-                    p.isNew ? "bg-indigo-600 text-white" : "bg-amber-500 text-white"
+                  className={`absolute left-2 top-2 z-10 rounded-full px-2 py-0.5 text-xs font-medium ${
+                    p.isNew ? "bg-accent text-white" : "bg-[#B08D57]/80 text-white"
                   }`}
                 >
                   {p.tag}
@@ -93,16 +93,16 @@ export default function ExamplePage() {
               />
               <button
                 onClick={() => tryOn(p)}
-                className="absolute inset-x-2 bottom-2 translate-y-2 rounded-lg bg-slate-900/90 py-2 text-sm font-medium text-white opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100"
+                className="absolute inset-x-2 bottom-2 translate-y-2 rounded-full bg-primary/90 py-2 text-sm font-medium text-white opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100"
               >
                 Sinab ko&apos;rish
               </button>
             </div>
             <div className="p-3">
-              <p className="truncate text-sm font-medium text-slate-900">{p.name}</p>
-              <p className="text-xs text-slate-400">{p.cat}</p>
-              <p className="mt-1 text-sm text-slate-700">
-                {p.old && <s className="mr-1 text-slate-400">{p.old}</s>}
+              <p className="truncate text-sm font-medium text-primary">{p.name}</p>
+              <p className="text-xs text-muted">{p.cat}</p>
+              <p className="mt-1 text-sm text-primary">
+                {p.old && <s className="mr-1 text-muted">{p.old}</s>}
                 {p.price} so&apos;m
               </p>
             </div>

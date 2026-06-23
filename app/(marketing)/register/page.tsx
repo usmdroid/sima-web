@@ -31,7 +31,6 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
-  // Dev: kod kelsa ~8s toast qilib ko'rsatamiz (TRYON_OTP_EXPOSE_CODE yoqilganda)
   function showCode(devCode?: string) {
     if (!devCode) return;
     setToast("OTP kod: " + devCode);
@@ -53,7 +52,6 @@ export default function RegisterPage() {
       setError("Email to'ldirilishi shart.");
       return;
     }
-    // Email formati: lokal@domen.tld
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) {
       setError("Email formati noto'g'ri.");
       return;
@@ -110,17 +108,17 @@ export default function RegisterPage() {
   return (
     <section className="mx-auto flex max-w-md flex-col px-6 py-16">
       {toast && (
-        <div className="fixed right-5 top-5 z-50 rounded-lg bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-lg">
+        <div className="fixed right-5 top-5 z-50 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white shadow-lg">
           {toast}
         </div>
       )}
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hamkor bo&apos;lish</h1>
-      <p className="mt-2 text-sm text-slate-500">
+      <h1 className="text-2xl font-bold tracking-tight text-primary font-serif">Hamkor bo&apos;lish</h1>
+      <p className="mt-2 text-sm text-muted">
         {step === 1 ? "Do'koningizni ro'yxatdan o'tkazing." : "Email manzilingizga yuborilgan kodni kiriting."}
       </p>
 
       {step === 1 ? (
-        <form onSubmit={onContinue} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+        <form onSubmit={onContinue} className="mt-8 space-y-4 rounded-2xl border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
           <Field label="Do'kon nomi" value={name} onChange={setName} placeholder="ATLAS Store" />
           <Field label="Telefon raqam" value={phone} onChange={(v) => setPhone(formatPhone(v))} placeholder="+998 90 123 45 67" type="tel" />
           <Field label="Email" value={email} onChange={setEmail} placeholder="siz@dokon.uz" type="email" />
@@ -130,29 +128,29 @@ export default function RegisterPage() {
           {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
 
           <button type="submit" disabled={loading}
-            className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50">
+            className="w-full rounded-full bg-accent px-4 py-2.5 font-medium text-white transition hover:bg-hover disabled:opacity-50">
             {loading ? "Yuborilmoqda…" : "Davom etish"}
           </button>
-          <p className="text-center text-sm text-slate-500">
-            Akkauntingiz bormi? <Link href="/login" className="font-medium text-indigo-600 hover:underline">Kirish</Link>
+          <p className="text-center text-sm text-muted">
+            Akkauntingiz bormi? <Link href="/login" className="font-medium text-accent hover:text-hover transition-colors">Kirish</Link>
           </p>
         </form>
       ) : (
-        <form onSubmit={onVerify} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="text-sm text-slate-600">
-            <span className="font-medium text-slate-900">{email}</span> manziliga tasdiqlash kodi yuborildi.
+        <form onSubmit={onVerify} className="mt-8 space-y-4 rounded-2xl border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+          <p className="text-sm text-muted">
+            <span className="font-medium text-primary">{email}</span> manziliga tasdiqlash kodi yuborildi.
           </p>
           <Field label="Tasdiqlash kodi" value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" type="text" />
 
           {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
 
           <button type="submit" disabled={loading}
-            className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50">
+            className="w-full rounded-full bg-accent px-4 py-2.5 font-medium text-white transition hover:bg-hover disabled:opacity-50">
             {loading ? "Tekshirilmoqda…" : "Tasdiqlash va ro'yxatdan o'tish"}
           </button>
           <div className="flex justify-between text-sm">
-            <button type="button" onClick={() => { setStep(1); setError(null); }} className="text-slate-500 hover:text-slate-900">← Orqaga</button>
-            <button type="button" onClick={onResend} className="text-indigo-600 hover:underline">Kodni qayta yuborish</button>
+            <button type="button" onClick={() => { setStep(1); setError(null); }} className="text-muted hover:text-primary transition-colors">← Orqaga</button>
+            <button type="button" onClick={onResend} className="text-accent hover:text-hover transition-colors">Kodni qayta yuborish</button>
           </div>
         </form>
       )}
@@ -172,14 +170,14 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-slate-700">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-primary">{label}</label>
       <input
         type={type}
         value={value}
         required={required}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+        className="w-full rounded-lg border border-line px-3 py-2.5 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 bg-bg"
       />
     </div>
   );

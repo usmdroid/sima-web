@@ -8,23 +8,23 @@ function BrandLogo() {
   return (
     <>
       {BRAND.slice(0, mid)}
-      <span className="text-indigo-600">{BRAND.slice(mid)}</span>
+      <span className="text-accent">{BRAND.slice(mid)}</span>
     </>
   );
 }
 
 function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-line bg-bg">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-xl font-bold tracking-tight text-slate-900">
+        <Link href="/" className="text-xl font-bold tracking-tight text-primary">
           <BrandLogo />
         </Link>
-        <nav className="hidden items-center gap-8 text-sm text-slate-600 md:flex">
-          <a href="/#features" className="hover:text-slate-900">Imkoniyatlar</a>
-          <a href="/#how" className="hover:text-slate-900">Qanday ishlaydi</a>
-          <a href="/#partner" className="hover:text-slate-900">Hamkorlik</a>
-          <Link href="/example" className="font-medium text-indigo-600 hover:text-indigo-700">Namuna</Link>
+        <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
+          <a href="/#features" className="hover:text-accent transition-colors">Imkoniyatlar</a>
+          <a href="/#how" className="hover:text-accent transition-colors">Qanday ishlaydi</a>
+          <a href="/#partner" className="hover:text-accent transition-colors">Hamkorlik</a>
+          <Link href="/example" className="font-medium text-accent hover:text-hover">Namuna</Link>
         </nav>
         <AuthNavButton />
       </div>
@@ -34,13 +34,13 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-50">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-10 text-sm text-slate-500 sm:flex-row">
-        <div className="font-semibold text-slate-700">
+    <footer className="border-t border-line bg-beige">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-10 text-sm text-muted sm:flex-row">
+        <div className="font-semibold text-primary">
           <BrandLogo />
         </div>
         <div>Virtual kiyib ko&apos;rish xizmati · {new Date().getFullYear()}</div>
-        <a href={`mailto:${BRAND_EMAIL}`} className="hover:text-slate-900">{BRAND_EMAIL}</a>
+        <a href={`mailto:${BRAND_EMAIL}`} className="hover:text-primary transition-colors">{BRAND_EMAIL}</a>
       </div>
     </footer>
   );

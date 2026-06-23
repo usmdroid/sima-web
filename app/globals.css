@@ -1,21 +1,24 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Colors */
+  --color-bg: #FAF7F2;
+  --color-surface: #FFFFFF;
+  --color-primary: #1D1D1D;
+  --color-accent: #B08D57;
+  --color-line: #D9C7A4;
+  --color-muted: #6B6356;
+  --color-beige: #E6DFD0;
+  --color-hover: #C9A36A;
+  --color-disabled: #EBE6DC;
 
-/* Sayt yorug' temada — dark mode o'tkazgichi olib tashlandi (matn doim ko'rinadi). */
+  /* Fonts */
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-inter);
+}
 
 body {
-  background: #ffffff;
-  color: #171717;
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  background: #FAF7F2;
+  color: #1D1D1D;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
 }

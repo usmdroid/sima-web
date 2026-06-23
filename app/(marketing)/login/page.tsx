@@ -24,7 +24,6 @@ function LoginContent() {
     try {
       const res = await login(identifier, password);
       saveSession(res);
-      // ?redirect= bo'lsa shu yerga qaytamiz (faqat nisbiy yo'l ruxsat)
       const redirect = searchParams.get("redirect");
       if (redirect && redirect.startsWith("/")) {
         router.push(redirect);
@@ -40,28 +39,28 @@ function LoginContent() {
 
   return (
     <section className="mx-auto flex max-w-md flex-col px-6 py-20">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hamkor kabinetiga kirish</h1>
-      <p className="mt-2 text-sm text-slate-500">Telefon yoki email bilan kiring.</p>
+      <h1 className="text-2xl font-bold tracking-tight text-primary font-serif">Hamkor kabinetiga kirish</h1>
+      <p className="mt-2 text-sm text-muted">Telefon yoki email bilan kiring.</p>
 
-      <form onSubmit={onSubmit} className="mt-8 space-y-4 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+      <form onSubmit={onSubmit} className="mt-8 space-y-4 rounded-2xl border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Telefon yoki email</label>
+          <label className="mb-1 block text-sm font-medium text-primary">Telefon yoki email</label>
           <input
             type="text"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             placeholder="+998 90 123 45 67 yoki siz@dokon.uz"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            className="w-full rounded-lg border border-line px-3 py-2.5 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 bg-bg"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Parol</label>
+          <label className="mb-1 block text-sm font-medium text-primary">Parol</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            className="w-full rounded-lg border border-line px-3 py-2.5 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 bg-bg"
           />
         </div>
 
@@ -70,15 +69,15 @@ function LoginContent() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50"
+          className="w-full rounded-full bg-accent px-4 py-2.5 font-medium text-white transition hover:bg-hover disabled:opacity-50"
         >
           {loading ? "Kirilmoqda…" : "Kirish"}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-muted">
         Hamkor emasmisiz?{" "}
-        <Link href="/register" className="font-medium text-indigo-600 hover:underline">Ro&apos;yxatdan o&apos;tish</Link>
+        <Link href="/register" className="font-medium text-accent hover:text-hover transition-colors">Ro&apos;yxatdan o&apos;tish</Link>
       </p>
     </section>
   );
