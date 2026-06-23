@@ -72,7 +72,7 @@ export default function ExamplePage() {
         {PRODUCTS.map((p) => (
           <div
             key={p.name}
-            className="group overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(29,29,29,0.04)]"
+            className="group overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(29,29,29,0.04)] transition-[border-color,box-shadow,transform] hover:border-accent/50 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(176,141,87,0.15)]"
           >
             <div className="relative aspect-[3/4] overflow-hidden bg-beige">
               {p.tag && (
@@ -89,11 +89,11 @@ export default function ExamplePage() {
                 src={p.img}
                 alt={p.name}
                 loading="lazy"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
               />
               <button
                 onClick={() => tryOn(p)}
-                className="absolute inset-x-2 bottom-2 translate-y-2 rounded-full bg-primary/90 py-2 text-sm font-medium text-white opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100"
+                className="absolute inset-x-2 bottom-2 translate-y-2 rounded-full bg-primary/90 py-2 text-sm font-medium text-white opacity-0 transition duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:opacity-100"
               >
                 Sinab ko&apos;rish
               </button>

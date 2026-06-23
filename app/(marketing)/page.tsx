@@ -49,13 +49,13 @@ export default function LandingPage() {
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <a
                 href="#partner"
-                className="rounded-full bg-accent px-6 py-3 font-medium text-white transition hover:bg-hover"
+                className="rounded-full bg-accent px-6 py-3 font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0 active:shadow-none"
               >
                 Hamkor bo&apos;lish
               </a>
               <Link
                 href="/login"
-                className="rounded-full border border-line px-6 py-3 font-medium text-primary transition hover:border-accent hover:text-accent"
+                className="rounded-full border border-line px-6 py-3 font-medium text-primary transition hover:bg-[#FAF7F2] hover:border-accent hover:text-accent"
               >
                 Kirish
               </Link>
@@ -78,7 +78,7 @@ export default function LandingPage() {
           </h2>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map((f) => (
-              <div key={f.title} className="rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+              <div key={f.title} className="rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)] transition-[border-color,box-shadow] hover:border-accent/60 hover:shadow-[0_4px_16px_rgba(176,141,87,0.12)]">
                 <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
                   <span className="h-2 w-2 rounded-full bg-accent" />
                 </div>
@@ -134,7 +134,7 @@ export default function LandingPage() {
             </p>
             <Link
               href="/register"
-              className="mt-6 block rounded-full bg-accent px-4 py-3 text-center font-medium text-white transition hover:bg-hover"
+              className="mt-6 block rounded-full bg-accent px-4 py-3 text-center font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0 active:shadow-none"
             >
               Ro&apos;yxatdan o&apos;tish
             </Link>

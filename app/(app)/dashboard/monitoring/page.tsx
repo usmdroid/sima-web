@@ -13,6 +13,8 @@ import {
 } from "@/lib/api";
 import UsageChart from "./UsageChart";
 import SimIcon from "@/app/components/SimIcon";
+import { Skeleton } from "@/app/components/Skeleton";
+import { Spinner } from "@/app/components/Spinner";
 
 function fmtDate(iso: string | null) {
   if (!iso) return "—";
@@ -92,7 +94,11 @@ export default function MonitoringPage() {
   }, [token, range, selectedKeyId]);
 
   if (!token) {
-    return <div className="p-10 text-muted">Yuklanmoqda…</div>;
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Spinner size={24} className="text-accent" />
+      </div>
+    );
   }
 
   return (
@@ -107,35 +113,39 @@ export default function MonitoringPage() {
           <p className="text-xs font-medium uppercase tracking-wide text-muted">
             Foydalanish soni
           </p>
-          <p className="mt-2 text-2xl font-bold text-primary">
-            {topLoading ? "…" : summary?.totalRequests.toLocaleString() ?? "—"}
-          </p>
+          {topLoading
+            ? <Skeleton className="mt-2 h-8 w-20" />
+            : <p className="mt-2 text-2xl font-bold text-primary">{summary?.totalRequests.toLocaleString() ?? "—"}</p>}
         </div>
         <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
           <p className="text-xs font-medium uppercase tracking-wide text-muted">
             Umumiy sarf
           </p>
-          <p className="mt-2 flex items-center gap-1.5 text-2xl font-bold text-accent">
-            {topLoading ? "…" : Math.round(summary?.totalSpentSim ?? 0).toLocaleString()}
-            <SimIcon size={18} className="inline-block" />
-          </p>
+          {topLoading
+            ? <Skeleton className="mt-2 h-8 w-20" />
+            : <p className="mt-2 flex items-center gap-1.5 text-2xl font-bold text-accent">
+                {Math.round(summary?.totalSpentSim ?? 0).toLocaleString()}
+                <SimIcon size={18} className="inline-block" />
+              </p>}
         </div>
         <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
           <p className="text-xs font-medium uppercase tracking-wide text-muted">
             Balans
           </p>
-          <p className="mt-2 flex items-center gap-1.5 text-2xl font-bold text-primary">
-            {topLoading ? "…" : Math.round(summary?.balanceSim ?? 0).toLocaleString()}
-            <SimIcon size={18} className="inline-block" />
-          </p>
+          {topLoading
+            ? <Skeleton className="mt-2 h-8 w-20" />
+            : <p className="mt-2 flex items-center gap-1.5 text-2xl font-bold text-primary">
+                {Math.round(summary?.balanceSim ?? 0).toLocaleString()}
+                <SimIcon size={18} className="inline-block" />
+              </p>}
         </div>
         <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
           <p className="text-xs font-medium uppercase tracking-wide text-muted">
             Kalitlar soni
           </p>
-          <p className="mt-2 text-2xl font-bold text-primary">
-            {topLoading ? "…" : summary?.keysCount ?? "—"}
-          </p>
+          {topLoading
+            ? <Skeleton className="mt-2 h-8 w-16" />
+            : <p className="mt-2 text-2xl font-bold text-primary">{summary?.keysCount ?? "—"}</p>}
         </div>
       </section>
 
@@ -150,7 +160,9 @@ export default function MonitoringPage() {
 
         <div className="mt-4">
           {topLoading && (
-            <p className="text-sm text-muted">Yuklanmoqda…</p>
+            <div className="space-y-2">
+              {[0, 1, 2].map((i) => <Skeleton key={i} className="h-11 w-full" />)}
+            </div>
           )}
           {!topLoading && !topError && byKey.length === 0 && (
             <p className="text-sm text-muted">Hali ma&apos;lumot yo&apos;q.</p>

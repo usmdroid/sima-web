@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getSession } from "@/lib/api";
 import ApiKeysSection from "../ApiKeysSection";
+import { Spinner } from "@/app/components/Spinner";
 
 export default function KeysPage() {
   const [token, setToken] = useState<string | null>(null);
@@ -14,7 +15,11 @@ export default function KeysPage() {
   }, []);
 
   if (!token) {
-    return <div className="p-10 text-muted">Yuklanmoqda…</div>;
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Spinner size={24} className="text-accent" />
+      </div>
+    );
   }
 
   return (

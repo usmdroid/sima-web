@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getSession, clearSession, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import CreditBadge from "./CreditBadge";
+import { Spinner } from "@/app/components/Spinner";
 
 const NAV_ITEMS = [
   { href: "/dashboard/keys", label: "API kalitlar", exact: false },
@@ -37,7 +38,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   if (!client || !token) {
-    return <div className="p-10 text-muted">Yuklanmoqda…</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Spinner size={24} className="text-accent" />
+      </div>
+    );
   }
 
   const navItems = [

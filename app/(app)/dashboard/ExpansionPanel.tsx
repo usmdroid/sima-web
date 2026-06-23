@@ -26,7 +26,7 @@ export default function ExpansionPanel({
         <div className="flex items-center gap-3">
           {leading}
           <svg
-            className={`h-5 w-5 text-muted transition-transform ${open ? "rotate-180" : ""}`}
+            className={`h-5 w-5 text-muted transition-transform duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "rotate-180" : ""}`}
             viewBox="0 0 20 20"
             fill="currentColor"
             aria-hidden="true"
@@ -39,7 +39,15 @@ export default function ExpansionPanel({
           </svg>
         </div>
       </button>
-      {open && <div className="px-6 pb-6">{children}</div>}
+      {/* grid-template-rows trick: animates height without JS measurement */}
+      <div
+        className="grid transition-[grid-template-rows] duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <div className="px-6 pb-6">{children}</div>
+        </div>
+      </div>
     </div>
   );
 }

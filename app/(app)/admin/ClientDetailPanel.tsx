@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getAdminClient, type AdminClientDetail } from "@/lib/api";
 import SimIcon from "@/app/components/SimIcon";
+import { Skeleton } from "@/app/components/Skeleton";
 
 function fmtDateTime(iso: string) {
   return new Date(iso).toLocaleString("uz-UZ", {
@@ -26,39 +27,52 @@ export default function ClientDetailPanel({
   const [detail, setDetail] = useState<AdminClientDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [visible, setVisible] = useState(false);
 
+  // Trigger enter animation after mount
+  useEffect(() => {
+    const id = requestAnimationFrame(() => requestAnimationFrame(() => setVisible(true)));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  // Load data
   useEffect(() => {
     let active = true;
     setLoading(true);
     setError(null);
     getAdminClient(token, clientId)
-      .then((d) => {
-        if (active) setDetail(d);
-      })
-      .catch((e) => {
-        if (active) setError(e instanceof Error ? e.message : "Xatolik yuz berdi.");
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
+      .then((d) => { if (active) setDetail(d); })
+      .catch((e) => { if (active) setError(e instanceof Error ? e.message : "Xatolik yuz berdi."); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, [token, clientId]);
+
+  function handleClose() {
+    setVisible(false);
+    setTimeout(onClose, 250);
+  }
+
+  const overlayTransition = visible
+    ? "opacity-100 duration-[400ms] ease-out"
+    : "opacity-0 duration-[250ms] ease-[cubic-bezier(0.65,0,0.35,1)]";
+
+  const panelTransition = visible
+    ? "opacity-100 scale-100 translate-y-0 duration-[400ms] ease-out"
+    : "opacity-0 scale-[0.96] translate-y-2 duration-[250ms] ease-[cubic-bezier(0.65,0,0.35,1)]";
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-primary/40 p-4 sm:p-8"
-      onClick={onClose}
+      className={`fixed inset-0 z-50 flex items-start justify-center bg-primary/40 p-4 sm:p-8 transition-opacity ${overlayTransition}`}
+      onClick={handleClose}
     >
       <div
-        className="max-h-full w-full max-w-2xl overflow-y-auto rounded-2xl border border-line bg-surface p-6 shadow-xl"
+        className={`max-h-full w-full max-w-2xl overflow-y-auto rounded-2xl border border-line bg-surface p-6 shadow-xl transition-[opacity,transform] ${panelTransition}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">
           <h2 className="text-lg font-semibold text-primary">Mijoz tafsilotlari</h2>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="text-sm text-muted hover:text-primary transition-colors"
             aria-label="Yopish"
           >
@@ -67,7 +81,13 @@ export default function ClientDetailPanel({
         </div>
 
         {loading ? (
-          <p className="mt-4 text-sm text-muted">Yuklanmoqda…</p>
+          <div className="mt-4 space-y-3">
+            <Skeleton className="h-7 w-48" />
+            <Skeleton className="h-4 w-64" />
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[0, 1, 2].map((i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}
+            </div>
+          </div>
         ) : error ? (
           <p className="mt-4 text-sm text-red-500">{error}</p>
         ) : detail ? (

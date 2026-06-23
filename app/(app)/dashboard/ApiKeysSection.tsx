@@ -9,6 +9,8 @@ import {
   type CreatedApiKey,
 } from "@/lib/api";
 import ExpansionPanel from "./ExpansionPanel";
+import { Skeleton } from "@/app/components/Skeleton";
+import { Spinner } from "@/app/components/Spinner";
 
 function fmt(iso: string | null) {
   if (!iso) return "—";
@@ -138,9 +140,10 @@ export default function ApiKeysSection({ token }: { token: string }) {
           <button
             type="submit"
             disabled={createLoading}
-            className="rounded-full bg-accent px-3 py-2 text-sm font-medium text-white hover:bg-hover disabled:opacity-50 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-2 text-sm font-medium text-white hover:bg-hover disabled:opacity-50 transition-colors"
           >
-            {createLoading ? "Yaratilmoqda…" : "Yaratish"}
+            {createLoading && <Spinner size={13} className="text-white" />}
+            Yaratish
           </button>
           <button
             type="button"
@@ -179,7 +182,11 @@ export default function ApiKeysSection({ token }: { token: string }) {
       )}
 
       <div className="mt-4">
-        {loading && <p className="text-sm text-muted">Yuklanmoqda…</p>}
+        {loading && (
+          <div className="space-y-2">
+            {[0, 1, 2].map((i) => <Skeleton key={i} className="h-14 w-full" />)}
+          </div>
+        )}
         {error && <p className="text-sm text-red-500">{error}</p>}
         {!loading && !error && keys.length === 0 && (
           <p className="text-sm text-muted">Hali API kalit yo&apos;q.</p>

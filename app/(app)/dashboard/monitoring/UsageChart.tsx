@@ -1,6 +1,7 @@
 "use client";
 
 import { type MonitoringBucket, type MonitoringRange } from "@/lib/api";
+import { Skeleton } from "@/app/components/Skeleton";
 
 // Oddiy, o'zi-yetarli SVG ustunli diagramma — tashqi kutubxonasiz.
 // Backend faqat ma'lumotli buketlarni qaytaradi (siyrak), shuning uchun
@@ -27,11 +28,7 @@ export default function UsageChart({
   loading?: boolean;
 }) {
   if (loading) {
-    return (
-      <div className="flex h-64 items-center justify-center text-sm text-muted">
-        Yuklanmoqda…
-      </div>
-    );
+    return <Skeleton className="h-64 w-full rounded-xl" />;
   }
 
   if (!buckets || buckets.length === 0) {

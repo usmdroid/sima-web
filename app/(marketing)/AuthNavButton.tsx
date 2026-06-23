@@ -15,7 +15,7 @@ export default function AuthNavButton() {
     return (
       <Link
         href="/dashboard"
-        className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-hover"
+        className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0"
       >
         Dashboard
       </Link>
@@ -25,7 +25,7 @@ export default function AuthNavButton() {
   return (
     <Link
       href="/login"
-      className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-hover"
+      className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0"
     >
       Kirish
     </Link>

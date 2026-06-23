@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register, sendOtp, saveSession } from "@/lib/api";
+import { Spinner } from "@/app/components/Spinner";
 
 /** Telefon mask: default +998, "+998 90 123 45 67". Boshqa kod yozilsa — erkin. */
 function formatPhone(value: string): string {
@@ -128,7 +129,8 @@ export default function RegisterPage() {
           {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
 
           <button type="submit" disabled={loading}
-            className="w-full rounded-full bg-accent px-4 py-2.5 font-medium text-white transition hover:bg-hover disabled:opacity-50">
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-2.5 font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.25)] active:translate-y-0 disabled:opacity-50 disabled:translate-y-0">
+            {loading && <Spinner size={14} className="text-white" />}
             {loading ? "Yuborilmoqda…" : "Davom etish"}
           </button>
           <p className="text-center text-sm text-muted">
@@ -145,7 +147,8 @@ export default function RegisterPage() {
           {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
 
           <button type="submit" disabled={loading}
-            className="w-full rounded-full bg-accent px-4 py-2.5 font-medium text-white transition hover:bg-hover disabled:opacity-50">
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-2.5 font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.25)] active:translate-y-0 disabled:opacity-50 disabled:translate-y-0">
+            {loading && <Spinner size={14} className="text-white" />}
             {loading ? "Tekshirilmoqda…" : "Tasdiqlash va ro'yxatdan o'tish"}
           </button>
           <div className="flex justify-between text-sm">

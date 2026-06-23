@@ -10,6 +10,8 @@ import {
   type PricingInfo,
 } from "@/lib/api";
 import SimIcon from "@/app/components/SimIcon";
+import { Skeleton } from "@/app/components/Skeleton";
+import { Spinner } from "@/app/components/Spinner";
 
 const PAYMENT_METHODS = [
   { id: "payme", label: "Payme", bg: "#00CCB1", fg: "#0a3d38" },
@@ -78,14 +80,17 @@ export default function WalletPage() {
   }
 
   if (!token) {
-    return <div className="p-10 text-muted">Yuklanmoqda…</div>;
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Spinner size={24} className="text-accent" />
+      </div>
+    );
   }
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
       <h1 className="text-2xl font-bold text-primary font-serif">Hamyon</h1>
 
-      {loading && <p className="mt-4 text-sm text-muted">Yuklanmoqda…</p>}
       {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
 
       {/* ============ 1-QISM: Credit sotib olish ============ */}
@@ -93,9 +98,9 @@ export default function WalletPage() {
         <div>
           <p className="text-sm text-muted">Joriy balans</p>
           <div className="mt-1 flex items-center gap-2">
-            <span className="text-4xl font-bold text-accent">
-              {wallet ? Math.round(wallet.balanceSim) : "…"}
-            </span>
+            {wallet
+              ? <span className="text-4xl font-bold text-accent">{Math.round(wallet.balanceSim)}</span>
+              : <Skeleton className="h-10 w-28" />}
             <SimIcon size={24} className="inline-block" />
           </div>
         </div>
@@ -172,8 +177,9 @@ export default function WalletPage() {
           <button
             type="submit"
             disabled={purchasing}
-            className="mt-6 w-full rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-hover disabled:opacity-50 sm:w-auto sm:px-8"
+            className="mt-6 inline-flex items-center justify-center gap-2 w-full rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.25)] active:translate-y-0 active:shadow-none disabled:opacity-50 disabled:translate-y-0 sm:w-auto sm:px-8"
           >
+            {purchasing && <Spinner size={14} className="text-white" />}
             {purchasing ? "Amalga oshirilmoqda…" : "Sotib olish"}
           </button>
           {purchaseError && <p className="mt-2 text-sm text-red-500">{purchaseError}</p>}
@@ -189,6 +195,11 @@ export default function WalletPage() {
           Har bir so&apos;rov narxi jami amalga oshirilgan so&apos;rovlar soniga qarab kamayadi.
         </p>
 
+        {loading && !pricing && (
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {[0, 1, 2].map((i) => <Skeleton key={i} className="h-36 w-full rounded-2xl" />)}
+          </div>
+        )}
         {pricing && (
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {pricing.tiers.map((tier, i) => {

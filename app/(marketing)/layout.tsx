@@ -21,10 +21,10 @@ function Header() {
           <BrandLogo />
         </Link>
         <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
-          <a href="/#features" className="hover:text-accent transition-colors">Imkoniyatlar</a>
-          <a href="/#how" className="hover:text-accent transition-colors">Qanday ishlaydi</a>
-          <a href="/#partner" className="hover:text-accent transition-colors">Hamkorlik</a>
-          <Link href="/example" className="font-medium text-accent hover:text-hover">Namuna</Link>
+          <a href="/#features" className="nav-link hover:text-accent transition-colors">Imkoniyatlar</a>
+          <a href="/#how" className="nav-link hover:text-accent transition-colors">Qanday ishlaydi</a>
+          <a href="/#partner" className="nav-link hover:text-accent transition-colors">Hamkorlik</a>
+          <Link href="/example" className="font-medium text-accent hover:text-hover transition-colors">Namuna</Link>
         </nav>
         <AuthNavButton />
       </div>

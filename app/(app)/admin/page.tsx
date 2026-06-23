@@ -17,6 +17,8 @@ import {
 import { BRAND } from "@/lib/brand";
 import ClientDetailPanel from "./ClientDetailPanel";
 import SimIcon from "@/app/components/SimIcon";
+import { Skeleton } from "@/app/components/Skeleton";
+import { Spinner } from "@/app/components/Spinner";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -109,7 +111,11 @@ export default function AdminPage() {
   }
 
   if (!ready) {
-    return <div className="p-10 text-muted">Yuklanmoqda…</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Spinner size={24} className="text-accent" />
+      </div>
+    );
   }
 
   return (
@@ -141,31 +147,25 @@ export default function AdminPage() {
         {/* Platform stats */}
         <section className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted">
-              Mijozlar
-            </p>
-            <p className="mt-2 text-2xl font-bold text-primary">
-              {loading ? "…" : stats?.totalClients?.toLocaleString() ?? "0"}
-            </p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted">Mijozlar</p>
+            {loading
+              ? <Skeleton className="mt-2 h-8 w-16" />
+              : <p className="mt-2 text-2xl font-bold text-primary">{stats?.totalClients?.toLocaleString() ?? "0"}</p>}
           </div>
           <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted">
-              Jami so&apos;rovlar
-            </p>
-            <p className="mt-2 text-2xl font-bold text-primary">
-              {loading ? "…" : stats?.totalRequests?.toLocaleString() ?? "0"}
-            </p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted">Jami so&apos;rovlar</p>
+            {loading
+              ? <Skeleton className="mt-2 h-8 w-20" />
+              : <p className="mt-2 text-2xl font-bold text-primary">{stats?.totalRequests?.toLocaleString() ?? "0"}</p>}
           </div>
           <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted">
-              Jami daromad
-            </p>
-            <p className="mt-2 flex items-center gap-1.5 text-2xl font-bold text-primary">
-              {loading
-                ? "…"
-                : Math.round(stats?.totalRevenueSim ?? 0).toLocaleString()}
-              <SimIcon size={18} className="inline-block" />
-            </p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted">Jami daromad</p>
+            {loading
+              ? <Skeleton className="mt-2 h-8 w-20" />
+              : <p className="mt-2 flex items-center gap-1.5 text-2xl font-bold text-primary">
+                  {Math.round(stats?.totalRevenueSim ?? 0).toLocaleString()}
+                  <SimIcon size={18} className="inline-block" />
+                </p>}
           </div>
         </section>
 
@@ -174,7 +174,9 @@ export default function AdminPage() {
           <h2 className="text-lg font-semibold text-primary">Mijozlar</h2>
 
           {loading ? (
-            <p className="mt-4 text-sm text-muted">Yuklanmoqda…</p>
+            <div className="mt-4 space-y-2">
+              {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
+            </div>
           ) : clients.length === 0 ? (
             <p className="mt-4 text-sm text-muted">Mijozlar yo&apos;q.</p>
           ) : (
