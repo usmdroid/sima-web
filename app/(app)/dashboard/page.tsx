@@ -62,7 +62,8 @@ export default function DashboardPage() {
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div className="text-lg font-bold text-slate-900">
-            {BRAND} <span className="text-sm font-normal text-slate-400">dashboard</span>
+            <Link href="/" className="hover:text-indigo-600">{BRAND}</Link>{" "}
+            <span className="text-sm font-normal text-slate-400">dashboard</span>
           </div>
           <div className="flex items-center gap-4">
             <Link

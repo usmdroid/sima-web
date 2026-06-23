@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BRAND, BRAND_EMAIL } from "@/lib/brand";
+import AuthNavButton from "./AuthNavButton";
 
 /** Brend logosi — nomni avtomatik ikkiga bo'lib, ikkinchi qismini aksent qiladi. */
 function BrandLogo() {
@@ -25,12 +26,7 @@ function Header() {
           <a href="/#partner" className="hover:text-slate-900">Hamkorlik</a>
           <Link href="/example" className="font-medium text-indigo-600 hover:text-indigo-700">Namuna</Link>
         </nav>
-        <Link
-          href="/login"
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-600"
-        >
-          Kirish
-        </Link>
+        <AuthNavButton />
       </div>
     </header>
   );
