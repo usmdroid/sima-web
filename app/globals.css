@@ -18,7 +18,7 @@
 }
 
 body {
-  background: #FAF7F2;
-  color: #1D1D1D;
+  background: var(--color-bg);
+  color: var(--color-primary);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
 }
