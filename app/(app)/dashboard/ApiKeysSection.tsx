@@ -106,7 +106,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
       title="API kalitlar"
       defaultOpen
       leading={
-        <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-sm font-medium text-slate-600">
+        <span className="rounded-full bg-beige px-2.5 py-0.5 text-sm font-medium text-muted">
           {keys.length}
         </span>
       }
@@ -119,7 +119,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
             setNewName("");
           }}
           disabled={showCreate}
-          className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="rounded-full bg-accent px-3 py-1.5 text-sm font-medium text-white hover:bg-hover disabled:opacity-50 transition-colors"
         >
           + Yangi kalit
         </button>
@@ -133,19 +133,19 @@ export default function ApiKeysSection({ token }: { token: string }) {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             autoFocus
-            className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="flex-1 rounded-lg border border-line px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent bg-bg"
           />
           <button
             type="submit"
             disabled={createLoading}
-            className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="rounded-full bg-accent px-3 py-2 text-sm font-medium text-white hover:bg-hover disabled:opacity-50 transition-colors"
           >
             {createLoading ? "Yaratilmoqda…" : "Yaratish"}
           </button>
           <button
             type="button"
             onClick={() => setShowCreate(false)}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+            className="rounded-full border border-line px-3 py-2 text-sm text-muted hover:bg-bg transition-colors"
           >
             Bekor
           </button>
@@ -154,24 +154,24 @@ export default function ApiKeysSection({ token }: { token: string }) {
       {createError && <p className="mt-2 text-sm text-red-500">{createError}</p>}
 
       {revealed && (
-        <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
-          <p className="text-sm font-medium text-amber-800">
+        <div className="mt-4 rounded-lg border border-accent/30 bg-beige p-4">
+          <p className="text-sm font-medium text-primary">
             ✅ Kalit yaratildi. Uni xohlagan vaqtda quyidagi ro&apos;yxatdan ham nusxalashingiz mumkin.
           </p>
           <div className="mt-2 flex items-center gap-2">
-            <code className="flex-1 break-all rounded border border-amber-200 bg-white px-3 py-2 font-mono text-sm text-slate-900">
+            <code className="flex-1 break-all rounded border border-line bg-surface px-3 py-2 font-mono text-sm text-primary">
               {revealed.key}
             </code>
             <button
               onClick={copyKey}
-              className="shrink-0 rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white hover:bg-amber-700"
+              className="shrink-0 rounded-full bg-accent px-3 py-2 text-sm font-medium text-white hover:bg-hover transition-colors"
             >
               {copied ? "Nusxalandi!" : "Nusxalash"}
             </button>
           </div>
           <button
             onClick={() => setRevealed(null)}
-            className="mt-2 text-sm text-amber-700 hover:underline"
+            className="mt-2 text-sm text-accent hover:text-hover transition-colors"
           >
             Yopish
           </button>
@@ -179,18 +179,18 @@ export default function ApiKeysSection({ token }: { token: string }) {
       )}
 
       <div className="mt-4">
-        {loading && <p className="text-sm text-slate-400">Yuklanmoqda…</p>}
+        {loading && <p className="text-sm text-muted">Yuklanmoqda…</p>}
         {error && <p className="text-sm text-red-500">{error}</p>}
         {!loading && !error && keys.length === 0 && (
-          <p className="text-sm text-slate-400">Hali API kalit yo&apos;q.</p>
+          <p className="text-sm text-muted">Hali API kalit yo&apos;q.</p>
         )}
         {keys.length > 0 && (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-line">
             {keys.map((k) => (
               <div key={k.id} className="flex items-center justify-between py-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-slate-900">{k.name}</p>
-                  <p className="mt-0.5 font-mono text-xs text-slate-400">
+                  <p className="truncate text-sm font-medium text-primary">{k.name}</p>
+                  <p className="mt-0.5 font-mono text-xs text-muted">
                     {k.keyPrefix}…
                     {k.revokedAt && (
                       <span className="ml-2 rounded bg-red-100 px-1.5 py-0.5 text-xs font-medium text-red-600">
@@ -198,7 +198,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
                       </span>
                     )}
                   </p>
-                  <p className="mt-0.5 text-xs text-slate-400">
+                  <p className="mt-0.5 text-xs text-muted">
                     Yaratilgan: {fmt(k.createdAt)} · So&apos;nggi: {fmt(k.lastUsedAt)}
                   </p>
                 </div>
@@ -207,7 +207,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
                     {k.key && (
                       <button
                         onClick={() => copyRow(k.id, k.key!)}
-                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                        className="rounded-lg border border-line px-3 py-1.5 text-xs font-medium text-muted hover:bg-bg transition-colors"
                       >
                         {copiedId === k.id ? "Nusxalandi!" : "Nusxalash"}
                       </button>
@@ -215,7 +215,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
                     <button
                       onClick={() => handleRevoke(k.id, k.name)}
                       disabled={revoking === k.id}
-                      className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                      className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
                     >
                       {revoking === k.id ? "…" : "Bekor qilish"}
                     </button>

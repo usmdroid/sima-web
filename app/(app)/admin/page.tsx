@@ -16,6 +16,7 @@ import {
 } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import ClientDetailPanel from "./ClientDetailPanel";
+import SimIcon from "@/app/components/SimIcon";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -32,7 +33,6 @@ export default function AdminPage() {
   const [actionBusy, setActionBusy] = useState<string | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
 
-  // Role-gating: only SUPER_ADMIN may stay here.
   useEffect(() => {
     const s = getSession();
     if (!s) {
@@ -109,24 +109,24 @@ export default function AdminPage() {
   }
 
   if (!ready) {
-    return <div className="p-10 text-slate-500">Yuklanmoqda…</div>;
+    return <div className="p-10 text-muted">Yuklanmoqda…</div>;
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
+    <div className="min-h-screen bg-bg">
+      <header className="border-b border-line bg-surface">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/dashboard" className="text-lg font-bold text-slate-900">
-            {BRAND} <span className="text-sm font-normal text-slate-400">admin</span>
+          <Link href="/dashboard" className="text-lg font-bold text-primary">
+            {BRAND} <span className="text-sm font-normal text-muted">admin</span>
           </Link>
           <div className="flex items-center gap-4">
             <Link
               href="/dashboard"
-              className="text-sm text-slate-600 hover:text-indigo-600"
+              className="text-sm text-muted hover:text-accent transition-colors"
             >
               Dashboard
             </Link>
-            <button onClick={logout} className="text-sm text-slate-600 hover:text-slate-900">
+            <button onClick={logout} className="text-sm text-muted hover:text-primary transition-colors">
               Chiqish
             </button>
           </div>
@@ -134,54 +134,54 @@ export default function AdminPage() {
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-10">
-        <h1 className="text-2xl font-bold text-slate-900">Admin panel</h1>
+        <h1 className="text-2xl font-bold text-primary font-serif">Admin panel</h1>
 
         {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
 
         {/* Platform stats */}
         <section className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted">
               Mijozlar
             </p>
-            <p className="mt-2 text-2xl font-bold text-slate-900">
+            <p className="mt-2 text-2xl font-bold text-primary">
               {loading ? "…" : stats?.totalClients?.toLocaleString() ?? "0"}
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted">
               Jami so&apos;rovlar
             </p>
-            <p className="mt-2 text-2xl font-bold text-slate-900">
+            <p className="mt-2 text-2xl font-bold text-primary">
               {loading ? "…" : stats?.totalRequests?.toLocaleString() ?? "0"}
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted">
               Jami daromad
             </p>
-            <p className="mt-2 text-2xl font-bold text-slate-900">
+            <p className="mt-2 flex items-center gap-1.5 text-2xl font-bold text-primary">
               {loading
                 ? "…"
-                : Math.round(stats?.totalRevenueSim ?? 0).toLocaleString()}{" "}
-              <span className="text-sm font-normal text-slate-500">sim</span>
+                : Math.round(stats?.totalRevenueSim ?? 0).toLocaleString()}
+              <SimIcon size={18} className="inline-block" />
             </p>
           </div>
         </section>
 
         {/* Clients table */}
-        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-slate-900">Mijozlar</h2>
+        <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+          <h2 className="text-lg font-semibold text-primary">Mijozlar</h2>
 
           {loading ? (
-            <p className="mt-4 text-sm text-slate-500">Yuklanmoqda…</p>
+            <p className="mt-4 text-sm text-muted">Yuklanmoqda…</p>
           ) : clients.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-500">Mijozlar yo&apos;q.</p>
+            <p className="mt-4 text-sm text-muted">Mijozlar yo&apos;q.</p>
           ) : (
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-xs font-medium uppercase tracking-wide text-slate-400">
+                  <tr className="border-b border-line text-left text-xs font-medium uppercase tracking-wide text-muted">
                     <th className="py-2 pr-3">Ism</th>
                     <th className="py-2 pr-3">Telefon</th>
                     <th className="py-2 pr-3 text-right">Balans</th>
@@ -190,16 +190,18 @@ export default function AdminPage() {
                     <th className="py-2 pr-3 text-right">Amallar</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-line">
                   {clients.map((c) => (
-                    <tr key={c.id} className="align-top hover:bg-slate-50">
-                      <td className="py-3 pr-3 text-slate-900">{c.name}</td>
-                      <td className="py-3 pr-3 text-slate-600">{c.phone}</td>
-                      <td className="py-3 pr-3 text-right text-slate-900">
-                        {Math.round(c.balanceSim).toLocaleString()}{" "}
-                        <span className="text-xs font-normal text-slate-500">sim</span>
+                    <tr key={c.id} className="align-top hover:bg-bg transition-colors">
+                      <td className="py-3 pr-3 text-primary">{c.name}</td>
+                      <td className="py-3 pr-3 text-muted">{c.phone}</td>
+                      <td className="py-3 pr-3 text-right text-primary">
+                        <span className="inline-flex items-center gap-1">
+                          {Math.round(c.balanceSim).toLocaleString()}
+                          <SimIcon size={12} className="inline-block" />
+                        </span>
                       </td>
-                      <td className="py-3 pr-3 text-right text-slate-600">
+                      <td className="py-3 pr-3 text-right text-muted">
                         {c.totalRequests.toLocaleString()}
                       </td>
                       <td className="py-3 pr-3">
@@ -218,7 +220,7 @@ export default function AdminPage() {
                           <div className="flex flex-wrap items-center justify-end gap-2">
                             <button
                               onClick={() => setDetailId(c.id)}
-                              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300"
+                              className="rounded-lg border border-line px-3 py-1.5 text-xs font-medium text-muted transition hover:border-accent hover:text-accent"
                             >
                               Batafsil
                             </button>
@@ -226,7 +228,7 @@ export default function AdminPage() {
                               onClick={() =>
                                 setCreditFor(creditFor === c.id ? null : c.id)
                               }
-                              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300"
+                              className="rounded-lg border border-line px-3 py-1.5 text-xs font-medium text-muted transition hover:border-accent hover:text-accent"
                             >
                               Balans
                             </button>
@@ -247,15 +249,15 @@ export default function AdminPage() {
                               <input
                                 type="number"
                                 step="0.01"
-                                placeholder="sim miqdori"
+                                placeholder="miqdor"
                                 value={creditAmount}
                                 onChange={(e) => setCreditAmount(e.target.value)}
-                                className="w-28 rounded-lg border border-slate-200 px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-28 rounded-lg border border-line px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent bg-bg"
                               />
                               <button
                                 onClick={() => submitCredit(c.id)}
                                 disabled={actionBusy === c.id}
-                                className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
+                                className="rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-hover disabled:opacity-50"
                               >
                                 {actionBusy === c.id ? "…" : "Qo'shish"}
                               </button>

@@ -14,7 +14,6 @@ function tickLabel(iso: string, range: MonitoringRange): string {
   if (range === "monthly") {
     return d.toLocaleDateString("uz-UZ", { year: "numeric", month: "short" });
   }
-  // daily / weekly
   return d.toLocaleDateString("uz-UZ", { month: "short", day: "numeric" });
 }
 
@@ -29,7 +28,7 @@ export default function UsageChart({
 }) {
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-slate-400">
+      <div className="flex h-64 items-center justify-center text-sm text-muted">
         Yuklanmoqda…
       </div>
     );
@@ -37,7 +36,7 @@ export default function UsageChart({
 
   if (!buckets || buckets.length === 0) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-slate-400">
+      <div className="flex h-64 items-center justify-center text-sm text-muted">
         Ma&apos;lumot yo&apos;q
       </div>
     );
@@ -46,11 +45,10 @@ export default function UsageChart({
   const max = Math.max(...buckets.map((b) => b.count), 1);
   const n = buckets.length;
 
-  // viewBox koordinatalari — responsive (width=100% orqali).
   const W = Math.max(n * 48, 320);
   const H = 240;
-  const padBottom = 36; // x-o'qi belgilar uchun
-  const padTop = 20; // qiymat belgilar uchun
+  const padBottom = 36;
+  const padTop = 20;
   const chartH = H - padBottom - padTop;
   const slot = W / n;
   const barW = Math.min(slot * 0.6, 40);
@@ -70,7 +68,7 @@ export default function UsageChart({
           y1={H - padBottom}
           x2={W}
           y2={H - padBottom}
-          stroke="#e2e8f0"
+          stroke="#D9C7A4"
           strokeWidth={1}
         />
         {buckets.map((b, i) => {
@@ -85,14 +83,14 @@ export default function UsageChart({
                 width={barW}
                 height={Math.max(h, 1)}
                 rx={3}
-                fill="#6366f1"
+                fill="#B08D57"
               />
               {/* qiymat belgisi */}
               <text
                 x={x + barW / 2}
                 y={y - 5}
                 textAnchor="middle"
-                className="fill-slate-600"
+                fill="#6B6356"
                 fontSize={11}
               >
                 {b.count}
@@ -102,7 +100,7 @@ export default function UsageChart({
                 x={x + barW / 2}
                 y={H - padBottom + 16}
                 textAnchor="middle"
-                className="fill-slate-400"
+                fill="#6B6356"
                 fontSize={10}
               >
                 {tickLabel(b.ts, range)}

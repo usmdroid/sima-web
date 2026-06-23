@@ -12,6 +12,7 @@ import {
   type MonitoringRange,
 } from "@/lib/api";
 import UsageChart from "./UsageChart";
+import SimIcon from "@/app/components/SimIcon";
 
 function fmtDate(iso: string | null) {
   if (!iso) return "—";
@@ -91,103 +92,103 @@ export default function MonitoringPage() {
   }, [token, range, selectedKeyId]);
 
   if (!token) {
-    return <div className="p-10 text-slate-500">Yuklanmoqda…</div>;
+    return <div className="p-10 text-muted">Yuklanmoqda…</div>;
   }
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="text-2xl font-bold text-slate-900">Monitoring</h1>
+      <h1 className="text-2xl font-bold text-primary font-serif">Monitoring</h1>
 
       {topError && <p className="mt-4 text-sm text-red-500">{topError}</p>}
 
       {/* ============ Umumiy kartalar ============ */}
       <section className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+        <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted">
             Foydalanish soni
           </p>
-          <p className="mt-2 text-2xl font-bold text-slate-900">
+          <p className="mt-2 text-2xl font-bold text-primary">
             {topLoading ? "…" : summary?.totalRequests.toLocaleString() ?? "—"}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+        <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted">
             Umumiy sarf
           </p>
-          <p className="mt-2 text-2xl font-bold text-indigo-600">
-            {topLoading ? "…" : Math.round(summary?.totalSpentSim ?? 0).toLocaleString()}{" "}
-            <span className="text-sm font-normal text-slate-500">sim</span>
+          <p className="mt-2 flex items-center gap-1.5 text-2xl font-bold text-accent">
+            {topLoading ? "…" : Math.round(summary?.totalSpentSim ?? 0).toLocaleString()}
+            <SimIcon size={18} className="inline-block" />
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+        <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted">
             Balans
           </p>
-          <p className="mt-2 text-2xl font-bold text-slate-900">
-            {topLoading ? "…" : Math.round(summary?.balanceSim ?? 0).toLocaleString()}{" "}
-            <span className="text-sm font-normal text-slate-500">sim</span>
+          <p className="mt-2 flex items-center gap-1.5 text-2xl font-bold text-primary">
+            {topLoading ? "…" : Math.round(summary?.balanceSim ?? 0).toLocaleString()}
+            <SimIcon size={18} className="inline-block" />
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+        <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted">
             Kalitlar soni
           </p>
-          <p className="mt-2 text-2xl font-bold text-slate-900">
+          <p className="mt-2 text-2xl font-bold text-primary">
             {topLoading ? "…" : summary?.keysCount ?? "—"}
           </p>
         </div>
       </section>
 
       {/* ============ Kalitlar bo'yicha jadval ============ */}
-      <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
-        <h3 className="font-semibold text-slate-900">
+      <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+        <h3 className="font-semibold text-primary">
           Batafsil — SK kalitlar bo&apos;yicha
         </h3>
-        <p className="mt-1 text-xs text-slate-400">
+        <p className="mt-1 text-xs text-muted">
           Diagrammani filtrlash uchun qatorni tanlang.
         </p>
 
         <div className="mt-4">
           {topLoading && (
-            <p className="text-sm text-slate-400">Yuklanmoqda…</p>
+            <p className="text-sm text-muted">Yuklanmoqda…</p>
           )}
           {!topLoading && !topError && byKey.length === 0 && (
-            <p className="text-sm text-slate-400">Hali ma&apos;lumot yo&apos;q.</p>
+            <p className="text-sm text-muted">Hali ma&apos;lumot yo&apos;q.</p>
           )}
           {byKey.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-xs uppercase tracking-wide text-slate-400">
+                  <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
                     <th className="py-2 pr-3 font-medium">Nomi</th>
                     <th className="py-2 pr-3 font-medium">Prefiks</th>
                     <th className="py-2 pr-3 text-right font-medium">So&apos;rovlar</th>
-                    <th className="py-2 pr-3 text-right font-medium">Sarf (sim)</th>
+                    <th className="py-2 pr-3 text-right font-medium">Sarf</th>
                     <th className="py-2 pr-3 font-medium">So&apos;nggi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-line">
                   <tr
                     onClick={() => setSelectedKeyId(null)}
-                    className={`cursor-pointer transition hover:bg-slate-50 ${
-                      selectedKeyId === null ? "bg-indigo-50" : ""
+                    className={`cursor-pointer transition hover:bg-bg ${
+                      selectedKeyId === null ? "bg-beige" : ""
                     }`}
                   >
-                    <td className="py-3 pr-3 font-medium text-slate-900">
+                    <td className="py-3 pr-3 font-medium text-primary">
                       Barchasi
                     </td>
-                    <td className="py-3 pr-3 text-slate-400">—</td>
-                    <td className="py-3 pr-3 text-right text-slate-600">
+                    <td className="py-3 pr-3 text-muted">—</td>
+                    <td className="py-3 pr-3 text-right text-muted">
                       {byKey
                         .reduce((s, r) => s + r.requests, 0)
                         .toLocaleString()}
                     </td>
-                    <td className="py-3 pr-3 text-right text-slate-600">
+                    <td className="py-3 pr-3 text-right text-muted">
                       {Math.round(
                         byKey.reduce((s, r) => s + r.spentSim, 0)
                       ).toLocaleString()}
                     </td>
-                    <td className="py-3 pr-3 text-slate-400">—</td>
+                    <td className="py-3 pr-3 text-muted">—</td>
                   </tr>
                   {byKey.map((r, i) => {
                     const id = r.apiKeyId ?? `__null_${i}`;
@@ -202,12 +203,12 @@ export default function MonitoringPage() {
                         }
                         className={`transition ${
                           selectable
-                            ? "cursor-pointer hover:bg-slate-50"
+                            ? "cursor-pointer hover:bg-bg"
                             : ""
-                        } ${isSelected ? "bg-indigo-50" : ""}`}
+                        } ${isSelected ? "bg-beige" : ""}`}
                       >
                         <td className="py-3 pr-3">
-                          <span className="font-medium text-slate-900">
+                          <span className="font-medium text-primary">
                             {r.name}
                           </span>
                           {r.revokedAt && (
@@ -216,16 +217,16 @@ export default function MonitoringPage() {
                             </span>
                           )}
                         </td>
-                        <td className="py-3 pr-3 font-mono text-xs text-slate-400">
+                        <td className="py-3 pr-3 font-mono text-xs text-muted">
                           {r.keyPrefix ? `${r.keyPrefix}…` : "—"}
                         </td>
-                        <td className="py-3 pr-3 text-right text-slate-600">
+                        <td className="py-3 pr-3 text-right text-muted">
                           {r.requests.toLocaleString()}
                         </td>
-                        <td className="py-3 pr-3 text-right text-slate-600">
+                        <td className="py-3 pr-3 text-right text-muted">
                           {Math.round(r.spentSim).toLocaleString()}
                         </td>
-                        <td className="py-3 pr-3 text-slate-500">
+                        <td className="py-3 pr-3 text-muted">
                           {fmtDate(r.lastUsedAt)}
                         </td>
                       </tr>
@@ -239,11 +240,11 @@ export default function MonitoringPage() {
       </section>
 
       {/* ============ Diagramma ============ */}
-      <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
+      <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="font-semibold text-slate-900">Diagramma</h3>
-            <p className="mt-1 text-xs text-slate-400">
+            <h3 className="font-semibold text-primary">Diagramma</h3>
+            <p className="mt-1 text-xs text-muted">
               {selectedKeyId === null
                 ? "Barcha kalitlar"
                 : byKey.find((r) => r.apiKeyId === selectedKeyId)?.name ??
@@ -257,10 +258,10 @@ export default function MonitoringPage() {
                 key={r.id}
                 type="button"
                 onClick={() => setRange(r.id)}
-                className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition ${
+                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                   range === r.id
-                    ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                    : "border-slate-200 text-slate-600 hover:border-slate-300"
+                    ? "border-accent bg-beige text-accent"
+                    : "border-line text-muted hover:border-accent"
                 }`}
               >
                 {r.label}

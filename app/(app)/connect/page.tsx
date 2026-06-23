@@ -20,7 +20,6 @@ function ConnectContent() {
   const [newKeyName, setNewKeyName] = useState("");
   const [creatingNew, setCreatingNew] = useState(false);
 
-  // redirect_uri tekshirish (https yoki localhost)
   const uriValid = (() => {
     if (!redirectUri) return false;
     try {
@@ -40,7 +39,6 @@ function ConnectContent() {
   useEffect(() => {
     const session = getSession();
     if (!session) {
-      // Login'ga yo'naltiramiz, qaytib kelish uchun hozirgi URL saqlaymiz
       const current = window.location.pathname + window.location.search;
       router.push(`/login?redirect=${encodeURIComponent(current)}`);
       return;
@@ -68,7 +66,6 @@ function ConnectContent() {
     setError(null);
     try {
       const created = await createApiKey(session.token, newKeyName.trim());
-      // Yangi kalitni ro'yxatga qo'shamiz va tanlaymiz
       const newKey: ApiKey = {
         id: created.id,
         name: created.name,
@@ -100,7 +97,6 @@ function ConnectContent() {
         redirectUri,
         state: state || null,
       });
-      // Brauzerni plugin callback'iga yo'naltiramiz — kalit hech qachon brauzerga chiqmaydi
       const sep = redirectUri.includes("?") ? "&" : "?";
       window.location.href = `${redirectUri}${sep}code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
     } catch (err) {
@@ -112,19 +108,18 @@ function ConnectContent() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-slate-500">Yuklanmoqda…</p>
+        <p className="text-muted">Yuklanmoqda…</p>
       </div>
     );
   }
 
   return (
     <section className="mx-auto flex max-w-lg flex-col px-6 py-16">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Sima'ga ulanish</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-primary font-serif">Sima&apos;ga ulanish</h1>
 
-      {/* Maqsad domen ko'rsatiladi — open-redirect himoyasi */}
       {uriValid && (
-        <div className="mt-3 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm text-indigo-800">
-          <strong className="font-semibold">{targetHost}</strong> saytiga ulanmoqchimisiz?
+        <div className="mt-3 rounded-2xl border border-line bg-beige px-4 py-3 text-sm text-primary">
+          <strong className="font-semibold text-accent">{targetHost}</strong> saytiga ulanmoqchimisiz?
           <br />
           Quyida kalit tanlang va tasdiqlang.
         </div>
@@ -139,16 +134,16 @@ function ConnectContent() {
           {/* Kalit ro'yxati */}
           <div className="mt-6 space-y-2">
             {keys.length === 0 && (
-              <p className="text-sm text-slate-500">Hali kalit yo'q. Yangi yarating.</p>
+              <p className="text-sm text-muted">Hali kalit yo&apos;q. Yangi yarating.</p>
             )}
             {keys.map((k) => {
               const disabled = !k.revealable;
               return (
                 <label
                   key={k.id}
-                  className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition
-                    ${disabled ? "cursor-not-allowed opacity-50" : "hover:border-indigo-400"}
-                    ${selectedId === k.id ? "border-indigo-500 bg-indigo-50" : "border-slate-200 bg-white"}`}
+                  className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 transition
+                    ${disabled ? "cursor-not-allowed opacity-50" : "hover:border-accent"}
+                    ${selectedId === k.id ? "border-accent bg-beige" : "border-line bg-surface"}`}
                 >
                   <input
                     type="radio"
@@ -160,10 +155,10 @@ function ConnectContent() {
                     className="mt-0.5"
                   />
                   <span className="flex-1">
-                    <span className="block font-medium text-slate-800">{k.name}</span>
-                    <span className="block text-xs text-slate-400">{k.keyPrefix}…</span>
+                    <span className="block font-medium text-primary">{k.name}</span>
+                    <span className="block text-xs text-muted">{k.keyPrefix}…</span>
                     {disabled && (
-                      <span className="block text-xs text-amber-600">(eski kalit — ulab bo'lmaydi)</span>
+                      <span className="block text-xs text-accent">(eski kalit — ulab bo&apos;lmaydi)</span>
                     )}
                   </span>
                 </label>
@@ -178,12 +173,12 @@ function ConnectContent() {
               value={newKeyName}
               onChange={(e) => setNewKeyName(e.target.value)}
               placeholder="Yangi kalit nomi"
-              className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="flex-1 rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 bg-bg"
             />
             <button
               onClick={handleCreateNew}
               disabled={creatingNew || !newKeyName.trim()}
-              className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200 disabled:opacity-50"
+              className="rounded-full bg-beige px-4 py-2 text-sm font-medium text-primary transition hover:bg-line disabled:opacity-50"
             >
               {creatingNew ? "Yaratilmoqda…" : "Yaratish"}
             </button>
@@ -193,13 +188,13 @@ function ConnectContent() {
           <button
             onClick={handleConnect}
             disabled={!selectedId || connecting}
-            className="mt-6 w-full rounded-xl bg-indigo-600 px-4 py-3 font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
+            className="mt-6 w-full rounded-full bg-accent px-4 py-3 font-semibold text-white transition hover:bg-hover disabled:opacity-50"
           >
             {connecting ? "Ulanilmoqda…" : "Ulanish"}
           </button>
 
-          <p className="mt-4 text-center text-xs text-slate-400">
-            Kalit faqat {targetHost} serveriga xavfsiz yo'naltiriladi. Brauzerga chiqmaydi.
+          <p className="mt-4 text-center text-xs text-muted">
+            Kalit faqat {targetHost} serveriga xavfsiz yo&apos;naltiriladi. Brauzerga chiqmaydi.
           </p>
         </>
       )}
@@ -209,7 +204,7 @@ function ConnectContent() {
 
 export default function ConnectPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><p className="text-slate-500">Yuklanmoqda…</p></div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><p className="text-muted">Yuklanmoqda…</p></div>}>
       <ConnectContent />
     </Suspense>
   );

@@ -9,6 +9,7 @@ import {
   type WalletInfo,
   type PricingInfo,
 } from "@/lib/api";
+import SimIcon from "@/app/components/SimIcon";
 
 const PAYMENT_METHODS = [
   { id: "payme", label: "Payme", bg: "#00CCB1", fg: "#0a3d38" },
@@ -77,30 +78,30 @@ export default function WalletPage() {
   }
 
   if (!token) {
-    return <div className="p-10 text-slate-500">Yuklanmoqda…</div>;
+    return <div className="p-10 text-muted">Yuklanmoqda…</div>;
   }
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="text-2xl font-bold text-slate-900">Hamyon</h1>
+      <h1 className="text-2xl font-bold text-primary font-serif">Hamyon</h1>
 
-      {loading && <p className="mt-4 text-sm text-slate-400">Yuklanmoqda…</p>}
+      {loading && <p className="mt-4 text-sm text-muted">Yuklanmoqda…</p>}
       {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
 
       {/* ============ 1-QISM: Credit sotib olish ============ */}
-      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+      <section className="mt-6 rounded-2xl border border-line bg-surface p-6 sm:p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
         <div>
-          <p className="text-sm text-slate-500">Joriy balans</p>
-          <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-4xl font-bold text-indigo-600">
+          <p className="text-sm text-muted">Joriy balans</p>
+          <div className="mt-1 flex items-center gap-2">
+            <span className="text-4xl font-bold text-accent">
               {wallet ? Math.round(wallet.balanceSim) : "…"}
             </span>
-            <span className="text-slate-500">sim</span>
+            <SimIcon size={24} className="inline-block" />
           </div>
         </div>
 
         <form onSubmit={handlePurchase} className="mt-6">
-          <label className="mb-1.5 block text-sm font-medium text-slate-700">
+          <label className="mb-1.5 block text-sm font-medium text-primary">
             Qancha to&apos;ldiramiz?
           </label>
           <div className="flex flex-wrap gap-2">
@@ -109,17 +110,17 @@ export default function WalletPage() {
                 key={q}
                 type="button"
                 onClick={() => setUsd(String(q))}
-                className={`rounded-lg border px-3.5 py-2 text-sm font-medium transition ${
+                className={`rounded-full border px-3.5 py-2 text-sm font-medium transition ${
                   usd === String(q)
-                    ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                    : "border-slate-200 text-slate-600 hover:border-slate-300"
+                    ? "border-accent bg-beige text-accent"
+                    : "border-line text-muted hover:border-accent"
                 }`}
               >
                 ${q}
               </button>
             ))}
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted">
                 $
               </span>
               <input
@@ -129,21 +130,22 @@ export default function WalletPage() {
                 placeholder="boshqa"
                 value={usd}
                 onChange={(e) => setUsd(e.target.value)}
-                className="w-28 rounded-lg border border-slate-200 py-2 pl-7 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-28 rounded-full border border-line py-2 pl-7 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent bg-bg"
               />
             </div>
           </div>
 
-          <p className="mt-2 text-xs text-slate-400">
-            1 USD = {rate} sim
+          <p className="mt-2 text-xs text-muted">
+            1 USD = {rate}{" "}
+            <SimIcon size={12} className="inline-block align-middle" />
             {simPreview != null && (
-              <span className="ml-1 font-medium text-slate-600">
-                → {simPreview.toLocaleString()} sim olasiz
+              <span className="ml-1 font-medium text-primary">
+                → {simPreview.toLocaleString()} olasiz
               </span>
             )}
           </p>
 
-          <p className="mb-2 mt-6 text-sm font-medium text-slate-700">To&apos;lov usuli</p>
+          <p className="mb-2 mt-6 text-sm font-medium text-primary">To&apos;lov usuli</p>
           <div className="grid grid-cols-3 gap-3">
             {PAYMENT_METHODS.map((m) => (
               <button
@@ -151,10 +153,10 @@ export default function WalletPage() {
                 type="button"
                 onClick={() => setMethod(m.id)}
                 aria-label={m.label}
-                className={`flex items-center justify-center rounded-xl border px-3 py-4 transition ${
+                className={`flex items-center justify-center rounded-2xl border px-3 py-4 transition ${
                   method === m.id
-                    ? "border-indigo-500 ring-2 ring-indigo-200"
-                    : "border-slate-200 hover:border-slate-300"
+                    ? "border-accent ring-2 ring-accent/20"
+                    : "border-line hover:border-accent"
                 }`}
               >
                 <span
@@ -170,7 +172,7 @@ export default function WalletPage() {
           <button
             type="submit"
             disabled={purchasing}
-            className="mt-6 w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50 sm:w-auto sm:px-8"
+            className="mt-6 w-full rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-hover disabled:opacity-50 sm:w-auto sm:px-8"
           >
             {purchasing ? "Amalga oshirilmoqda…" : "Sotib olish"}
           </button>
@@ -178,12 +180,12 @@ export default function WalletPage() {
         </form>
       </section>
 
-      <div className="my-12 border-t border-slate-200" />
+      <div className="my-12 border-t border-line" />
 
       {/* ============ 2-QISM: Narxlar (3 ustun) ============ */}
       <section>
-        <h2 className="text-lg font-semibold text-slate-900">Narxlar</h2>
-        <p className="mt-1 text-sm text-slate-500">
+        <h2 className="text-lg font-semibold text-primary">Narxlar</h2>
+        <p className="mt-1 text-sm text-muted">
           Har bir so&apos;rov narxi jami amalga oshirilgan so&apos;rovlar soniga qarab kamayadi.
         </p>
 
@@ -198,16 +200,17 @@ export default function WalletPage() {
               return (
                 <div
                   key={i}
-                  className="rounded-2xl border border-slate-200 bg-white p-6 text-center"
+                  className="rounded-2xl border border-line bg-surface p-6 text-center shadow-[0_1px_2px_rgba(29,29,29,0.04)]"
                 >
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted">
                     {i === 0 ? "Boshlang'ich" : i === 1 ? "O'suvchi" : "Yirik hajm"}
                   </p>
-                  <p className="mt-3 text-3xl font-bold text-indigo-600">
+                  <p className="mt-3 flex items-center justify-center gap-1.5 text-3xl font-bold text-accent">
                     {tier.simPerRequest}
+                    <SimIcon size={20} className="inline-block" />
                   </p>
-                  <p className="text-sm text-slate-500">sim / so&apos;rov</p>
-                  <p className="mt-3 text-sm text-slate-600">{range}</p>
+                  <p className="text-sm text-muted">so&apos;rov boshiga</p>
+                  <p className="mt-3 text-sm text-muted">{range}</p>
                 </div>
               );
             })}

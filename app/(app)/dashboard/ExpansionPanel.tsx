@@ -16,17 +16,17 @@ export default function ExpansionPanel({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white">
+    <div className="rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between gap-3 px-6 py-5 text-left"
       >
-        <h3 className="font-semibold text-slate-900">{title}</h3>
+        <h3 className="font-semibold text-primary">{title}</h3>
         <div className="flex items-center gap-3">
           {leading}
           <svg
-            className={`h-5 w-5 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`}
+            className={`h-5 w-5 text-muted transition-transform ${open ? "rotate-180" : ""}`}
             viewBox="0 0 20 20"
             fill="currentColor"
             aria-hidden="true"
