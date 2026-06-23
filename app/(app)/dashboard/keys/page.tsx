@@ -1,0 +1,28 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { getSession } from "@/lib/api";
+import ApiKeysSection from "../ApiKeysSection";
+
+export default function KeysPage() {
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const s = getSession();
+    if (!s) return;
+    setToken(s.token);
+  }, []);
+
+  if (!token) {
+    return <div className="p-10 text-muted">Yuklanmoqda…</div>;
+  }
+
+  return (
+    <div className="mx-auto max-w-5xl px-6 py-10">
+      <h1 className="text-2xl font-bold text-primary font-serif">API kalitlar</h1>
+      <div className="mt-8">
+        <ApiKeysSection token={token} />
+      </div>
+    </div>
+  );
+}

@@ -8,10 +8,10 @@ import { BRAND } from "@/lib/brand";
 import CreditBadge from "./CreditBadge";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Asosiy", exact: true },
+  { href: "/dashboard/keys", label: "API kalitlar", exact: false },
   { href: "/dashboard/monitoring", label: "Monitoring", exact: false },
   { href: "/dashboard/wallet", label: "Hamyon", exact: false },
-  { href: "/dashboard/developers", label: "Devlar", exact: false },
+  { href: "/dashboard/developers", label: "Dasturchilar uchun", exact: false },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
