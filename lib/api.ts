@@ -449,3 +449,129 @@ export async function getAdminStats(token: string): Promise<AdminStats> {
   if (!res.ok) throw new Error(json.error || "Statistikani yuklab bo'lmadi.");
   return json as AdminStats;
 }
+
+// ---- Hisob sozlamalari (Account Settings) ----
+
+export interface OtpSentResult {
+  sent: boolean;
+  channel: string;
+  devCode?: string;
+}
+
+export interface SecondaryEmail {
+  id: string;
+  email: string;
+  verified: boolean;
+  createdAt: string;
+}
+
+// OTP sent to the account's primary email (no SMS provider exists)
+export async function phoneChangeRequest(
+  token: string,
+  newPhone: string
+): Promise<OtpSentResult> {
+  const res = await fetch(`${API_BASE}/account/phone/change-request`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ newPhone }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "OTP yuborib bo'lmadi.");
+  return json as OtpSentResult;
+}
+
+export async function phoneVerify(
+  token: string,
+  code: string,
+  newPhone: string
+): Promise<{ phone: string }> {
+  const res = await fetch(`${API_BASE}/account/phone/verify`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ code, newPhone }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Kod noto'g'ri yoki muddati o'tgan.");
+  return json as { phone: string };
+}
+
+export async function emailChangeRequest(
+  token: string,
+  newEmail: string
+): Promise<OtpSentResult> {
+  const res = await fetch(`${API_BASE}/account/email/change-request`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ newEmail }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "OTP yuborib bo'lmadi.");
+  return json as OtpSentResult;
+}
+
+export async function emailVerify(
+  token: string,
+  code: string,
+  newEmail: string
+): Promise<{ email: string }> {
+  const res = await fetch(`${API_BASE}/account/email/verify`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ code, newEmail }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Kod noto'g'ri yoki muddati o'tgan.");
+  return json as { email: string };
+}
+
+export async function getSecondaryEmails(token: string): Promise<SecondaryEmail[]> {
+  const res = await fetch(`${API_BASE}/account/email/secondary`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Email manzillarni yuklab bo'lmadi.");
+  return json as SecondaryEmail[];
+}
+
+export async function emailAdd(
+  token: string,
+  email: string
+): Promise<OtpSentResult> {
+  const res = await fetch(`${API_BASE}/account/email/add`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ email }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "OTP yuborib bo'lmadi.");
+  return json as OtpSentResult;
+}
+
+export async function emailVerifySecondary(
+  token: string,
+  code: string,
+  email: string
+): Promise<{ id: string; email: string; verified: boolean }> {
+  const res = await fetch(`${API_BASE}/account/email/verify-secondary`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ code, email }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Kod noto'g'ri yoki muddati o'tgan.");
+  return json as { id: string; email: string; verified: boolean };
+}
+
+export async function deleteSecondaryEmail(
+  token: string,
+  id: string
+): Promise<void> {
+  const res = await fetch(`${API_BASE}/account/email/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    const json = await res.json().catch(() => ({}));
+    throw new Error(json.error || "Emailni o'chirib bo'lmadi.");
+  }
+}

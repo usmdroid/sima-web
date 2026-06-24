@@ -3,16 +3,18 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { KeyRound, BarChart2, Wallet, Code2, Settings, ShieldAlert } from "lucide-react";
 import { getSession, clearSession, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import CreditBadge from "./CreditBadge";
 import { Spinner } from "@/app/components/Spinner";
 
 const NAV_ITEMS = [
-  { href: "/dashboard/keys", label: "API kalitlar", exact: false },
-  { href: "/dashboard/monitoring", label: "Monitoring", exact: false },
-  { href: "/dashboard/wallet", label: "Hamyon", exact: false },
-  { href: "/dashboard/developers", label: "Dasturchilar uchun", exact: false },
+  { href: "/dashboard/keys", label: "API kalitlar", exact: false, icon: KeyRound },
+  { href: "/dashboard/monitoring", label: "Monitoring", exact: false, icon: BarChart2 },
+  { href: "/dashboard/wallet", label: "Hamyon", exact: false, icon: Wallet },
+  { href: "/dashboard/developers", label: "Dasturchilar uchun", exact: false, icon: Code2 },
+  { href: "/dashboard/settings", label: "Sozlamalar", exact: false, icon: Settings },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -48,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const navItems = [
     ...NAV_ITEMS,
     ...(client.role === "SUPER_ADMIN"
-      ? [{ href: "/admin", label: "Admin", exact: false }]
+      ? [{ href: "/admin", label: "Admin", exact: false, icon: ShieldAlert }]
       : []),
   ];
 
@@ -67,19 +69,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </Link>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-0.5">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive(item.href, item.exact)
-                  ? "bg-beige text-accent"
-                  : "text-muted hover:bg-bg hover:text-primary"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive(item.href, item.exact)
+                    ? "bg-beige text-accent"
+                    : "text-muted hover:bg-bg hover:text-primary"
+                }`}
+              >
+                {Icon && <Icon size={15} className="shrink-0" />}
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
       </aside>
 
@@ -119,20 +125,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {/* Mobile nav dropdown */}
           {menuOpen && (
             <nav className="md:hidden border-t border-line px-4 py-2 space-y-0.5">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive(item.href, item.exact)
-                      ? "bg-beige text-accent"
-                      : "text-muted hover:bg-bg hover:text-primary"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive(item.href, item.exact)
+                        ? "bg-beige text-accent"
+                        : "text-muted hover:bg-bg hover:text-primary"
+                    }`}
+                  >
+                    {Icon && <Icon size={15} className="shrink-0" />}
+                    {item.label}
+                  </Link>
+                );
+              })}
             </nav>
           )}
         </header>
