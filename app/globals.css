@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Colors */
+  /* Colors — light (default) */
   --color-bg: #FAF7F2;
   --color-surface: #FFFFFF;
   --color-primary: #1D1D1D;
@@ -29,6 +29,19 @@
 }
 
 @layer base {
+  /* Dark palette — applied when .dark class is on <html> */
+  .dark {
+    --color-bg: #1A1815;
+    --color-surface: #252320;
+    --color-primary: #F0EBE3;
+    --color-accent: #C9A572;
+    --color-line: #3D3830;
+    --color-muted: #9B9089;
+    --color-beige: #2E2A25;
+    --color-hover: #D4B07A;
+    --color-disabled: #2A2621;
+  }
+
   /* Mandatory accessibility: freeze all motion for users who prefer it */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -43,6 +56,7 @@
     background: var(--color-bg);
     color: var(--color-primary);
     font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+    transition: background-color 200ms ease, color 200ms ease;
   }
 
   @keyframes shimmer {

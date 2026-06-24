@@ -18,8 +18,7 @@ import {
 } from "@/lib/api";
 import { Spinner } from "@/app/components/Spinner";
 import { Skeleton } from "@/app/components/Skeleton";
-
-// ---- Helpers ----
+import { useTranslations } from "next-intl";
 
 function formatPhone(value: string): string {
   const digits = value.replace(/\D/g, "");
@@ -33,12 +32,10 @@ function formatPhone(value: string): string {
   return out;
 }
 
-// ---- Toast ----
-
 function Toast({ msg, onClose }: { msg: string; onClose: () => void }) {
   useEffect(() => {
-    const t = setTimeout(onClose, 6000);
-    return () => clearTimeout(t);
+    const timer = setTimeout(onClose, 6000);
+    return () => clearTimeout(timer);
   }, [onClose]);
   return (
     <div className="fixed right-5 top-5 z-[100] max-w-sm rounded-xl bg-primary px-4 py-3 text-sm font-medium text-white shadow-lg">
@@ -46,8 +43,6 @@ function Toast({ msg, onClose }: { msg: string; onClose: () => void }) {
     </div>
   );
 }
-
-// ---- Modal wrapper ----
 
 function Modal({ open, onClose, title, children }: {
   open: boolean;
@@ -76,11 +71,7 @@ function Modal({ open, onClose, title, children }: {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-line">
           <h3 className="font-serif text-lg font-semibold text-primary">{title}</h3>
-          <button
-            onClick={onClose}
-            aria-label="Yopish"
-            className="text-muted hover:text-primary transition-colors"
-          >
+          <button onClick={onClose} aria-label="Yopish" className="text-muted hover:text-primary transition-colors">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
@@ -92,16 +83,8 @@ function Modal({ open, onClose, title, children }: {
   );
 }
 
-// ---- Input field ----
-
-function Field({
-  label, value, onChange, placeholder, type = "text",
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  type?: string;
+function Field({ label, value, onChange, placeholder, type = "text" }: {
+  label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string;
 }) {
   return (
     <div>
@@ -117,21 +100,12 @@ function Field({
   );
 }
 
-// ---- Error box ----
-
 function ErrorBox({ msg }: { msg: string }) {
   return <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{msg}</p>;
 }
 
-// ---- Accent button ----
-
 function AccentBtn({ children, loading, disabled, onClick, type = "button", full = false }: {
-  children: React.ReactNode;
-  loading?: boolean;
-  disabled?: boolean;
-  onClick?: () => void;
-  type?: "button" | "submit";
-  full?: boolean;
+  children: React.ReactNode; loading?: boolean; disabled?: boolean; onClick?: () => void; type?: "button" | "submit"; full?: boolean;
 }) {
   return (
     <button
@@ -146,15 +120,10 @@ function AccentBtn({ children, loading, disabled, onClick, type = "button", full
   );
 }
 
-// ---- Phone change modal ----
-
 function PhoneModal({ open, onClose, token, currentEmail, onSuccess }: {
-  open: boolean;
-  onClose: () => void;
-  token: string;
-  currentEmail: string | null | undefined;
-  onSuccess: (phone: string) => void;
+  open: boolean; onClose: () => void; token: string; currentEmail: string | null | undefined; onSuccess: (phone: string) => void;
 }) {
+  const t = useTranslations("settings");
   const [step, setStep] = useState<1 | 2>(1);
   const [newPhone, setNewPhone] = useState("+998 ");
   const [code, setCode] = useState("");
@@ -171,7 +140,7 @@ function PhoneModal({ open, onClose, token, currentEmail, onSuccess }: {
     setLoading(true);
     try {
       const r = await phoneChangeRequest(token, "+" + raw);
-      if (r.devCode) setDevNote("Dev kodi: " + r.devCode);
+      if (r.devCode) setDevNote(t("devCode", { code: r.devCode }));
       setStep(2);
     } catch (e) { setError(e instanceof Error ? e.message : "Xatolik"); }
     finally { setLoading(false); }
@@ -179,7 +148,7 @@ function PhoneModal({ open, onClose, token, currentEmail, onSuccess }: {
 
   async function onVerify() {
     setError(null);
-    if (code.trim().length < 4) { setError("Tasdiqlash kodini kiriting."); return; }
+    if (code.trim().length < 4) { setError(t("enterCode")); return; }
     setLoading(true);
     try {
       const raw = newPhone.replace(/\D/g, "");
@@ -191,43 +160,24 @@ function PhoneModal({ open, onClose, token, currentEmail, onSuccess }: {
     finally { setLoading(false); }
   }
 
-  function handleClose() { reset(); onClose(); }
-
   return (
-    <Modal open={open} onClose={handleClose} title="Telefon raqamni o'zgartirish">
+    <Modal open={open} onClose={() => { reset(); onClose(); }} title={t("phoneModalTitle")}>
       {step === 1 ? (
         <>
-          <p className="text-sm text-muted">OTP kodi joriy email manzilingizga {currentEmail ? <span className="font-medium text-primary">({currentEmail})</span> : ""} yuboriladi.</p>
-          <Field
-            label="Yangi telefon raqam"
-            value={newPhone}
-            onChange={(v) => setNewPhone(formatPhone(v))}
-            placeholder="+998 90 123 45 67"
-            type="tel"
-          />
+          <p className="text-sm text-muted">{t("otpToCurrentEmail")}{currentEmail ? <span className="font-medium text-primary"> ({currentEmail})</span> : ""}</p>
+          <Field label={t("newPhone")} value={newPhone} onChange={(v) => setNewPhone(formatPhone(v))} placeholder="+998 90 123 45 67" type="tel" />
           {error && <ErrorBox msg={error} />}
-          <AccentBtn loading={loading} onClick={onRequest} full>OTP yuborish</AccentBtn>
+          <AccentBtn loading={loading} onClick={onRequest} full>{t("sendOtp")}</AccentBtn>
         </>
       ) : (
         <>
-          <p className="text-sm text-muted">Kodingizni kiriting.</p>
-          {devNote && (
-            <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">{devNote}</div>
-          )}
-          <Field
-            label="OTP kod"
-            value={code}
-            onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))}
-            placeholder="123456"
-          />
+          <p className="text-sm text-muted">{t("enterCode")}</p>
+          {devNote && <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">{devNote}</div>}
+          <Field label={t("otpCode")} value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" />
           {error && <ErrorBox msg={error} />}
-          <AccentBtn loading={loading} onClick={onVerify} full>Tasdiqlash</AccentBtn>
-          <button
-            type="button"
-            onClick={() => { setStep(1); setError(null); setDevNote(null); }}
-            className="w-full text-center text-sm text-muted hover:text-primary transition-colors"
-          >
-            ← Orqaga
+          <AccentBtn loading={loading} onClick={onVerify} full>{t("verify")}</AccentBtn>
+          <button type="button" onClick={() => { setStep(1); setError(null); setDevNote(null); }} className="w-full text-center text-sm text-muted hover:text-primary transition-colors">
+            {t("back")}
           </button>
         </>
       )}
@@ -235,14 +185,10 @@ function PhoneModal({ open, onClose, token, currentEmail, onSuccess }: {
   );
 }
 
-// ---- Primary email change modal ----
-
 function EmailChangeModal({ open, onClose, token, onSuccess }: {
-  open: boolean;
-  onClose: () => void;
-  token: string;
-  onSuccess: (email: string) => void;
+  open: boolean; onClose: () => void; token: string; onSuccess: (email: string) => void;
 }) {
+  const t = useTranslations("settings");
   const [step, setStep] = useState<1 | 2>(1);
   const [newEmail, setNewEmail] = useState("");
   const [code, setCode] = useState("");
@@ -258,7 +204,7 @@ function EmailChangeModal({ open, onClose, token, onSuccess }: {
     setLoading(true);
     try {
       const r = await emailChangeRequest(token, newEmail.trim());
-      if (r.devCode) setDevNote("Dev kodi: " + r.devCode);
+      if (r.devCode) setDevNote(t("devCode", { code: r.devCode }));
       setStep(2);
     } catch (e) { setError(e instanceof Error ? e.message : "Xatolik"); }
     finally { setLoading(false); }
@@ -266,7 +212,7 @@ function EmailChangeModal({ open, onClose, token, onSuccess }: {
 
   async function onVerify() {
     setError(null);
-    if (code.trim().length < 4) { setError("Tasdiqlash kodini kiriting."); return; }
+    if (code.trim().length < 4) { setError(t("enterCode")); return; }
     setLoading(true);
     try {
       const r = await emailVerify(token, code.trim(), newEmail.trim());
@@ -277,43 +223,35 @@ function EmailChangeModal({ open, onClose, token, onSuccess }: {
     finally { setLoading(false); }
   }
 
-  function handleClose() { reset(); onClose(); }
-
   return (
-    <Modal open={open} onClose={handleClose} title="Asosiy emailni o'zgartirish">
+    <Modal open={open} onClose={() => { reset(); onClose(); }} title={t("emailModalTitle")}>
       {step === 1 ? (
         <>
-          <p className="text-sm text-muted">OTP kodi yangi email manzilingizga yuboriladi.</p>
-          <Field label="Yangi email" value={newEmail} onChange={setNewEmail} placeholder="yangi@email.com" type="email" />
+          <p className="text-sm text-muted">{t("otpToNewEmail")}</p>
+          <Field label={t("newEmail")} value={newEmail} onChange={setNewEmail} placeholder="yangi@email.com" type="email" />
           {error && <ErrorBox msg={error} />}
-          <AccentBtn loading={loading} onClick={onRequest} full>OTP yuborish</AccentBtn>
+          <AccentBtn loading={loading} onClick={onRequest} full>{t("sendOtp")}</AccentBtn>
         </>
       ) : (
         <>
           <p className="text-sm text-muted">
-            <span className="font-medium text-primary">{newEmail}</span> manziliga kod yuborildi.
+            {t("codeSentTo", { email: newEmail })}
           </p>
-          {devNote && (
-            <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">{devNote}</div>
-          )}
-          <Field label="OTP kod" value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" />
+          {devNote && <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">{devNote}</div>}
+          <Field label={t("otpCode")} value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" />
           {error && <ErrorBox msg={error} />}
-          <AccentBtn loading={loading} onClick={onVerify} full>Tasdiqlash</AccentBtn>
-          <button type="button" onClick={() => { setStep(1); setError(null); setDevNote(null); }} className="w-full text-center text-sm text-muted hover:text-primary transition-colors">← Orqaga</button>
+          <AccentBtn loading={loading} onClick={onVerify} full>{t("verify")}</AccentBtn>
+          <button type="button" onClick={() => { setStep(1); setError(null); setDevNote(null); }} className="w-full text-center text-sm text-muted hover:text-primary transition-colors">{t("back")}</button>
         </>
       )}
     </Modal>
   );
 }
 
-// ---- Add secondary email modal ----
-
 function AddEmailModal({ open, onClose, token, onSuccess }: {
-  open: boolean;
-  onClose: () => void;
-  token: string;
-  onSuccess: (entry: SecondaryEmail) => void;
+  open: boolean; onClose: () => void; token: string; onSuccess: (entry: SecondaryEmail) => void;
 }) {
+  const t = useTranslations("settings");
   const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -329,7 +267,7 @@ function AddEmailModal({ open, onClose, token, onSuccess }: {
     setLoading(true);
     try {
       const r = await emailAdd(token, email.trim());
-      if (r.devCode) setDevNote("Dev kodi: " + r.devCode);
+      if (r.devCode) setDevNote(t("devCode", { code: r.devCode }));
       setStep(2);
     } catch (e) { setError(e instanceof Error ? e.message : "Xatolik"); }
     finally { setLoading(false); }
@@ -337,7 +275,7 @@ function AddEmailModal({ open, onClose, token, onSuccess }: {
 
   async function onVerify() {
     setError(null);
-    if (code.trim().length < 4) { setError("Tasdiqlash kodini kiriting."); return; }
+    if (code.trim().length < 4) { setError(t("enterCode")); return; }
     setLoading(true);
     try {
       const r = await emailVerifySecondary(token, code.trim(), email.trim());
@@ -348,41 +286,32 @@ function AddEmailModal({ open, onClose, token, onSuccess }: {
     finally { setLoading(false); }
   }
 
-  function handleClose() { reset(); onClose(); }
-
   return (
-    <Modal open={open} onClose={handleClose} title="Email qo'shish">
+    <Modal open={open} onClose={() => { reset(); onClose(); }} title={t("addEmailModalTitle")}>
       {step === 1 ? (
         <>
-          <Field label="Email manzil" value={email} onChange={setEmail} placeholder="qo'shimcha@email.com" type="email" />
+          <Field label={t("emailField")} value={email} onChange={setEmail} placeholder="qo'shimcha@email.com" type="email" />
           {error && <ErrorBox msg={error} />}
-          <AccentBtn loading={loading} onClick={onRequest} full>OTP yuborish</AccentBtn>
+          <AccentBtn loading={loading} onClick={onRequest} full>{t("sendOtp")}</AccentBtn>
         </>
       ) : (
         <>
           <p className="text-sm text-muted">
-            <span className="font-medium text-primary">{email}</span> manziliga kod yuborildi.
+            {t("codeSentTo", { email })}
           </p>
-          {devNote && (
-            <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">{devNote}</div>
-          )}
-          <Field label="OTP kod" value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" />
+          {devNote && <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">{devNote}</div>}
+          <Field label={t("otpCode")} value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" />
           {error && <ErrorBox msg={error} />}
-          <AccentBtn loading={loading} onClick={onVerify} full>Tasdiqlash va qo'shish</AccentBtn>
-          <button type="button" onClick={() => { setStep(1); setError(null); setDevNote(null); }} className="w-full text-center text-sm text-muted hover:text-primary transition-colors">← Orqaga</button>
+          <AccentBtn loading={loading} onClick={onVerify} full>{t("verifyAndAdd")}</AccentBtn>
+          <button type="button" onClick={() => { setStep(1); setError(null); setDevNote(null); }} className="w-full text-center text-sm text-muted hover:text-primary transition-colors">{t("back")}</button>
         </>
       )}
     </Modal>
   );
 }
 
-// ---- Card wrapper ----
-
 function Card({ title, icon, children, animDelay = 0 }: {
-  title: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-  animDelay?: number;
+  title: string; icon: React.ReactNode; children: React.ReactNode; animDelay?: number;
 }) {
   return (
     <div
@@ -398,8 +327,6 @@ function Card({ title, icon, children, animDelay = 0 }: {
   );
 }
 
-// ---- Info row ----
-
 function InfoRow({ label, value, action }: { label: string; value: React.ReactNode; action?: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-4 py-3 border-b border-line last:border-0">
@@ -411,8 +338,6 @@ function InfoRow({ label, value, action }: { label: string; value: React.ReactNo
     </div>
   );
 }
-
-// ---- Small ghost button ----
 
 function GhostBtn({ children, onClick, danger }: { children: React.ReactNode; onClick: () => void; danger?: boolean }) {
   return (
@@ -430,9 +355,8 @@ function GhostBtn({ children, onClick, danger }: { children: React.ReactNode; on
   );
 }
 
-// ---- Main page ----
-
 export default function SettingsPage() {
+  const t = useTranslations("settings");
   const [client, setClient] = useState<ClientInfo | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [secondaryEmails, setSecondaryEmails] = useState<SecondaryEmail[]>([]);
@@ -442,51 +366,44 @@ export default function SettingsPage() {
   const [phoneModal, setPhoneModal] = useState(false);
   const [emailModal, setEmailModal] = useState(false);
   const [addEmailModal, setAddEmailModal] = useState(false);
-
   const [toast, setToast] = useState<string | null>(null);
   const [notifEmail, setNotifEmail] = useState(true);
+
+  async function loadSecondaryEmails(tk: string) {
+    setEmailsLoading(true);
+    try {
+      const list = await getSecondaryEmails(tk);
+      setSecondaryEmails(list);
+    } catch { /* non-fatal */ }
+    finally { setEmailsLoading(false); }
+  }
 
   useEffect(() => {
     const s = getSession();
     if (!s) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setClient(s.client);
     setToken(s.token);
     loadSecondaryEmails(s.token);
   }, []);
 
-  async function loadSecondaryEmails(t: string) {
-    setEmailsLoading(true);
-    try {
-      const list = await getSecondaryEmails(t);
-      setSecondaryEmails(list);
-    } catch {
-      // non-fatal
-    } finally {
-      setEmailsLoading(false);
-    }
-  }
-
-  function showToast(msg: string) {
-    setToast(msg);
-  }
-
   function onPhoneSuccess(phone: string) {
     setClient((prev) => prev ? { ...prev, phone } : prev);
     const s = getSession();
     if (s) saveSession({ ...s, client: { ...s.client, phone } });
-    showToast("Telefon raqam muvaffaqiyatli o'zgartirildi.");
+    setToast(t("phoneSuccess"));
   }
 
   function onEmailSuccess(email: string) {
     setClient((prev) => prev ? { ...prev, email } : prev);
     const s = getSession();
     if (s) saveSession({ ...s, client: { ...s.client, email } });
-    showToast("Asosiy email muvaffaqiyatli o'zgartirildi.");
+    setToast(t("emailSuccess"));
   }
 
   function onSecondaryAdded(entry: SecondaryEmail) {
     setSecondaryEmails((prev) => [...prev, entry]);
-    showToast("Email muvaffaqiyatli qo'shildi va tasdiqlandi.");
+    setToast(t("emailAdded"));
   }
 
   async function onDeleteSecondary(id: string) {
@@ -495,9 +412,9 @@ export default function SettingsPage() {
     try {
       await deleteSecondaryEmail(token, id);
       setSecondaryEmails((prev) => prev.filter((e) => e.id !== id));
-      showToast("Email o'chirildi.");
+      setToast(t("emailDeleted"));
     } catch (e) {
-      showToast(e instanceof Error ? e.message : "O'chirishda xatolik.");
+      setToast(e instanceof Error ? e.message : "O'chirishda xatolik.");
     } finally {
       setDeletingId(null);
     }
@@ -512,6 +429,12 @@ export default function SettingsPage() {
       </div>
     );
   }
+
+  const securityItems = [
+    t("changePassword"),
+    t("twoFactor"),
+    t("activeSessions"),
+  ];
 
   return (
     <>
@@ -528,81 +451,57 @@ export default function SettingsPage() {
 
       {toast && <Toast msg={toast} onClose={() => setToast(null)} />}
 
-      {/* Modals */}
-      <PhoneModal
-        open={phoneModal}
-        onClose={() => setPhoneModal(false)}
-        token={token}
-        currentEmail={client.email}
-        onSuccess={onPhoneSuccess}
-      />
-      <EmailChangeModal
-        open={emailModal}
-        onClose={() => setEmailModal(false)}
-        token={token}
-        onSuccess={onEmailSuccess}
-      />
-      <AddEmailModal
-        open={addEmailModal}
-        onClose={() => setAddEmailModal(false)}
-        token={token}
-        onSuccess={onSecondaryAdded}
-      />
+      <PhoneModal open={phoneModal} onClose={() => setPhoneModal(false)} token={token} currentEmail={client.email} onSuccess={onPhoneSuccess} />
+      <EmailChangeModal open={emailModal} onClose={() => setEmailModal(false)} token={token} onSuccess={onEmailSuccess} />
+      <AddEmailModal open={addEmailModal} onClose={() => setAddEmailModal(false)} token={token} onSuccess={onSecondaryAdded} />
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-primary">Sozlamalar</h1>
-          <p className="mt-1 text-sm text-muted">Profil, xavfsizlik va bildirishnomalarni boshqaring.</p>
+          <h1 className="font-serif text-2xl font-bold text-primary">{t("title")}</h1>
+          <p className="mt-1 text-sm text-muted">{t("subtitle")}</p>
         </div>
 
-        {/* Card 1: Profil */}
-        <Card title="Profil ma'lumotlari" icon={<Phone size={18} />} animDelay={0}>
+        <Card title={t("profileCard")} icon={<Phone size={18} />} animDelay={0}>
           <InfoRow
-            label="Telefon raqam"
+            label={t("phone")}
             value={client.phone || "—"}
-            action={<GhostBtn onClick={() => setPhoneModal(true)}>O&apos;zgartirish</GhostBtn>}
+            action={<GhostBtn onClick={() => setPhoneModal(true)}>{t("change")}</GhostBtn>}
           />
           <InfoRow
-            label="Asosiy email"
+            label={t("primaryEmail")}
             value={
               <span className="flex items-center gap-1.5">
-                {client.email || <span className="text-muted italic">Belgilanmagan</span>}
+                {client.email || <span className="text-muted italic">{t("notSet")}</span>}
                 {client.email && (
                   <span className="inline-flex items-center gap-0.5 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                    <CheckCircle size={11} /> Tasdiqlangan
+                    <CheckCircle size={11} /> {t("verified")}
                   </span>
                 )}
               </span>
             }
-            action={<GhostBtn onClick={() => setEmailModal(true)}>O&apos;zgartirish</GhostBtn>}
+            action={<GhostBtn onClick={() => setEmailModal(true)}>{t("change")}</GhostBtn>}
           />
 
-          {/* Secondary emails */}
           <div className="pt-3">
-            <p className="text-xs text-muted font-medium uppercase tracking-wide mb-2">Qo'shimcha emaillar</p>
+            <p className="text-xs text-muted font-medium uppercase tracking-wide mb-2">{t("extraEmails")}</p>
             {emailsLoading ? (
               <div className="space-y-2">
                 <Skeleton className="h-9 w-full" />
                 <Skeleton className="h-9 w-3/4" />
               </div>
             ) : secondaryEmails.length === 0 ? (
-              <p className="text-sm text-muted italic py-1">Qo'shimcha email yo'q.</p>
+              <p className="text-sm text-muted italic py-1">{t("noExtraEmails")}</p>
             ) : (
               <ul className="space-y-1.5">
                 {secondaryEmails.map((se) => (
-                  <li
-                    key={se.id}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-line px-3 py-2 bg-bg"
-                  >
+                  <li key={se.id} className="flex items-center justify-between gap-3 rounded-lg border border-line px-3 py-2 bg-bg">
                     <div className="flex items-center gap-2 min-w-0">
                       <Mail size={13} className="text-muted shrink-0" />
                       <span className="text-sm text-primary truncate">{se.email}</span>
-                      <span className="inline-flex items-center rounded-full bg-beige px-2 py-0.5 text-xs font-medium text-muted">
-                        Qo&apos;shimcha
-                      </span>
+                      <span className="inline-flex items-center rounded-full bg-beige px-2 py-0.5 text-xs font-medium text-muted">{t("extra")}</span>
                       {se.verified && (
                         <span className="inline-flex items-center gap-0.5 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                          <CheckCircle size={10} /> Tasdiqlangan
+                          <CheckCircle size={10} /> {t("verified")}
                         </span>
                       )}
                     </div>
@@ -612,69 +511,45 @@ export default function SettingsPage() {
                       disabled={deletingId === se.id}
                       className="shrink-0 text-sm font-medium text-red-500 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
                     >
-                      {deletingId === se.id ? <Spinner size={13} className="text-red-500" /> : "O'chirish"}
+                      {deletingId === se.id ? <Spinner size={13} className="text-red-500" /> : t("delete")}
                     </button>
                   </li>
                 ))}
               </ul>
             )}
-
-            <button
-              type="button"
-              onClick={() => setAddEmailModal(true)}
-              className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-hover transition-colors"
-            >
-              <span className="text-base leading-none">+</span> Email qo&apos;shish
+            <button type="button" onClick={() => setAddEmailModal(true)} className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-hover transition-colors">
+              {t("addEmail")}
             </button>
           </div>
         </Card>
 
-        {/* Card 2: Xavfsizlik */}
-        <Card title="Xavfsizlik" icon={<ShieldCheck size={18} />} animDelay={60}>
+        <Card title={t("securityCard")} icon={<ShieldCheck size={18} />} animDelay={60}>
           <div className="space-y-2">
-            {[
-              { label: "Parol o'zgartirish" },
-              { label: "Ikki bosqichli tekshiruv (2FA)" },
-              { label: "Faol seanslar" },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="flex items-center justify-between py-3 border-b border-line last:border-0"
-              >
-                <span className="text-sm text-primary font-medium">{item.label}</span>
-                <button
-                  type="button"
-                  disabled
-                  className="text-sm font-medium px-3 py-1.5 rounded-lg bg-disabled text-muted cursor-not-allowed"
-                >
-                  Tez kunda
+            {securityItems.map((label) => (
+              <div key={label} className="flex items-center justify-between py-3 border-b border-line last:border-0">
+                <span className="text-sm text-primary font-medium">{label}</span>
+                <button type="button" disabled className="text-sm font-medium px-3 py-1.5 rounded-lg bg-disabled text-muted cursor-not-allowed">
+                  {t("comingSoon")}
                 </button>
               </div>
             ))}
           </div>
         </Card>
 
-        {/* Card 3: Bildirishnomalar */}
-        <Card title="Bildirishnomalar" icon={<Bell size={18} />} animDelay={120}>
+        <Card title={t("notifCard")} icon={<Bell size={18} />} animDelay={120}>
           <div className="flex items-center justify-between py-2">
             <div>
-              <p className="text-sm font-medium text-primary">Email bildirishnomalar</p>
-              <p className="text-xs text-muted mt-0.5">Hisob faoliyati haqida emailga xabar olish</p>
+              <p className="text-sm font-medium text-primary">{t("emailNotif")}</p>
+              <p className="text-xs text-muted mt-0.5">{t("emailNotifDesc")}</p>
             </div>
             <button
               type="button"
               role="switch"
               aria-checked={notifEmail}
               onClick={() => setNotifEmail((v) => !v)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                notifEmail ? "bg-accent" : "bg-line"
-              }`}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${notifEmail ? "bg-accent" : "bg-line"}`}
             >
-              <span
-                className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-                  notifEmail ? "translate-x-6" : "translate-x-1"
-                }`}
-              />
+              <span className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${notifEmail ? "translate-x-6" : "translate-x-1"}`} />
             </button>
           </div>
         </Card>

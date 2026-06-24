@@ -44,6 +44,7 @@ function ConnectContent() {
       return;
     }
     if (!uriValid) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
       setError("redirect_uri noto'g'ri yoki yo'q. https bilan boshlanishi kerak (localhost bundan mustasno).");
       return;

@@ -12,6 +12,7 @@ import {
 import SimIcon from "@/app/components/SimIcon";
 import { Skeleton } from "@/app/components/Skeleton";
 import { Spinner } from "@/app/components/Spinner";
+import { useTranslations } from "next-intl";
 
 const PAYMENT_METHODS = [
   { id: "payme", label: "Payme", bg: "#00CCB1", fg: "#0a3d38" },
@@ -22,6 +23,7 @@ const PAYMENT_METHODS = [
 const QUICK = [5, 10, 20, 50];
 
 export default function WalletPage() {
+  const t = useTranslations("wallet");
   const [token, setToken] = useState<string | null>(null);
   const [wallet, setWallet] = useState<WalletInfo | null>(null);
   const [pricing, setPricing] = useState<PricingInfo | null>(null);
@@ -35,13 +37,14 @@ export default function WalletPage() {
   useEffect(() => {
     const s = getSession();
     if (!s) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setToken(s.token);
   }, []);
 
-  const load = useCallback(async (t: string) => {
+  const load = useCallback(async (tk: string) => {
     setError(null);
     try {
-      const [w, p] = await Promise.all([getWallet(t), getPricing()]);
+      const [w, p] = await Promise.all([getWallet(tk), getPricing()]);
       setWallet(w);
       setPricing(p);
     } catch (e) {
@@ -52,6 +55,7 @@ export default function WalletPage() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (token) load(token);
   }, [token, load]);
 
@@ -63,7 +67,7 @@ export default function WalletPage() {
     e.preventDefault();
     if (!token) return;
     if (!usd.trim() || isNaN(amount) || amount <= 0) {
-      setPurchaseError("To'g'ri miqdor kiriting.");
+      setPurchaseError(t("errorInvalidAmount"));
       return;
     }
     setPurchasing(true);
@@ -87,16 +91,18 @@ export default function WalletPage() {
     );
   }
 
+  const tierLabels = [t("starter"), t("growing"), t("enterprise")];
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="text-2xl font-bold text-primary font-serif">Hamyon</h1>
+      <h1 className="text-2xl font-bold text-primary font-serif">{t("title")}</h1>
 
       {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
 
-      {/* ============ 1-QISM: Credit sotib olish ============ */}
+      {/* Purchase section */}
       <section className="mt-6 rounded-2xl border border-line bg-surface p-6 sm:p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
         <div>
-          <p className="text-sm text-muted">Joriy balans</p>
+          <p className="text-sm text-muted">{t("currentBalance")}</p>
           <div className="mt-1 flex items-center gap-2">
             {wallet
               ? <span className="text-4xl font-bold text-accent">{Math.round(wallet.balanceSim)}</span>
@@ -107,7 +113,7 @@ export default function WalletPage() {
 
         <form onSubmit={handlePurchase} className="mt-6">
           <label className="mb-1.5 block text-sm font-medium text-primary">
-            Qancha to&apos;ldiramiz?
+            {t("howMuch")}
           </label>
           <div className="flex flex-wrap gap-2">
             {QUICK.map((q) => (
@@ -125,14 +131,12 @@ export default function WalletPage() {
               </button>
             ))}
             <div className="relative">
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted">
-                $
-              </span>
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted">$</span>
               <input
                 type="number"
                 min="0.01"
                 step="0.01"
-                placeholder="boshqa"
+                placeholder={t("other")}
                 value={usd}
                 onChange={(e) => setUsd(e.target.value)}
                 className="w-28 rounded-full border border-line py-2 pl-7 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent bg-bg"
@@ -145,12 +149,12 @@ export default function WalletPage() {
             <SimIcon size={12} className="inline-block align-middle" />
             {simPreview != null && (
               <span className="ml-1 font-medium text-primary">
-                → {simPreview.toLocaleString()} olasiz
+                → {simPreview.toLocaleString()} {t("youGet")}
               </span>
             )}
           </p>
 
-          <p className="mb-2 mt-6 text-sm font-medium text-primary">To&apos;lov usuli</p>
+          <p className="mb-2 mt-6 text-sm font-medium text-primary">{t("paymentMethod")}</p>
           <div className="grid grid-cols-3 gap-3">
             {PAYMENT_METHODS.map((m) => (
               <button
@@ -180,7 +184,7 @@ export default function WalletPage() {
             className="mt-6 inline-flex items-center justify-center gap-2 w-full rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.25)] active:translate-y-0 active:shadow-none disabled:opacity-50 disabled:translate-y-0 sm:w-auto sm:px-8"
           >
             {purchasing && <Spinner size={14} className="text-white" />}
-            {purchasing ? "Amalga oshirilmoqda…" : "Sotib olish"}
+            {purchasing ? t("processing") : t("buy")}
           </button>
           {purchaseError && <p className="mt-2 text-sm text-red-500">{purchaseError}</p>}
         </form>
@@ -188,12 +192,10 @@ export default function WalletPage() {
 
       <div className="my-12 border-t border-line" />
 
-      {/* ============ 2-QISM: Narxlar (3 ustun) ============ */}
+      {/* Pricing */}
       <section>
-        <h2 className="text-lg font-semibold text-primary">Narxlar</h2>
-        <p className="mt-1 text-sm text-muted">
-          Har bir so&apos;rov narxi jami amalga oshirilgan so&apos;rovlar soniga qarab kamayadi.
-        </p>
+        <h2 className="text-lg font-semibold text-primary">{t("pricing")}</h2>
+        <p className="mt-1 text-sm text-muted">{t("pricingDesc")}</p>
 
         {loading && !pricing && (
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -206,21 +208,21 @@ export default function WalletPage() {
               const prev = i > 0 ? pricing.tiers[i - 1].uptoRequests ?? 0 : 0;
               const range =
                 tier.uptoRequests === null
-                  ? `${prev.toLocaleString()}+ so'rov`
-                  : `${prev.toLocaleString()}–${tier.uptoRequests.toLocaleString()} so'rov`;
+                  ? `${prev.toLocaleString()}+ ${t("requests")}`
+                  : `${prev.toLocaleString()}–${tier.uptoRequests.toLocaleString()} ${t("requests")}`;
               return (
                 <div
                   key={i}
                   className="rounded-2xl border border-line bg-surface p-6 text-center shadow-[0_1px_2px_rgba(29,29,29,0.04)]"
                 >
                   <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                    {i === 0 ? "Boshlang'ich" : i === 1 ? "O'suvchi" : "Yirik hajm"}
+                    {tierLabels[i] ?? ""}
                   </p>
                   <p className="mt-3 flex items-center justify-center gap-1.5 text-3xl font-bold text-accent">
                     {tier.simPerRequest}
                     <SimIcon size={20} className="inline-block" />
                   </p>
-                  <p className="text-sm text-muted">so&apos;rov boshiga</p>
+                  <p className="text-sm text-muted">{t("perRequest")}</p>
                   <p className="mt-3 text-sm text-muted">{range}</p>
                 </div>
               );

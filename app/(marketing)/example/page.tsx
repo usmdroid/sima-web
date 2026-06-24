@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { useTranslations } from "next-intl";
 
 type SimaTryOn = {
   open: (opts: { cloth: string; type?: string; name?: string }) => void;
@@ -47,6 +48,8 @@ function configureWidget() {
 }
 
 export default function ExamplePage() {
+  const t = useTranslations("marketing");
+
   function tryOn(p: Product) {
     if (!window.SimaTryOn) return;
     window.SimaTryOn.open({ cloth: p.img, type: p.type, name: p.name });
@@ -57,14 +60,12 @@ export default function ExamplePage() {
       <Script src="/widget.js" strategy="afterInteractive" onReady={configureWidget} />
 
       <div className="mb-8">
-        <p className="text-sm font-medium text-accent">Demo do&apos;kon</p>
+        <p className="text-sm font-medium text-accent">{t("exampleDemoShop")}</p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-primary font-serif">
-          Atlas — namuna integratsiya
+          {t("exampleTitle")}
         </h1>
         <p className="mt-2 max-w-2xl text-muted">
-          Bu sahifa Sima vidjeti do&apos;kon saytiga qanday ulanishini ko&apos;rsatadi.
-          &quot;Sinab ko&apos;rish&quot; tugmasi vidjetni ochadi; token Sima serveridan
-          (sk_ brauzerga chiqmaydi) olinadi.
+          {t("exampleDesc")}
         </p>
       </div>
 
@@ -95,7 +96,7 @@ export default function ExamplePage() {
                 onClick={() => tryOn(p)}
                 className="absolute inset-x-2 bottom-2 translate-y-2 rounded-full bg-primary/90 py-2 text-sm font-medium text-white opacity-0 transition duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:opacity-100"
               >
-                Sinab ko&apos;rish
+                {t("exampleTryOn")}
               </button>
             </div>
             <div className="p-3">

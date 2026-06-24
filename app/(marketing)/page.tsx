@@ -1,33 +1,32 @@
+"use client";
+
 import Link from "next/link";
 import { BRAND } from "@/lib/brand";
 import Image from "next/image";
-
-const FEATURES = [
-  {
-    title: "Oson integratsiya",
-    text: "Saytingizga bitta qator skript qo'shasiz — kiyib ko'rish tugmasi tayyor. WordPress va Shopify uchun ham.",
-  },
-  {
-    title: "AI yaroqlilik tekshiruvi",
-    text: "Rasm avtomatik tekshiriladi: odam bormi, pozа yaroqlimi, tana ko'rinadimi — sifatsiz natijalarning oldi olinadi.",
-  },
-  {
-    title: "Xavfsiz",
-    text: "Bir martali, qisqa muddatli token. Maxfiy kalit hech qachon brauzerga chiqmaydi.",
-  },
-  {
-    title: "Har qanday platforma",
-    text: "Custom sayt, WordPress, Shopify — hammasida ishlaydi. Kod yozish shart emas.",
-  },
-];
-
-const STEPS = [
-  { n: "1", title: "Ro'yxatdan o'ting", text: "Hamkor sifatida akkaunt oching va kalitingizni oling." },
-  { n: "2", title: "Skriptni ulang", text: "Bir qator kod — mahsulot sahifangizda tugma paydo bo'ladi." },
-  { n: "3", title: "Mijoz sinab ko'radi", text: "Foydalanuvchi o'z rasmida kiyimni ko'radi va sotib oladi." },
-];
+import { useTranslations } from "next-intl";
 
 export default function LandingPage() {
+  const t = useTranslations("marketing");
+
+  const features = [
+    { title: t("feature0Title"), text: t("feature0Text") },
+    { title: t("feature1Title"), text: t("feature1Text") },
+    { title: t("feature2Title"), text: t("feature2Text") },
+    { title: t("feature3Title"), text: t("feature3Text") },
+  ];
+
+  const steps = [
+    { n: "1", title: t("step0Title"), text: t("step0Text") },
+    { n: "2", title: t("step1Title"), text: t("step1Text") },
+    { n: "3", title: t("step2Title"), text: t("step2Text") },
+  ];
+
+  const partnerFeatures = [
+    t("partnerFeature0"),
+    t("partnerFeature1"),
+    t("partnerFeature2"),
+  ];
+
   return (
     <>
       {/* Hero */}
@@ -35,33 +34,29 @@ export default function LandingPage() {
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
             <span className="inline-block rounded-full border border-line bg-beige px-4 py-1 text-xs font-medium uppercase tracking-wider text-accent">
-              Virtual kiyib ko&apos;rish
+              {t("heroBadge")}
             </span>
             <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight text-primary sm:text-5xl font-serif">
-              Mijozlaringiz kiyimni{" "}
-              <span className="text-accent">o&apos;z rasmida</span>{" "}
-              sinab ko&apos;rsin
+              {t("heroHeading")}
             </h1>
             <p className="mt-6 max-w-xl text-lg text-muted">
-              {BRAND} — onlayn kiyim do&apos;konlari uchun virtual kiyib ko&apos;rish xizmati.
-              Saytingizga bir qatorda ulang, mijozlar tasavvur qilmasdan ko&apos;rsin.
+              {t("heroDesc", { brand: BRAND })}
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <a
                 href="#partner"
                 className="rounded-full bg-accent px-6 py-3 font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0 active:shadow-none"
               >
-                Hamkor bo&apos;lish
+                {t("heroCta")}
               </a>
               <Link
                 href="/login"
                 className="rounded-full border border-line px-6 py-3 font-medium text-primary transition hover:bg-[#FAF7F2] hover:border-accent hover:text-accent"
               >
-                Kirish
+                {t("heroLogin")}
               </Link>
             </div>
           </div>
-          {/* Hero emblem */}
           <div className="flex justify-center">
             <div className="relative flex h-72 w-72 items-center justify-center rounded-full bg-[radial-gradient(ellipse_at_center,_#E6DFD0_0%,_#B08D57_100%)] shadow-lg sm:h-80 sm:w-80">
               <Image src="/sim-icon.png" alt="Sima" width={180} height={180} priority />
@@ -74,10 +69,10 @@ export default function LandingPage() {
       <section id="features" className="border-t border-line bg-beige py-20">
         <div className="mx-auto max-w-6xl px-6">
           <h2 className="text-center text-3xl font-bold tracking-tight text-primary font-serif">
-            Nima uchun {BRAND}
+            {t("featuresHeading", { brand: BRAND })}
           </h2>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map((f) => (
+            {features.map((f) => (
               <div key={f.title} className="rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)] transition-[border-color,box-shadow] hover:border-accent/60 hover:shadow-[0_4px_16px_rgba(176,141,87,0.12)]">
                 <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
                   <span className="h-2 w-2 rounded-full bg-accent" />
@@ -94,10 +89,10 @@ export default function LandingPage() {
       <section id="how" className="py-20">
         <div className="mx-auto max-w-6xl px-6">
           <h2 className="text-center text-3xl font-bold tracking-tight text-primary font-serif">
-            Qanday ishlaydi
+            {t("howHeading")}
           </h2>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {STEPS.map((s) => (
+            {steps.map((s) => (
               <div key={s.n} className="text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent text-lg font-bold text-white">
                   {s.n}
@@ -114,33 +109,31 @@ export default function LandingPage() {
       <section id="partner" className="border-t border-line bg-beige py-20">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight text-primary font-serif">Hamkorlik</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-primary font-serif">{t("partnerHeading")}</h2>
             <p className="mt-4 text-muted">
-              Do&apos;koningizni {BRAND}&apos;ga ulang. Ro&apos;yxatdan o&apos;ting,
-              kalitingizni oling va xizmatni saytingizda ishga tushiring.
+              {t("partnerDesc", { brand: BRAND })}
             </p>
             <ul className="mt-6 space-y-3 text-sm text-muted">
-              <li className="flex items-center gap-2"><span className="text-accent font-bold">✓</span> Bir qatorlik integratsiya</li>
-              <li className="flex items-center gap-2"><span className="text-accent font-bold">✓</span> Dashboard: foydalanish va tarix</li>
-              <li className="flex items-center gap-2"><span className="text-accent font-bold">✓</span> Xavfsiz token tizimi</li>
+              {partnerFeatures.map((f) => (
+                <li key={f} className="flex items-center gap-2">
+                  <span className="text-accent font-bold">✓</span> {f}
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Ro'yxatdan o'tish */}
           <div className="rounded-2xl border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
-            <h3 className="text-xl font-semibold text-primary">Hoziroq boshlang</h3>
-            <p className="mt-2 text-sm text-muted">
-              Bir necha daqiqada ro&apos;yxatdan o&apos;tib, do&apos;koningizni ulang.
-            </p>
+            <h3 className="text-xl font-semibold text-primary">{t("partnerCtaTitle")}</h3>
+            <p className="mt-2 text-sm text-muted">{t("partnerCtaDesc")}</p>
             <Link
               href="/register"
               className="mt-6 block rounded-full bg-accent px-4 py-3 text-center font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0 active:shadow-none"
             >
-              Ro&apos;yxatdan o&apos;tish
+              {t("partnerCta")}
             </Link>
             <p className="mt-4 text-center text-sm text-muted">
-              Akkauntingiz bormi?{" "}
-              <Link href="/login" className="font-medium text-accent hover:text-hover transition-colors">Kirish</Link>
+              {t("partnerHaveAccount")}{" "}
+              <Link href="/login" className="font-medium text-accent hover:text-hover transition-colors">{t("partnerLogin")}</Link>
             </p>
           </div>
         </div>

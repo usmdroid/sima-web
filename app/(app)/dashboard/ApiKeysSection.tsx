@@ -11,6 +11,7 @@ import {
 import ExpansionPanel from "./ExpansionPanel";
 import { Skeleton } from "@/app/components/Skeleton";
 import { Spinner } from "@/app/components/Spinner";
+import { useTranslations } from "next-intl";
 
 function fmt(iso: string | null) {
   if (!iso) return "—";
@@ -22,6 +23,7 @@ function fmt(iso: string | null) {
 }
 
 export default function ApiKeysSection({ token }: { token: string }) {
+  const t = useTranslations("keys");
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,13 +48,14 @@ export default function ApiKeysSection({ token }: { token: string }) {
   }, [token]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchKeys();
   }, [fetchKeys]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!newName.trim()) {
-      setCreateError("Kalit nomi kiritilishi shart.");
+      setCreateError(t("nameRequired"));
       return;
     }
     setCreateLoading(true);
@@ -71,12 +74,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
   }
 
   async function handleRevoke(id: string, name: string) {
-    if (
-      !confirm(
-        `"${name}" API kalitini bekor qilmoqchimisiz? Bu amalni qaytarib bo'lmaydi.`
-      )
-    )
-      return;
+    if (!confirm(t("revokeConfirm", { name }))) return;
     setRevoking(id);
     try {
       await revokeApiKey(token, id);
@@ -105,7 +103,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
 
   return (
     <ExpansionPanel
-      title="API kalitlar"
+      title={t("title")}
       defaultOpen
       leading={
         <span className="rounded-full bg-beige px-2.5 py-0.5 text-sm font-medium text-muted">
@@ -123,7 +121,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
           disabled={showCreate}
           className="rounded-full bg-accent px-3 py-1.5 text-sm font-medium text-white hover:bg-hover disabled:opacity-50 transition-colors"
         >
-          + Yangi kalit
+          {t("newKey")}
         </button>
       </div>
 
@@ -131,7 +129,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
         <form onSubmit={handleCreate} className="mt-4 flex gap-2">
           <input
             type="text"
-            placeholder="Kalit nomi (masalan, Asosiy sayt)"
+            placeholder={t("namePlaceholder")}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             autoFocus
@@ -143,14 +141,14 @@ export default function ApiKeysSection({ token }: { token: string }) {
             className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-2 text-sm font-medium text-white hover:bg-hover disabled:opacity-50 transition-colors"
           >
             {createLoading && <Spinner size={13} className="text-white" />}
-            Yaratish
+            {t("create")}
           </button>
           <button
             type="button"
             onClick={() => setShowCreate(false)}
             className="rounded-full border border-line px-3 py-2 text-sm text-muted hover:bg-bg transition-colors"
           >
-            Bekor
+            {t("cancel")}
           </button>
         </form>
       )}
@@ -158,9 +156,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
 
       {revealed && (
         <div className="mt-4 rounded-lg border border-accent/30 bg-beige p-4">
-          <p className="text-sm font-medium text-primary">
-            ✅ Kalit yaratildi. Uni xohlagan vaqtda quyidagi ro&apos;yxatdan ham nusxalashingiz mumkin.
-          </p>
+          <p className="text-sm font-medium text-primary">{t("keyCreated")}</p>
           <div className="mt-2 flex items-center gap-2">
             <code className="flex-1 break-all rounded border border-line bg-surface px-3 py-2 font-mono text-sm text-primary">
               {revealed.key}
@@ -169,14 +165,14 @@ export default function ApiKeysSection({ token }: { token: string }) {
               onClick={copyKey}
               className="shrink-0 rounded-full bg-accent px-3 py-2 text-sm font-medium text-white hover:bg-hover transition-colors"
             >
-              {copied ? "Nusxalandi!" : "Nusxalash"}
+              {copied ? t("copied") : t("copy")}
             </button>
           </div>
           <button
             onClick={() => setRevealed(null)}
             className="mt-2 text-sm text-accent hover:text-hover transition-colors"
           >
-            Yopish
+            {t("close")}
           </button>
         </div>
       )}
@@ -189,7 +185,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
         )}
         {error && <p className="text-sm text-red-500">{error}</p>}
         {!loading && !error && keys.length === 0 && (
-          <p className="text-sm text-muted">Hali API kalit yo&apos;q.</p>
+          <p className="text-sm text-muted">{t("noKeys")}</p>
         )}
         {keys.length > 0 && (
           <div className="divide-y divide-line">
@@ -201,12 +197,12 @@ export default function ApiKeysSection({ token }: { token: string }) {
                     {k.keyPrefix}…
                     {k.revokedAt && (
                       <span className="ml-2 rounded bg-red-100 px-1.5 py-0.5 text-xs font-medium text-red-600">
-                        bekor qilingan
+                        {t("revoked")}
                       </span>
                     )}
                   </p>
                   <p className="mt-0.5 text-xs text-muted">
-                    Yaratilgan: {fmt(k.createdAt)} · So&apos;nggi: {fmt(k.lastUsedAt)}
+                    {t("created", { date: fmt(k.createdAt) })} · {t("lastUsed", { date: fmt(k.lastUsedAt) })}
                   </p>
                 </div>
                 {!k.revokedAt && (
@@ -216,7 +212,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
                         onClick={() => copyRow(k.id, k.key!)}
                         className="rounded-lg border border-line px-3 py-1.5 text-xs font-medium text-muted hover:bg-bg transition-colors"
                       >
-                        {copiedId === k.id ? "Nusxalandi!" : "Nusxalash"}
+                        {copiedId === k.id ? t("copied") : t("copy")}
                       </button>
                     )}
                     <button
@@ -224,7 +220,7 @@ export default function ApiKeysSection({ token }: { token: string }) {
                       disabled={revoking === k.id}
                       className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
                     >
-                      {revoking === k.id ? "…" : "Bekor qilish"}
+                      {revoking === k.id ? "…" : t("revoke")}
                     </button>
                   </div>
                 )}

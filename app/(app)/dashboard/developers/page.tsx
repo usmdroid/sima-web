@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 const SIMA_API = "https://tryon-backend-production-92ad.up.railway.app/api";
 
@@ -260,16 +261,17 @@ func tryOn(imageData: Data) async throws {
 }`;
 
 export default function DevelopersPage() {
+  const t = useTranslations("developers");
+
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="text-3xl font-bold text-primary font-serif">Integratsiya qo&apos;llanmasi</h1>
+      <h1 className="text-3xl font-bold text-primary font-serif">{t("title")}</h1>
       <p className="mt-3 text-muted">
-        Sima vidjeti va API-ni saytingizga yoki ilovangizga ulash bo&apos;yicha to&apos;liq yo&apos;riqnoma.
-        API bazasi: <code className="rounded bg-beige px-1.5 py-0.5 text-sm font-mono text-accent">{SIMA_API}</code>
+        {t("subtitle")}
+        {" "}{t("apiBase")} <code className="rounded bg-beige px-1.5 py-0.5 text-sm font-mono text-accent">{SIMA_API}</code>
       </p>
 
-      {/* ===== Tez boshlash ===== */}
-      <Section title="Plagin ulash yo'riqnomasi">
+      <Section title={t("quickStart")}>
         <ol className="space-y-4 text-muted">
           <li className="flex gap-3">
             <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-white">1</span>
@@ -310,7 +312,7 @@ export default function DevelopersPage() {
       </Section>
 
       {/* ===== Token oqimi ===== */}
-      <Section title="Token oqimi (asosiy tushuncha)">
+      <Section title={t("tokenFlow")}>
         <p className="text-muted text-sm leading-relaxed">
           Do&apos;kon kabinetda <code className="rounded bg-beige px-1 font-mono text-accent">sk_...</code> (maxfiy API kalit) yaratadi.
           Bu kalit <strong className="text-primary">faqat do&apos;kon serverida</strong> turadi — brauzerga <strong className="text-primary">hech qachon chiqmaydi</strong>.
@@ -335,7 +337,7 @@ export default function DevelopersPage() {
       </Section>
 
       {/* ===== A. HTML/JS ===== */}
-      <Section title="A. Oddiy HTML / JavaScript">
+      <Section title={t("htmlJs")}>
         <p className="text-sm text-muted">
           Har qanday veb-saytga qo&apos;shish mumkin: WordPress, oddiy HTML yoki boshqa framework.
         </p>
@@ -351,7 +353,7 @@ export default function DevelopersPage() {
       </Section>
 
       {/* ===== B. React / Next.js ===== */}
-      <Section title="B. React / Next.js">
+      <Section title={t("react")}>
         <p className="text-sm text-muted">
           Bu loyihaning o&apos;zidagi <code className="font-mono text-primary">app/(marketing)/example/page.tsx</code> va{" "}
           <code className="font-mono text-primary">app/api/sima-token/route.ts</code> — real ishlaydigan namuna.
@@ -368,7 +370,7 @@ export default function DevelopersPage() {
       </Section>
 
       {/* ===== C. WordPress ===== */}
-      <Section title="C. WordPress / WooCommerce">
+      <Section title={t("wordpress")}>
         <p className="text-sm text-muted">
           Rasmiy plugin hozircha yo&apos;q — tema yoki <strong className="text-primary">Code Snippets</strong> plaginiga quyidagi kodni qo&apos;shing.
         </p>
@@ -377,7 +379,7 @@ export default function DevelopersPage() {
       </Section>
 
       {/* ===== D. Shopify ===== */}
-      <Section title="D. Shopify">
+      <Section title={t("shopify")}>
         <p className="text-sm text-muted">
           Shopify tema fayliga widget skriptini qo&apos;shing, token endpointni Shopify App Proxy orqali xizmat qilsin.
         </p>
@@ -386,7 +388,7 @@ export default function DevelopersPage() {
       </Section>
 
       {/* ===== E. Mobil ===== */}
-      <Section title="E. Mobil ilovalar">
+      <Section title={t("mobile")}>
         <p className="text-sm text-muted">
           Token oqimi bir xil: ilova <strong className="text-primary">o&apos;z backendidan</strong> token oladi, so&apos;ng Sima&apos;ga to&apos;g&apos;ridan-to&apos;g&apos;ri <code className="font-mono">Bearer</code> token bilan multipart so&apos;rov yuboradi.
         </p>
@@ -404,7 +406,7 @@ export default function DevelopersPage() {
 
       {/* ===== Xavfsizlik ===== */}
       <div className="mt-10 rounded-2xl border border-line bg-beige p-6">
-        <h2 className="text-base font-bold text-primary">⚠️ Xavfsizlik eslatmalari</h2>
+        <h2 className="text-base font-bold text-primary">{t("security")}</h2>
         <ul className="mt-3 space-y-2 text-sm text-muted">
           <li>
             <strong className="text-primary">sk_ kaliti hech qachon brauzerda bo&apos;lmasin</strong> — uni faqat server muhitida (<code className="font-mono">process.env</code> yoki server-side env) saqlang. Brauzer kodiga, git repoga yoki loglarga chiqarmang.
@@ -419,7 +421,7 @@ export default function DevelopersPage() {
       </div>
 
       <div className="mt-12 pb-6 text-center text-xs text-muted">
-        Savollar: <a href="mailto:info@sima.uz" className="text-accent hover:text-hover transition-colors">info@sima.uz</a>
+        {t("questions")} <a href="mailto:info@sima.uz" className="text-accent hover:text-hover transition-colors">info@sima.uz</a>
       </div>
     </div>
   );

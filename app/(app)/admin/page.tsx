@@ -45,6 +45,7 @@ export default function AdminPage() {
       router.replace("/dashboard");
       return;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setToken(s.token);
     setReady(true);
   }, [router]);
@@ -63,6 +64,7 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (token) load(token);
   }, [token, load]);
 

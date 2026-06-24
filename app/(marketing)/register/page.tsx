@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register, sendOtp, saveSession } from "@/lib/api";
 import { Spinner } from "@/app/components/Spinner";
+import { useTranslations } from "next-intl";
 
-/** Telefon mask: default +998, "+998 90 123 45 67". Boshqa kod yozilsa — erkin. */
 function formatPhone(value: string): string {
   const digits = value.replace(/\D/g, "");
   if (!digits.startsWith("998")) return digits ? "+" + digits : "";
@@ -21,6 +21,7 @@ function formatPhone(value: string): string {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const t = useTranslations("register");
   const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("+998 ");
@@ -34,7 +35,7 @@ export default function RegisterPage() {
 
   function showCode(devCode?: string) {
     if (!devCode) return;
-    setToast("OTP kod: " + devCode);
+    setToast(t("devOtp", { code: devCode }));
     setTimeout(() => setToast(null), 8000);
   }
 
@@ -42,27 +43,27 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
     if (!name.trim() || !phone.trim() || !password) {
-      setError("Do'kon nomi, telefon va parol to'ldirilishi shart.");
+      setError(t("errorRequired"));
       return;
     }
     if (phone.replace(/\D/g, "").length < 9) {
-      setError("Telefon raqamni to'liq kiriting.");
+      setError(t("errorPhone"));
       return;
     }
     if (!email.trim()) {
-      setError("Email to'ldirilishi shart.");
+      setError(t("errorEmailRequired"));
       return;
     }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) {
-      setError("Email formati noto'g'ri.");
+      setError(t("errorEmailFormat"));
       return;
     }
     if (password.length < 6) {
-      setError("Parol kamida 6 belgidan iborat bo'lsin.");
+      setError(t("errorPasswordLength"));
       return;
     }
     if (password !== confirm) {
-      setError("Parollar mos kelmadi.");
+      setError(t("errorPasswordMatch"));
       return;
     }
     setLoading(true);
@@ -71,7 +72,7 @@ export default function RegisterPage() {
       showCode(r.devCode);
       setStep(2);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Xatolik");
+      setError(err instanceof Error ? err.message : t("errorRequired"));
     } finally {
       setLoading(false);
     }
@@ -81,7 +82,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
     if (code.trim().length < 4) {
-      setError("Tasdiqlash kodini kiriting.");
+      setError(t("errorCodeRequired"));
       return;
     }
     setLoading(true);
@@ -90,7 +91,7 @@ export default function RegisterPage() {
       saveSession(res);
       router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Xatolik");
+      setError(err instanceof Error ? err.message : t("errorRequired"));
     } finally {
       setLoading(false);
     }
@@ -102,7 +103,7 @@ export default function RegisterPage() {
       const r = await sendOtp(email.trim());
       showCode(r.devCode);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Kod yuborilmadi");
+      setError(err instanceof Error ? err.message : t("errorRequired"));
     }
   }
 
@@ -113,47 +114,48 @@ export default function RegisterPage() {
           {toast}
         </div>
       )}
-      <h1 className="text-2xl font-bold tracking-tight text-primary font-serif">Hamkor bo&apos;lish</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-primary font-serif">{t("title")}</h1>
       <p className="mt-2 text-sm text-muted">
-        {step === 1 ? "Do'koningizni ro'yxatdan o'tkazing." : "Email manzilingizga yuborilgan kodni kiriting."}
+        {step === 1 ? t("step1Subtitle") : t("step2Subtitle")}
       </p>
 
       {step === 1 ? (
         <form onSubmit={onContinue} className="mt-8 space-y-4 rounded-2xl border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
-          <Field label="Do'kon nomi" value={name} onChange={setName} placeholder="ATLAS Store" />
-          <Field label="Telefon raqam" value={phone} onChange={(v) => setPhone(formatPhone(v))} placeholder="+998 90 123 45 67" type="tel" />
-          <Field label="Email" value={email} onChange={setEmail} placeholder="siz@dokon.uz" type="email" />
-          <Field label="Parol" value={password} onChange={setPassword} placeholder="••••••••" type="password" />
-          <Field label="Parolni takrorlang" value={confirm} onChange={setConfirm} placeholder="••••••••" type="password" />
+          <Field label={t("shopName")} value={name} onChange={setName} placeholder="ATLAS Store" />
+          <Field label={t("phone")} value={phone} onChange={(v) => setPhone(formatPhone(v))} placeholder="+998 90 123 45 67" type="tel" />
+          <Field label={t("email")} value={email} onChange={setEmail} placeholder="siz@dokon.uz" type="email" />
+          <Field label={t("password")} value={password} onChange={setPassword} placeholder="••••••••" type="password" />
+          <Field label={t("confirmPassword")} value={confirm} onChange={setConfirm} placeholder="••••••••" type="password" />
 
           {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
 
           <button type="submit" disabled={loading}
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-2.5 font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.25)] active:translate-y-0 disabled:opacity-50 disabled:translate-y-0">
             {loading && <Spinner size={14} className="text-white" />}
-            {loading ? "Yuborilmoqda…" : "Davom etish"}
+            {loading ? t("sending") : t("continue")}
           </button>
           <p className="text-center text-sm text-muted">
-            Akkauntingiz bormi? <Link href="/login" className="font-medium text-accent hover:text-hover transition-colors">Kirish</Link>
+            {t("haveAccount")}{" "}
+            <Link href="/login" className="font-medium text-accent hover:text-hover transition-colors">{t("login")}</Link>
           </p>
         </form>
       ) : (
         <form onSubmit={onVerify} className="mt-8 space-y-4 rounded-2xl border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
           <p className="text-sm text-muted">
-            <span className="font-medium text-primary">{email}</span> manziliga tasdiqlash kodi yuborildi.
+            {t("codeSentTo", { email })}
           </p>
-          <Field label="Tasdiqlash kodi" value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" type="text" />
+          <Field label={t("verifyCode")} value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" type="text" />
 
           {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
 
           <button type="submit" disabled={loading}
             className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-4 py-2.5 font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.25)] active:translate-y-0 disabled:opacity-50 disabled:translate-y-0">
             {loading && <Spinner size={14} className="text-white" />}
-            {loading ? "Tekshirilmoqda…" : "Tasdiqlash va ro'yxatdan o'tish"}
+            {loading ? t("verifying") : t("verifyAndRegister")}
           </button>
           <div className="flex justify-between text-sm">
-            <button type="button" onClick={() => { setStep(1); setError(null); }} className="text-muted hover:text-primary transition-colors">← Orqaga</button>
-            <button type="button" onClick={onResend} className="text-accent hover:text-hover transition-colors">Kodni qayta yuborish</button>
+            <button type="button" onClick={() => { setStep(1); setError(null); }} className="text-muted hover:text-primary transition-colors">{t("back")}</button>
+            <button type="button" onClick={onResend} className="text-accent hover:text-hover transition-colors">{t("resend")}</button>
           </div>
         </form>
       )}
@@ -162,14 +164,13 @@ export default function RegisterPage() {
 }
 
 function Field({
-  label, value, onChange, placeholder, type = "text", required = true,
+  label, value, onChange, placeholder, type = "text",
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   type?: string;
-  required?: boolean;
 }) {
   return (
     <div>
@@ -177,7 +178,6 @@ function Field({
       <input
         type={type}
         value={value}
-        required={required}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="w-full rounded-lg border border-line px-3 py-2.5 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 bg-bg"

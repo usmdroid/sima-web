@@ -38,6 +38,7 @@ export default function ClientDetailPanel({
   // Load data
   useEffect(() => {
     let active = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError(null);
     getAdminClient(token, clientId)
