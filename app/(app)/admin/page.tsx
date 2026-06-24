@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   getSession,
-  clearSession,
   getAdminStats,
   getAdminClients,
   creditAdminClient,
@@ -14,16 +11,12 @@ import {
   type AdminStats,
   type AdminClient,
 } from "@/lib/api";
-import { BRAND } from "@/lib/brand";
 import ClientDetailPanel from "./ClientDetailPanel";
 import SimIcon from "@/app/components/SimIcon";
 import { Skeleton } from "@/app/components/Skeleton";
-import { Spinner } from "@/app/components/Spinner";
 
 export default function AdminPage() {
-  const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
-  const [ready, setReady] = useState(false);
 
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [clients, setClients] = useState<AdminClient[]>([]);
@@ -37,18 +30,9 @@ export default function AdminPage() {
 
   useEffect(() => {
     const s = getSession();
-    if (!s) {
-      router.replace("/login");
-      return;
-    }
-    if (s.client.role !== "SUPER_ADMIN") {
-      router.replace("/dashboard");
-      return;
-    }
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setToken(s.token);
-    setReady(true);
-  }, [router]);
+    if (s) setToken(s.token);
+  }, []);
 
   const load = useCallback(async (t: string) => {
     setError(null);
@@ -67,11 +51,6 @@ export default function AdminPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (token) load(token);
   }, [token, load]);
-
-  function logout() {
-    clearSession();
-    router.replace("/login");
-  }
 
   async function submitCredit(id: string) {
     if (!token) return;
@@ -112,36 +91,8 @@ export default function AdminPage() {
     }
   }
 
-  if (!ready) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Spinner size={24} className="text-accent" />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-bg">
-      <header className="border-b border-line bg-surface">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link href="/dashboard" className="text-lg font-bold text-primary">
-            {BRAND} <span className="text-sm font-normal text-muted">admin</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/dashboard"
-              className="text-sm text-muted hover:text-accent transition-colors"
-            >
-              Dashboard
-            </Link>
-            <button onClick={logout} className="text-sm text-muted hover:text-primary transition-colors">
-              Chiqish
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-5xl px-6 py-10">
+    <div className="mx-auto max-w-5xl px-6 py-10">
         <h1 className="text-2xl font-bold text-primary font-serif">Admin panel</h1>
 
         {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
@@ -276,7 +227,6 @@ export default function AdminPage() {
             </div>
           )}
         </section>
-      </main>
 
       {token && detailId && (
         <ClientDetailPanel

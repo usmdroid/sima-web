@@ -6,12 +6,16 @@ import {
   getMonitoringSummary,
   getMonitoringByKey,
   getMonitoringTimeseries,
+  getAdminGlobalMonitoring,
   type MonitoringSummary,
   type MonitoringByKey,
   type MonitoringBucket,
   type MonitoringRange,
+  type AdminGlobalMonitoring,
+  type AdminMonitoringRange,
 } from "@/lib/api";
 import UsageChart from "./UsageChart";
+import SpendTrendChart from "./SpendTrendChart";
 import SimIcon from "@/app/components/SimIcon";
 import { Skeleton } from "@/app/components/Skeleton";
 import { Spinner } from "@/app/components/Spinner";
@@ -26,10 +30,161 @@ function fmtDate(iso: string | null) {
   });
 }
 
+// ---- SUPER_ADMIN global monitoring view ----
+
+function GlobalMonitoringView({ token }: { token: string }) {
+  const [range, setRange] = useState<AdminMonitoringRange>("daily");
+  const [data, setData] = useState<AdminGlobalMonitoring | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const RANGES: { id: AdminMonitoringRange; label: string }[] = [
+    { id: "daily", label: "Kunlik" },
+    { id: "weekly", label: "Haftalik" },
+    { id: "monthly", label: "Oylik" },
+  ];
+
+  const load = useCallback(async (tk: string, r: AdminMonitoringRange) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const d = await getAdminGlobalMonitoring(tk, r);
+      setData(d);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Xatolik yuz berdi.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load(token, range);
+  }, [token, range, load]);
+
+  return (
+    <div className="mx-auto max-w-5xl px-6 py-10">
+      <h1 className="text-2xl font-bold text-primary font-serif">Global Monitoring</h1>
+
+      {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
+
+      {/* Total requests: day / week / month */}
+      <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted">So&apos;rovlar (kun)</p>
+          {loading
+            ? <Skeleton className="mt-2 h-8 w-20" />
+            : <p className="mt-2 text-2xl font-bold text-primary">{data?.totalRequests.day.toLocaleString() ?? "—"}</p>}
+        </div>
+        <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted">So&apos;rovlar (hafta)</p>
+          {loading
+            ? <Skeleton className="mt-2 h-8 w-20" />
+            : <p className="mt-2 text-2xl font-bold text-primary">{data?.totalRequests.week.toLocaleString() ?? "—"}</p>}
+        </div>
+        <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted">So&apos;rovlar (oy)</p>
+          {loading
+            ? <Skeleton className="mt-2 h-8 w-20" />
+            : <p className="mt-2 text-2xl font-bold text-primary">{data?.totalRequests.month.toLocaleString() ?? "—"}</p>}
+        </div>
+      </section>
+
+      {/* Error rate */}
+      {!loading && data && (
+        <section className="mt-4 rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted">Xato darajasi (oxirgi 30 kun)</p>
+          <p className="mt-2 text-2xl font-bold text-primary">
+            {(data.errorRate.rate * 100).toFixed(1)}%
+          </p>
+          <p className="mt-1 text-xs text-muted">
+            {data.errorRate.failed.toLocaleString()} / {data.errorRate.totalTryons.toLocaleString()} so&apos;rov
+          </p>
+        </section>
+      )}
+
+      {/* Top 10 clients */}
+      <section className="mt-6 rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+        <h3 className="font-semibold text-primary">Top 10 mijozlar</h3>
+        {loading ? (
+          <div className="mt-4 space-y-2">
+            {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-10 w-full" />)}
+          </div>
+        ) : !data || data.topClients.length === 0 ? (
+          <p className="mt-4 text-sm text-muted">Ma&apos;lumot yo&apos;q.</p>
+        ) : (
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line text-left text-xs font-medium uppercase tracking-wide text-muted">
+                  <th className="py-2 pr-3">#</th>
+                  <th className="py-2 pr-3">Ism</th>
+                  <th className="py-2 pr-3 text-right">So&apos;rovlar</th>
+                  <th className="py-2 pr-3 text-right">Sarf</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-line">
+                {data.topClients.map((c, i) => (
+                  <tr key={c.clientId} className="hover:bg-bg transition-colors">
+                    <td className="py-3 pr-3 text-muted">{i + 1}</td>
+                    <td className="py-3 pr-3 font-medium text-primary">{c.name}</td>
+                    <td className="py-3 pr-3 text-right text-muted">{c.requests.toLocaleString()}</td>
+                    <td className="py-3 pr-3 text-right">
+                      <span className="inline-flex items-center gap-1 text-muted">
+                        {Math.round(c.spentSim).toLocaleString()}
+                        <SimIcon size={12} className="inline-block" />
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      {/* Credit spend trend */}
+      <section className="mt-6 rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="font-semibold text-primary">Kredit sarfi trendi</h3>
+            <p className="mt-1 text-xs text-muted">Barcha mijozlar bo&apos;yicha jami SIM sarfi</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {RANGES.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => setRange(r.id)}
+                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+                  range === r.id
+                    ? "border-accent bg-beige text-accent"
+                    : "border-line text-muted hover:border-accent"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="mt-6">
+          <SpendTrendChart
+            buckets={data?.creditSpendTrend.buckets ?? []}
+            range={range}
+            loading={loading}
+          />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// ---- CLIENT monitoring view (unchanged) ----
+
 export default function MonitoringPage() {
   const t = useTranslations("monitoring");
   const tCommon = useTranslations("common");
   const [token, setToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
 
   const [summary, setSummary] = useState<MonitoringSummary | null>(null);
   const [byKey, setByKey] = useState<MonitoringByKey[]>([]);
@@ -54,6 +209,7 @@ export default function MonitoringPage() {
     if (!s) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setToken(s.token);
+    setRole(s.client.role ?? "CLIENT");
   }, []);
 
   const loadTop = useCallback(async (tk: string) => {
@@ -73,12 +229,13 @@ export default function MonitoringPage() {
   }, [tCommon]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (token) loadTop(token);
-  }, [token, loadTop]);
+    // CLIENT path only
+    if (token && role && role !== "SUPER_ADMIN") loadTop(token);
+    else if (role === "SUPER_ADMIN") setTopLoading(false);
+  }, [token, role, loadTop]);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || role === "SUPER_ADMIN") return;
     let active = true;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setChartLoading(true);
@@ -95,9 +252,9 @@ export default function MonitoringPage() {
         if (active) setChartLoading(false);
       });
     return () => { active = false; };
-  }, [token, range, selectedKeyId, tCommon]);
+  }, [token, range, selectedKeyId, tCommon, role]);
 
-  if (!token) {
+  if (!token || role === null) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <Spinner size={24} className="text-accent" />
@@ -105,6 +262,12 @@ export default function MonitoringPage() {
     );
   }
 
+  // SUPER_ADMIN sees the global view
+  if (role === "SUPER_ADMIN") {
+    return <GlobalMonitoringView token={token} />;
+  }
+
+  // CLIENT view (unchanged)
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
       <h1 className="text-2xl font-bold text-primary font-serif">{t("title")}</h1>

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { KeyRound, BarChart2, Wallet, Code2, Settings, ShieldAlert, X } from "lucide-react";
+import { KeyRound, BarChart2, Wallet, Code2, Settings, X, Users, TrendingUp } from "lucide-react";
 import { getSession, clearSession, getWallet, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
@@ -61,18 +61,29 @@ function SidebarContent({
   onClose?: () => void;
 }) {
   const t = useTranslations("nav");
+  const isSuperAdmin = client.role === "SUPER_ADMIN";
 
   return (
     <div className="flex h-full flex-col">
       {/* Logo */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-line shrink-0">
-        <Link
-          href="/"
-          onClick={onClose}
-          className="text-lg font-bold text-primary hover:text-accent transition-colors"
-        >
-          {BRAND}
-        </Link>
+        <div>
+          <Link
+            href="/"
+            onClick={onClose}
+            className="text-lg font-bold text-primary hover:text-accent transition-colors"
+          >
+            {BRAND}
+          </Link>
+          {isSuperAdmin && (
+            <span
+              className="mt-1 block w-fit rounded-full px-2 py-0.5 text-xs font-semibold"
+              style={{ backgroundColor: "rgba(176,141,87,0.12)", color: "#B08D57" }}
+            >
+              Super Admin
+            </span>
+          )}
+        </div>
         {onClose && (
           <button onClick={onClose} aria-label="Yopish" className="text-muted hover:text-primary transition-colors md:hidden">
             <X size={18} />
@@ -80,10 +91,12 @@ function SidebarContent({
         )}
       </div>
 
-      {/* Balance widget */}
-      <div className="pt-3 shrink-0">
-        <BalanceWidget token={token} />
-      </div>
+      {/* Balance widget — faqat CLIENT uchun */}
+      {!isSuperAdmin && (
+        <div className="pt-3 shrink-0">
+          <BalanceWidget token={token} />
+        </div>
+      )}
 
       {/* Main nav */}
       <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-0.5">
@@ -91,7 +104,7 @@ function SidebarContent({
           const Icon = item.icon;
           return (
             <Link
-              key={item.href}
+              key={item.href + item.label}
               href={item.href}
               onClick={onClose}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -117,6 +130,9 @@ function SidebarContent({
           <div className="min-w-0 flex-1">
             {client.name && <p className="truncate text-sm font-medium text-primary">{client.name}</p>}
             <p className="truncate text-xs text-muted">{client.email || client.phone}</p>
+            {isSuperAdmin && (
+              <p className="truncate text-xs" style={{ color: "#B08D57" }}>Sizning rolingiz: Super Admin</p>
+            )}
           </div>
         </div>
 
@@ -164,6 +180,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setDrawerOpen(false); }, [pathname]);
 
+  // Route guard: SUPER_ADMIN hitting CLIENT-only routes → redirect /admin
+  useEffect(() => {
+    if (!client) return;
+    if (client.role === "SUPER_ADMIN") {
+      const clientOnly = ["/dashboard/keys", "/dashboard/wallet", "/dashboard/developers"];
+      if (clientOnly.some((r) => pathname === r || pathname.startsWith(r + "/"))) {
+        router.replace("/admin");
+      }
+    }
+  }, [client, pathname, router]);
+
   function logout() {
     clearSession();
     router.replace("/login");
@@ -177,16 +204,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     );
   }
 
-  const navItems = [
-    { href: "/dashboard/keys", label: t("keys"), exact: false, icon: KeyRound },
-    { href: "/dashboard/monitoring", label: t("monitoring"), exact: false, icon: BarChart2 },
-    { href: "/dashboard/wallet", label: t("wallet"), exact: false, icon: Wallet },
-    { href: "/dashboard/developers", label: t("developers"), exact: false, icon: Code2 },
-    { href: "/dashboard/settings", label: t("settings"), exact: false, icon: Settings },
-    ...(client.role === "SUPER_ADMIN"
-      ? [{ href: "/admin", label: t("admin"), exact: false, icon: ShieldAlert }]
-      : []),
-  ];
+  const isSuperAdmin = client.role === "SUPER_ADMIN";
+
+  const navItems = isSuperAdmin
+    ? [
+        { href: "/admin", label: t("users"), exact: false, icon: Users },
+        { href: "/dashboard/monitoring", label: t("monitoring"), exact: false, icon: BarChart2 },
+        { href: "/admin/stats", label: t("stats"), exact: false, icon: TrendingUp },
+        { href: "/dashboard/settings", label: t("settings"), exact: false, icon: Settings },
+      ]
+    : [
+        { href: "/dashboard/keys", label: t("keys"), exact: false, icon: KeyRound },
+        { href: "/dashboard/monitoring", label: t("monitoring"), exact: false, icon: BarChart2 },
+        { href: "/dashboard/wallet", label: t("wallet"), exact: false, icon: Wallet },
+        { href: "/dashboard/developers", label: t("developers"), exact: false, icon: Code2 },
+        { href: "/dashboard/settings", label: t("settings"), exact: false, icon: Settings },
+      ];
 
   function isActive(href: string, exact: boolean) {
     if (exact) return pathname === href;

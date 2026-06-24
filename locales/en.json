@@ -11,6 +11,8 @@
     "developers": "For Developers",
     "settings": "Settings",
     "admin": "Admin",
+    "users": "Users",
+    "stats": "Statistics",
     "logout": "Sign Out"
   },
   "balance": {

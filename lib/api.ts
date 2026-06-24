@@ -59,16 +59,36 @@ export function login(identifier: string, password: string): Promise<AuthResult>
   return postJson("/auth/login", { identifier, password });
 }
 
-// ---- Sessiya (localStorage) ----
+// ---- Sessiya (cookie + localStorage) ----
 const KEY = "sima_session";
 
+// Env-driven cookie domain: ".trysima.uz" in prod, omitted on localhost.
+const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_COOKIE_DOMAIN;
+
+function buildCookieString(value: string, maxAge?: number): string {
+  const parts = [`${KEY}=${encodeURIComponent(value)}`, "Path=/", "SameSite=Lax"];
+  if (COOKIE_DOMAIN) parts.push(`Domain=${COOKIE_DOMAIN}`, "Secure");
+  if (maxAge !== undefined) parts.push(`Max-Age=${maxAge}`);
+  return parts.join("; ");
+}
+
+function getCookieRaw(): string | null {
+  if (typeof document === "undefined") return null;
+  const entry = document.cookie.split(";").find((c) => c.trim().startsWith(KEY + "="));
+  if (!entry) return null;
+  return decodeURIComponent(entry.split("=").slice(1).join("="));
+}
+
 export function saveSession(r: AuthResult) {
-  if (typeof window !== "undefined") localStorage.setItem(KEY, JSON.stringify(r));
+  if (typeof window === "undefined") return;
+  const json = JSON.stringify(r);
+  localStorage.setItem(KEY, json);
+  document.cookie = buildCookieString(json);
 }
 
 export function getSession(): AuthResult | null {
   if (typeof window === "undefined") return null;
-  const raw = localStorage.getItem(KEY);
+  const raw = getCookieRaw() ?? localStorage.getItem(KEY);
   if (!raw) return null;
   try {
     return JSON.parse(raw) as AuthResult;
@@ -78,7 +98,9 @@ export function getSession(): AuthResult | null {
 }
 
 export function clearSession() {
-  if (typeof window !== "undefined") localStorage.removeItem(KEY);
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(KEY);
+  document.cookie = buildCookieString("", 0);
 }
 
 // ---- API Kalitlar ----
@@ -448,6 +470,41 @@ export async function getAdminStats(token: string): Promise<AdminStats> {
   const json = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(json.error || "Statistikani yuklab bo'lmadi.");
   return json as AdminStats;
+}
+
+// ---- Admin Global Monitoring ----
+
+export interface AdminGlobalTopClient {
+  clientId: string;
+  name: string;
+  requests: number;
+  spentSim: number;
+}
+
+export interface AdminGlobalSpendBucket {
+  ts: string;
+  spentSim: number;
+}
+
+export interface AdminGlobalMonitoring {
+  totalRequests: { day: number; week: number; month: number };
+  topClients: AdminGlobalTopClient[];
+  creditSpendTrend: { range: string; buckets: AdminGlobalSpendBucket[] };
+  errorRate: { totalTryons: number; failed: number; rate: number };
+}
+
+export type AdminMonitoringRange = "daily" | "weekly" | "monthly";
+
+export async function getAdminGlobalMonitoring(
+  token: string,
+  range: AdminMonitoringRange = "daily"
+): Promise<AdminGlobalMonitoring> {
+  const res = await fetch(`${API_BASE}/admin/monitoring/global?range=${range}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Global monitoringni yuklab bo'lmadi.");
+  return json as AdminGlobalMonitoring;
 }
 
 // ---- Hisob sozlamalari (Account Settings) ----
