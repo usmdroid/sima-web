@@ -22,13 +22,11 @@ function SidebarContent({
   drawerClose,
   isActive,
   onLogout,
-  showThemeLang,
 }: {
   client: ClientInfo;
   drawerClose?: () => void;
   isActive: (href: string, exact: boolean) => boolean;
   onLogout: () => void;
-  showThemeLang: boolean;
 }) {
   return (
     <div className="flex h-full flex-col">
@@ -82,17 +80,13 @@ function SidebarContent({
         })}
       </nav>
 
-      {/* Theme / language switchers (settings route only) */}
-      {showThemeLang && (
-        <>
-          <div className="px-2">
-            <ThemeSwitcher />
-          </div>
-          <div className="px-2">
-            <LanguageSwitcher />
-          </div>
-        </>
-      )}
+      {/* Theme / language switchers */}
+      <div className="px-2">
+        <ThemeSwitcher />
+      </div>
+      <div className="px-2">
+        <LanguageSwitcher />
+      </div>
 
       {/* Profile + logout */}
       <div
@@ -146,8 +140,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setDrawerOpen(false);
   }, [pathname]);
 
-  const isSettings = pathname === "/dashboard/settings" || pathname.startsWith("/dashboard/settings/");
-
   function logout() {
     clearSession();
     router.replace("/login");
@@ -174,7 +166,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           client={client}
           isActive={isActive}
           onLogout={logout}
-          showThemeLang={isSettings}
         />
       </aside>
 
@@ -197,13 +188,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           drawerClose={() => setDrawerOpen(false)}
           isActive={isActive}
           onLogout={logout}
-          showThemeLang={isSettings}
         />
       </aside>
 
       {/* Right column */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className={`border-b border-line bg-surface${isSettings ? " md:hidden" : ""}`}>
+        <header className="border-b border-line bg-surface md:hidden">
           <div className="flex items-center justify-between px-6 py-4">
             {/* Mobile: hamburger + brand */}
             <div className="flex items-center gap-3 md:hidden">
