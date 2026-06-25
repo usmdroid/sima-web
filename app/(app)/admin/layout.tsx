@@ -7,8 +7,7 @@ import { Users, BarChart2, TrendingUp, Settings, LogOut, X } from "lucide-react"
 import { getSession, clearSession, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
-import { ThemeSwitcher } from "@/app/components/ThemeSwitcher";
-import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
+import { LogoutModal, SidebarBottom } from "@/app/components/sidebar-shared";
 
 const ADMIN_NAV = [
   { href: "/admin", label: "Foydalanuvchilar", exact: true, icon: Users },
@@ -17,29 +16,6 @@ const ADMIN_NAV = [
   { href: "/admin/settings", label: "Sozlamalar", exact: false, icon: Settings },
 ];
 
-function LogoutModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-primary/40 backdrop-blur-[2px]" onClick={onCancel} />
-      <div
-        className="relative w-full max-w-sm rounded-2xl border border-line bg-surface px-6 py-6 shadow-xl"
-        style={{ animation: "modalIn 200ms cubic-bezier(0.16, 1, 0.3, 1) both" }}
-      >
-        <style>{`@keyframes modalIn { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:scale(1); } }`}</style>
-        <h2 className="font-serif text-lg font-bold text-primary">Chiqishni tasdiqlang</h2>
-        <p className="mt-2 text-sm text-muted">Hisobingizdan chiqishga ishonchingiz komilmi?</p>
-        <div className="mt-5 flex gap-3">
-          <button onClick={onCancel} className="flex-1 rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition hover:bg-bg hover:text-primary">
-            Bekor qilish
-          </button>
-          <button onClick={onConfirm} className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
-            Chiqish
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function SidebarContent({
   client,
@@ -108,37 +84,12 @@ function SidebarContent({
         </button>
       </nav>
 
-      {/* Theme / language switchers */}
-      <div className="px-2">
-        <ThemeSwitcher />
-      </div>
-      <div className="px-2">
-        <LanguageSwitcher />
-      </div>
-
-      {/* Profile */}
-      <div
-        className="shrink-0 px-3 py-3"
-        style={{
-          backgroundColor: "var(--color-sidebar-footer)",
-          borderTop: "1px solid var(--color-sidebar-footer-border)",
-        }}
-      >
-        <div className="flex items-center gap-2.5 rounded-lg px-2 py-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/15 text-sm font-bold text-accent">
-            {(client.name || client.email || "?")[0].toUpperCase()}
-          </div>
-          <div className="min-w-0 flex-1">
-            {client.name && (
-              <p className="truncate text-sm font-medium text-primary">{client.name}</p>
-            )}
-            <p className="truncate text-xs text-muted">{client.email || client.phone}</p>
-            <p className="truncate text-xs text-accent">
-              Sizning rolingiz: Super Admin
-            </p>
-          </div>
-        </div>
-      </div>
+      <SidebarBottom
+        client={client}
+        settingsHref="/admin/settings"
+        roleLabel="Sizning rolingiz: Super Admin"
+        onClose={drawerClose}
+      />
     </div>
   );
 }
