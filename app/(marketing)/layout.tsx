@@ -20,7 +20,7 @@ function BrandLogo() {
 function Header() {
   const t = useTranslations("marketing");
   return (
-    <header className="sticky top-0 z-50 border-b border-line">
+    <header className="sticky top-0 z-50 border-b border-line bg-bg">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="text-xl font-bold tracking-tight text-primary">
           <BrandLogo />
@@ -58,13 +58,10 @@ function Footer() {
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="bg-cover bg-center"
-      style={{ backgroundImage: "url('/texture.webp')" }}
-    >
+    <>
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
-    </div>
+    </>
   );
 }
