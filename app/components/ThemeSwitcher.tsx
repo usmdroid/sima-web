@@ -33,7 +33,7 @@ export function ThemeSwitcher() {
           aria-label={label}
           className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
             theme === value
-              ? "bg-surface text-accent shadow-sm"
+              ? "bg-accent text-white"
               : "text-muted hover:text-primary"
           }`}
         >

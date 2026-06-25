@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { BRAND, BRAND_EMAIL } from "@/lib/brand";
 import AuthNavButton from "./AuthNavButton";
+import { ThemeSwitcher } from "@/app/components/ThemeSwitcher";
+import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
 
 function BrandLogo() {
@@ -29,7 +31,11 @@ function Header() {
           <Link href="/#partner" className="nav-link hover:text-accent transition-colors">{t("partner")}</Link>
           <Link href="/example" className="font-medium text-accent hover:text-hover transition-colors">{t("example")}</Link>
         </nav>
-        <AuthNavButton />
+        <div className="flex items-center gap-2">
+          <AuthNavButton />
+          <ThemeSwitcher />
+          <LanguageSwitcher />
+        </div>
       </div>
     </header>
   );

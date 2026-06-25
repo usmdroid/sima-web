@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { KeyRound, BarChart2, Wallet, Code2, Settings, X, Users, TrendingUp } from "lucide-react";
+import { KeyRound, BarChart2, Wallet, Code2, Settings, X, Users, TrendingUp, LogOut, Plus } from "lucide-react";
 import { getSession, clearSession, getWallet, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
@@ -26,21 +26,54 @@ function BalanceWidget({ token }: { token: string }) {
   }, [token]);
 
   return (
-    <div className="mx-3 mb-3 rounded-xl border border-line bg-[rgba(176,141,87,0.06)] p-3">
-      <div className="flex items-center gap-2">
-        <Image src="/sim-icon.png" alt="SIM" width={20} height={20} className="shrink-0" />
-        <div className="min-w-0 flex-1">
-          {balance != null
-            ? <span className="text-sm font-bold text-primary">{Math.round(balance).toLocaleString()} {t("sim")}</span>
-            : <Skeleton className="h-4 w-16" />}
-        </div>
+    <div className="mx-3 mb-2 flex items-center gap-2 rounded-xl border border-line bg-[rgba(176,141,87,0.06)] px-3 py-2">
+      <Image src="/sim-icon.png" alt="SIM" width={20} height={20} className="shrink-0" />
+      <div className="min-w-0 flex-1">
+        {balance != null
+          ? (
+            <span className="font-serif text-sm font-bold" style={{ color: "var(--color-accent)" }}>
+              {Math.round(balance).toLocaleString()} SIM
+            </span>
+          )
+          : <Skeleton className="h-4 w-16" />}
       </div>
       <Link
         href="/dashboard/wallet"
-        className="mt-2 flex w-full items-center justify-center rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-hover"
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-white transition hover:bg-hover"
+        title={t("addCredits")}
+        aria-label={t("addCredits")}
       >
-        {t("addCredits")}
+        <Plus size={14} />
       </Link>
+    </div>
+  );
+}
+
+function LogoutModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-primary/40 backdrop-blur-[2px]" onClick={onCancel} />
+      <div
+        className="relative w-full max-w-sm rounded-2xl border border-line bg-surface px-6 py-6 shadow-xl"
+        style={{ animation: "modalIn 200ms cubic-bezier(0.16, 1, 0.3, 1) both" }}
+      >
+        <h2 className="font-serif text-lg font-bold text-primary">Chiqishni tasdiqlang</h2>
+        <p className="mt-2 text-sm text-muted">Hisobingizdan chiqishga ishonchingiz komilmi?</p>
+        <div className="mt-5 flex gap-3">
+          <button
+            onClick={onCancel}
+            className="flex-1 rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition hover:bg-bg hover:text-primary"
+          >
+            Bekor qilish
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+          >
+            Chiqish
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -50,14 +83,14 @@ function SidebarContent({
   token,
   navItems,
   isActive,
-  onLogout,
+  onLogoutRequest,
   onClose,
 }: {
   client: ClientInfo;
   token: string;
   navItems: { href: string; label: string; exact: boolean; icon: React.ElementType }[];
   isActive: (href: string, exact: boolean) => boolean;
-  onLogout: () => void;
+  onLogoutRequest: () => void;
   onClose?: () => void;
 }) {
   const t = useTranslations("nav");
@@ -91,13 +124,6 @@ function SidebarContent({
         )}
       </div>
 
-      {/* Balance widget — faqat CLIENT uchun */}
-      {!isSuperAdmin && (
-        <div className="pt-3 shrink-0">
-          <BalanceWidget token={token} />
-        </div>
-      )}
-
       {/* Main nav */}
       <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-0.5">
         {navItems.map((item) => {
@@ -122,19 +148,8 @@ function SidebarContent({
 
       {/* Bottom section */}
       <div className="shrink-0 border-t border-line px-3 py-3 space-y-2">
-        {/* User profile */}
-        <div className="flex items-center gap-2.5 rounded-lg px-2 py-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/15 text-sm font-bold text-accent">
-            {(client.name || client.email || "?")[0].toUpperCase()}
-          </div>
-          <div className="min-w-0 flex-1">
-            {client.name && <p className="truncate text-sm font-medium text-primary">{client.name}</p>}
-            <p className="truncate text-xs text-muted">{client.email || client.phone}</p>
-            {isSuperAdmin && (
-              <p className="truncate text-xs" style={{ color: "#B08D57" }}>Sizning rolingiz: Super Admin</p>
-            )}
-          </div>
-        </div>
+        {/* Credit widget — CLIENT only */}
+        {!isSuperAdmin && <BalanceWidget token={token} />}
 
         {/* Theme switcher */}
         <div className="px-2">
@@ -146,13 +161,29 @@ function SidebarContent({
           <LanguageSwitcher />
         </div>
 
-        {/* Logout */}
+        {/* Logout — red */}
         <button
-          onClick={onLogout}
-          className="w-full rounded-lg px-3 py-2 text-left text-sm text-muted hover:bg-bg hover:text-primary transition-colors"
+          onClick={onLogoutRequest}
+          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 transition hover:bg-bg hover:text-red-700"
         >
+          <LogOut size={15} className="shrink-0" />
           {t("logout")}
         </button>
+
+        {/* Admin profile — very bottom, links to settings */}
+        <Link
+          href="/dashboard/settings"
+          onClick={onClose}
+          className="flex items-center gap-2.5 rounded-lg px-2 py-2 transition hover:bg-bg"
+        >
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/15 text-sm font-bold text-accent">
+            {(client.name || client.email || "?")[0].toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            {client.name && <p className="truncate text-xs font-medium text-primary">{client.name}</p>}
+            <p className="truncate text-xs text-muted">{client.email || client.phone}</p>
+          </div>
+        </Link>
       </div>
     </div>
   );
@@ -164,6 +195,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [client, setClient] = useState<ClientInfo | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const t = useTranslations("nav");
 
   useEffect(() => {
@@ -214,8 +246,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { href: "/dashboard/settings", label: t("settings"), exact: false, icon: Settings },
       ]
     : [
-        { href: "/dashboard/keys", label: t("keys"), exact: false, icon: KeyRound },
         { href: "/dashboard/monitoring", label: t("monitoring"), exact: false, icon: BarChart2 },
+        { href: "/dashboard/keys", label: t("keys"), exact: false, icon: KeyRound },
         { href: "/dashboard/wallet", label: t("wallet"), exact: false, icon: Wallet },
         { href: "/dashboard/developers", label: t("developers"), exact: false, icon: Code2 },
         { href: "/dashboard/settings", label: t("settings"), exact: false, icon: Settings },
@@ -235,7 +267,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           token={token}
           navItems={navItems}
           isActive={isActive}
-          onLogout={logout}
+          onLogoutRequest={() => setShowLogoutModal(true)}
         />
       </aside>
 
@@ -258,33 +290,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           token={token}
           navItems={navItems}
           isActive={isActive}
-          onLogout={logout}
+          onLogoutRequest={() => { setDrawerOpen(false); setShowLogoutModal(true); }}
           onClose={() => setDrawerOpen(false)}
         />
       </aside>
 
-      {/* Right column: topbar + content */}
+      {/* Right column */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="border-b border-line bg-surface">
-          <div className="flex items-center justify-between px-6 py-4">
-            {/* Mobile: hamburger + logo */}
-            <div className="flex items-center gap-3 md:hidden">
-              <button
-                onClick={() => setDrawerOpen((v) => !v)}
-                aria-label="Menyu"
-                className="text-muted hover:text-primary transition-colors"
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <Link href="/" className="text-lg font-bold text-primary">
-                {BRAND}
-              </Link>
-            </div>
-            {/* Desktop spacer */}
-            <div className="hidden md:block" />
-            <div />
+        {/* Mobile-only top bar with hamburger */}
+        <header className="md:hidden border-b border-line bg-surface">
+          <div className="flex items-center gap-3 px-4 py-3">
+            <button
+              onClick={() => setDrawerOpen((v) => !v)}
+              aria-label="Menyu"
+              className="text-muted hover:text-primary transition-colors"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <Link href="/" className="text-lg font-bold text-primary">
+              {BRAND}
+            </Link>
           </div>
         </header>
 
@@ -292,6 +319,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </main>
       </div>
+
+      {/* Logout confirmation modal */}
+      {showLogoutModal && (
+        <LogoutModal
+          onConfirm={logout}
+          onCancel={() => setShowLogoutModal(false)}
+        />
+      )}
     </div>
   );
 }

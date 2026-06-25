@@ -36,7 +36,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="sima-theme">
       <LocaleCtx.Provider value={{ locale, setLocale }}>
         <NextIntlClientProvider locale={locale} messages={allMessages[locale]}>
           {children}
