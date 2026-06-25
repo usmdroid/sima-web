@@ -82,7 +82,13 @@ function SidebarContent({
       </nav>
 
       {/* Profile + logout */}
-      <div className="shrink-0 border-t border-line px-3 py-3 space-y-2">
+      <div
+        className="shrink-0 px-3 py-3 space-y-2"
+        style={{
+          backgroundColor: "var(--color-sidebar-footer)",
+          borderTop: "1px solid var(--color-sidebar-footer-border)",
+        }}
+      >
         <div className="flex items-center gap-2.5 rounded-lg px-2 py-2">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/15 text-sm font-bold text-accent">
             {(client.name || client.email || "?")[0].toUpperCase()}

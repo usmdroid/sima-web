@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { KeyRound, BarChart2, Wallet, Code2, Settings, X, Users, TrendingUp, LogOut, Plus } from "lucide-react";
 import { getSession, clearSession, getWallet, type ClientInfo } from "@/lib/api";
+import { formatCredit } from "@/lib/format";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
 import { Skeleton } from "@/app/components/Skeleton";
@@ -26,13 +27,13 @@ function BalanceWidget({ token }: { token: string }) {
   }, [token]);
 
   return (
-    <div className="mx-3 mb-2 flex items-center gap-2 rounded-xl border border-line bg-[rgba(176,141,87,0.06)] px-3 py-2">
+    <div className="flex items-center gap-2 rounded-xl border border-line bg-[rgba(176,141,87,0.06)] px-3 py-2">
       <Image src="/sim-icon.png" alt="SIM" width={20} height={20} className="shrink-0" />
       <div className="min-w-0 flex-1">
         {balance != null
           ? (
             <span className="font-serif text-sm font-bold" style={{ color: "var(--color-accent)" }}>
-              {Math.round(balance).toLocaleString()} SIM
+              {formatCredit(Math.round(balance))} SIM
             </span>
           )
           : <Skeleton className="h-4 w-16" />}
@@ -147,9 +148,19 @@ function SidebarContent({
       </nav>
 
       {/* Bottom section */}
-      <div className="shrink-0 border-t border-line px-3 py-3 space-y-2">
+      <div
+        className="shrink-0 px-3 py-3 space-y-2"
+        style={{
+          backgroundColor: "var(--color-sidebar-footer)",
+          borderTop: "1px solid var(--color-sidebar-footer-border)",
+        }}
+      >
         {/* Credit widget — CLIENT only */}
-        {!isSuperAdmin && <BalanceWidget token={token} />}
+        {!isSuperAdmin && (
+          <div className="px-2">
+            <BalanceWidget token={token} />
+          </div>
+        )}
 
         {/* Theme switcher */}
         <div className="px-2">

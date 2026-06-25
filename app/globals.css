@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme inline {
+@theme {
   /* Colors — light (default) */
   --color-bg: #FAF7F2;
   --color-surface: #FFFFFF;
@@ -11,6 +11,8 @@
   --color-beige: #E6DFD0;
   --color-hover: #C9A36A;
   --color-disabled: #EBE6DC;
+  --color-sidebar-footer: #F1ECE3;
+  --color-sidebar-footer-border: rgba(0, 0, 0, 0.06);
 
   /* Fonts */
   --font-serif: var(--font-playfair);
@@ -35,11 +37,13 @@
     --color-surface: #252320;
     --color-primary: #F0EBE3;
     --color-accent: #C9A572;
-    --color-line: #3D3830;
-    --color-muted: #9B9089;
+    --color-line: #3A352E;
+    --color-muted: #A39B8E;
     --color-beige: #2E2A25;
     --color-hover: #D4B07A;
     --color-disabled: #2A2621;
+    --color-sidebar-footer: #1F1D1A;
+    --color-sidebar-footer-border: rgba(255, 255, 255, 0.06);
   }
 
   /* Mandatory accessibility: freeze all motion for users who prefer it */
