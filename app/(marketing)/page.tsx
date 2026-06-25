@@ -30,7 +30,12 @@ export default function LandingPage() {
   return (
     <>
       {/* Hero */}
-      <section className="mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28">
+      <div className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-50"
+          style={{ backgroundImage: "url('/texture.webp')" }}
+        />
+      <section className="relative mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
             <span className="inline-block rounded-full border border-line bg-beige px-4 py-1 text-xs font-medium uppercase tracking-wider text-accent">
@@ -64,6 +69,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </div>
 
       {/* Features */}
       <section id="features" className="border-t border-line bg-beige py-20">
