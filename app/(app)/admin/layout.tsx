@@ -14,7 +14,7 @@ const ADMIN_NAV = [
   { href: "/admin", label: "Foydalanuvchilar", exact: true, icon: Users },
   { href: "/admin/monitoring", label: "Monitoring", exact: false, icon: BarChart2 },
   { href: "/admin/stats", label: "Statistika", exact: false, icon: TrendingUp },
-  { href: "/dashboard/settings", label: "Sozlamalar", exact: false, icon: Settings },
+  { href: "/admin/settings", label: "Sozlamalar", exact: false, icon: Settings },
 ];
 
 function SidebarContent({
