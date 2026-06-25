@@ -33,7 +33,7 @@ function BalanceWidget({ token }: { token: string }) {
         {balance != null
           ? (
             <span className="font-serif text-sm font-bold" style={{ color: "var(--color-accent)" }}>
-              {formatCredit(Math.round(balance))} SIM
+              {formatCredit(Math.round(balance))}
             </span>
           )
           : <Skeleton className="h-4 w-16" />}
@@ -145,6 +145,13 @@ function SidebarContent({
             </Link>
           );
         })}
+        <button
+          onClick={onLogoutRequest}
+          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 transition hover:bg-bg hover:text-red-700"
+        >
+          <LogOut size={15} className="shrink-0" />
+          {t("logout")}
+        </button>
       </nav>
 
       {/* Bottom section */}
@@ -172,16 +179,7 @@ function SidebarContent({
           <LanguageSwitcher />
         </div>
 
-        {/* Logout — red */}
-        <button
-          onClick={onLogoutRequest}
-          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 transition hover:bg-bg hover:text-red-700"
-        >
-          <LogOut size={15} className="shrink-0" />
-          {t("logout")}
-        </button>
-
-        {/* Admin profile — very bottom, links to settings */}
+        {/* Profile — links to settings */}
         <Link
           href="/dashboard/settings"
           onClick={onClose}
@@ -272,7 +270,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex min-h-screen bg-bg">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex md:flex-col w-56 shrink-0 bg-surface border-r border-line">
+      <aside className="hidden md:flex md:flex-col w-56 shrink-0 bg-surface border-r border-line h-screen sticky top-0">
         <SidebarContent
           client={client}
           token={token}

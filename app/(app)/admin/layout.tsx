@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Users, BarChart2, TrendingUp, Settings, X } from "lucide-react";
+import { Users, BarChart2, TrendingUp, Settings, LogOut, X } from "lucide-react";
 import { getSession, clearSession, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
@@ -27,7 +27,8 @@ function SidebarContent({
   drawerClose?: () => void;
   isActive: (href: string, exact: boolean) => boolean;
   onLogout: () => void;
-}) {
+})
+ {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
@@ -78,6 +79,13 @@ function SidebarContent({
             </Link>
           );
         })}
+        <button
+          onClick={onLogout}
+          className="flex w-full items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted hover:bg-bg hover:text-primary transition-colors"
+        >
+          <LogOut size={15} className="shrink-0" />
+          Chiqish
+        </button>
       </nav>
 
       {/* Theme / language switchers */}
@@ -88,9 +96,9 @@ function SidebarContent({
         <LanguageSwitcher />
       </div>
 
-      {/* Profile + logout */}
+      {/* Profile */}
       <div
-        className="shrink-0 px-3 py-3 space-y-2"
+        className="shrink-0 px-3 py-3"
         style={{
           backgroundColor: "var(--color-sidebar-footer)",
           borderTop: "1px solid var(--color-sidebar-footer-border)",
@@ -110,12 +118,6 @@ function SidebarContent({
             </p>
           </div>
         </div>
-        <button
-          onClick={onLogout}
-          className="w-full rounded-lg px-3 py-2 text-left text-sm text-muted hover:bg-bg hover:text-primary transition-colors"
-        >
-          Chiqish
-        </button>
       </div>
     </div>
   );
@@ -161,7 +163,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen bg-bg">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex md:flex-col w-56 shrink-0 bg-surface border-r border-line">
+      <aside className="hidden md:flex md:flex-col w-56 shrink-0 bg-surface border-r border-line h-screen sticky top-0">
         <SidebarContent
           client={client}
           isActive={isActive}

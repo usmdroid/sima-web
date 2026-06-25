@@ -19,12 +19,8 @@ export function ThemeSwitcher() {
     { value: "system", Icon: Monitor, label: t("system") },
   ];
 
-  if (!mounted) {
-    return <div className="h-8 w-[88px] rounded-lg border border-line bg-bg" />;
-  }
-
   return (
-    <div className="flex items-center gap-0.5 rounded-lg border border-line bg-bg p-0.5">
+    <div className={`flex items-center gap-0.5 rounded-lg border border-line bg-bg p-0.5 transition-opacity ${!mounted ? "opacity-0 pointer-events-none" : ""}`}>
       {options.map(({ value, Icon, label }) => (
         <button
           key={value}
