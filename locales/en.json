@@ -186,7 +186,9 @@
     "errorEmailFormat": "Invalid email format.",
     "errorPasswordLength": "Password must be at least 6 characters.",
     "errorPasswordMatch": "Passwords do not match.",
-    "errorCodeRequired": "Enter the verification code."
+    "errorCodeRequired": "Enter the verification code.",
+    "copyCode": "Copy code",
+    "copied": "Copied ✓"
   },
   "marketing": {
     "features": "Features",

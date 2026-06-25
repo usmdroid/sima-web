@@ -32,6 +32,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   function showCode(devCode?: string) {
     if (!devCode) return;
@@ -144,7 +145,21 @@ export default function RegisterPage() {
           <p className="text-sm text-muted">
             {t("codeSentTo", { email })}
           </p>
-          <Field label={t("verifyCode")} value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" type="text" />
+          <div className="relative">
+            <Field label={t("verifyCode")} value={code} onChange={(v) => setCode(v.replace(/\D/g, "").slice(0, 6))} placeholder="123456" type="text" />
+            <button
+              type="button"
+              disabled={code.trim().length === 0}
+              onClick={() => {
+                navigator.clipboard.writeText(code);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="mt-1 text-xs text-accent hover:text-hover transition-colors disabled:opacity-40"
+            >
+              {copied ? t("copied") : t("copyCode")}
+            </button>
+          </div>
 
           {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
 

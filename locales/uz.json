@@ -186,7 +186,9 @@
     "errorEmailFormat": "Email formati noto'g'ri.",
     "errorPasswordLength": "Parol kamida 6 belgidan iborat bo'lsin.",
     "errorPasswordMatch": "Parollar mos kelmadi.",
-    "errorCodeRequired": "Tasdiqlash kodini kiriting."
+    "errorCodeRequired": "Tasdiqlash kodini kiriting.",
+    "copyCode": "Nusxa olish",
+    "copied": "Nusxalandi ✓"
   },
   "marketing": {
     "features": "Imkoniyatlar",

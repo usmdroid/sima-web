@@ -184,7 +184,9 @@
     "errorEmailFormat": "Неверный формат email.",
     "errorPasswordLength": "Пароль должен содержать не менее 6 символов.",
     "errorPasswordMatch": "Пароли не совпадают.",
-    "errorCodeRequired": "Введите код подтверждения."
+    "errorCodeRequired": "Введите код подтверждения.",
+    "copyCode": "Скопировать",
+    "copied": "Скопировано ✓"
   },
   "marketing": {
     "features": "Возможности",

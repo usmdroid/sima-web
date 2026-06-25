@@ -32,9 +32,9 @@ function Header() {
           <Link href="/example" className="font-medium text-accent hover:text-hover transition-colors">{t("example")}</Link>
         </nav>
         <div className="flex items-center gap-2">
-          <AuthNavButton />
           <ThemeSwitcher />
           <LanguageSwitcher />
+          <AuthNavButton />
         </div>
       </div>
     </header>
@@ -49,7 +49,7 @@ function Footer() {
         <div className="font-semibold text-primary">
           <BrandLogo />
         </div>
-        <div>{t("footerService")} · {new Date().getFullYear()}</div>
+        <div>{BRAND} · {new Date().getFullYear()}</div>
         <a href={`mailto:${BRAND_EMAIL}`} className="hover:text-primary transition-colors">{BRAND_EMAIL}</a>
       </div>
     </footer>

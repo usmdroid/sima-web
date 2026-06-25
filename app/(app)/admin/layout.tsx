@@ -7,6 +7,8 @@ import { Users, BarChart2, TrendingUp, Settings, X } from "lucide-react";
 import { getSession, clearSession, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
+import { ThemeSwitcher } from "@/app/components/ThemeSwitcher";
+import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
 
 const ADMIN_NAV = [
   { href: "/admin", label: "Foydalanuvchilar", exact: true, icon: Users },
@@ -20,11 +22,13 @@ function SidebarContent({
   drawerClose,
   isActive,
   onLogout,
+  showThemeLang,
 }: {
   client: ClientInfo;
   drawerClose?: () => void;
   isActive: (href: string, exact: boolean) => boolean;
   onLogout: () => void;
+  showThemeLang: boolean;
 }) {
   return (
     <div className="flex h-full flex-col">
@@ -38,13 +42,10 @@ function SidebarContent({
           >
             {BRAND}
           </Link>
-          <span className="mt-0.5 block text-xs font-medium" style={{ color: "#B08D57" }}>
+          <span className="mt-0.5 block text-xs font-medium text-accent">
             Admin
           </span>
-          <span
-            className="mt-1 block w-fit rounded-full px-2 py-0.5 text-xs font-semibold"
-            style={{ backgroundColor: "rgba(176,141,87,0.12)", color: "#B08D57" }}
-          >
+          <span className="mt-1 block w-fit rounded-full px-2 py-0.5 text-xs font-semibold bg-accent/10 text-accent">
             Super Admin
           </span>
         </div>
@@ -81,6 +82,18 @@ function SidebarContent({
         })}
       </nav>
 
+      {/* Theme / language switchers (settings route only) */}
+      {showThemeLang && (
+        <>
+          <div className="px-2">
+            <ThemeSwitcher />
+          </div>
+          <div className="px-2">
+            <LanguageSwitcher />
+          </div>
+        </>
+      )}
+
       {/* Profile + logout */}
       <div
         className="shrink-0 px-3 py-3 space-y-2"
@@ -98,7 +111,7 @@ function SidebarContent({
               <p className="truncate text-sm font-medium text-primary">{client.name}</p>
             )}
             <p className="truncate text-xs text-muted">{client.email || client.phone}</p>
-            <p className="truncate text-xs" style={{ color: "#B08D57" }}>
+            <p className="truncate text-xs text-accent">
               Sizning rolingiz: Super Admin
             </p>
           </div>
@@ -133,6 +146,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setDrawerOpen(false);
   }, [pathname]);
 
+  const isSettings = pathname === "/dashboard/settings" || pathname.startsWith("/dashboard/settings/");
+
   function logout() {
     clearSession();
     router.replace("/login");
@@ -159,6 +174,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           client={client}
           isActive={isActive}
           onLogout={logout}
+          showThemeLang={isSettings}
         />
       </aside>
 
@@ -181,12 +197,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           drawerClose={() => setDrawerOpen(false)}
           isActive={isActive}
           onLogout={logout}
+          showThemeLang={isSettings}
         />
       </aside>
 
       {/* Right column */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="border-b border-line bg-surface">
+        <header className={`border-b border-line bg-surface${isSettings ? " md:hidden" : ""}`}>
           <div className="flex items-center justify-between px-6 py-4">
             {/* Mobile: hamburger + brand */}
             <div className="flex items-center gap-3 md:hidden">
