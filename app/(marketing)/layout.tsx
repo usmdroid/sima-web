@@ -20,7 +20,7 @@ function BrandLogo() {
 function Header() {
   const t = useTranslations("marketing");
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-bg/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-line backdrop-blur-md" style={{ backgroundColor: "color-mix(in srgb, var(--color-bg) 82%, transparent)" }}>
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="text-xl font-bold tracking-tight text-primary">
           <BrandLogo />
