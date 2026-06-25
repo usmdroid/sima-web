@@ -20,10 +20,8 @@ function BrandLogo() {
 function Header() {
   const t = useTranslations("marketing");
   return (
-    <header className="sticky top-0 z-50 border-b border-line backdrop-blur-sm relative">
-      {/* Semi-transparent fill so texture shows through */}
-      <div className="absolute inset-0 bg-bg" style={{ opacity: 0.82 }} />
-      <div className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <header className="sticky top-0 z-50 border-b border-line backdrop-blur-sm">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="text-xl font-bold tracking-tight text-primary">
           <BrandLogo />
         </Link>
