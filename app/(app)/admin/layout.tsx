@@ -17,18 +17,41 @@ const ADMIN_NAV = [
   { href: "/admin/settings", label: "Sozlamalar", exact: false, icon: Settings },
 ];
 
+function LogoutModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-primary/40 backdrop-blur-[2px]" onClick={onCancel} />
+      <div
+        className="relative w-full max-w-sm rounded-2xl border border-line bg-surface px-6 py-6 shadow-xl"
+        style={{ animation: "modalIn 200ms cubic-bezier(0.16, 1, 0.3, 1) both" }}
+      >
+        <style>{`@keyframes modalIn { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:scale(1); } }`}</style>
+        <h2 className="font-serif text-lg font-bold text-primary">Chiqishni tasdiqlang</h2>
+        <p className="mt-2 text-sm text-muted">Hisobingizdan chiqishga ishonchingiz komilmi?</p>
+        <div className="mt-5 flex gap-3">
+          <button onClick={onCancel} className="flex-1 rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition hover:bg-bg hover:text-primary">
+            Bekor qilish
+          </button>
+          <button onClick={onConfirm} className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700">
+            Chiqish
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SidebarContent({
   client,
   drawerClose,
   isActive,
-  onLogout,
+  onLogoutRequest,
 }: {
   client: ClientInfo;
   drawerClose?: () => void;
   isActive: (href: string, exact: boolean) => boolean;
-  onLogout: () => void;
-})
- {
+  onLogoutRequest: () => void;
+}) {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
@@ -41,9 +64,6 @@ function SidebarContent({
           >
             {BRAND}
           </Link>
-          <span className="mt-0.5 block text-xs font-medium text-accent">
-            Admin
-          </span>
           <span className="mt-1 block w-fit rounded-full px-2 py-0.5 text-xs font-semibold bg-accent/10 text-accent">
             Super Admin
           </span>
@@ -80,8 +100,8 @@ function SidebarContent({
           );
         })}
         <button
-          onClick={onLogout}
-          className="flex w-full items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted hover:bg-bg hover:text-primary transition-colors"
+          onClick={onLogoutRequest}
+          className="flex w-full items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-red-600 transition hover:bg-bg hover:text-red-700"
         >
           <LogOut size={15} className="shrink-0" />
           Chiqish
@@ -128,6 +148,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [client, setClient] = useState<ClientInfo | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     const s = getSession();
@@ -141,11 +162,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setDrawerOpen(false);
   }, [pathname]);
-
-  function logout() {
-    clearSession();
-    router.replace("/login");
-  }
 
   function isActive(href: string, exact: boolean) {
     if (exact) return pathname === href;
@@ -167,7 +183,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <SidebarContent
           client={client}
           isActive={isActive}
-          onLogout={logout}
+          onLogoutRequest={() => setShowLogoutModal(true)}
         />
       </aside>
 
@@ -189,7 +205,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           client={client}
           drawerClose={() => setDrawerOpen(false)}
           isActive={isActive}
-          onLogout={logout}
+          onLogoutRequest={() => { setDrawerOpen(false); setShowLogoutModal(true); }}
         />
       </aside>
 
@@ -228,6 +244,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
         <main className="flex-1">{children}</main>
       </div>
+
+      {showLogoutModal && (
+        <LogoutModal
+          onConfirm={() => { clearSession(); router.replace("/login"); }}
+          onCancel={() => setShowLogoutModal(false)}
+        />
+      )}
     </div>
   );
 }
