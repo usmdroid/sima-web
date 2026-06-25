@@ -32,7 +32,7 @@ export default function LandingPage() {
       {/* Hero */}
       <div className="relative overflow-hidden">
         <div
-          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-50"
+          className="pointer-events-none absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/texture.webp')" }}
         />
       <section className="relative mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28">
