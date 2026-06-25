@@ -29,12 +29,6 @@ export default function LandingPage() {
 
   return (
     <>
-      {/* Texture background — fixed so it sits behind the sticky header too */}
-      <div
-        className="pointer-events-none fixed inset-0 -z-10 bg-cover bg-center"
-        style={{ backgroundImage: "url('/texture.webp')" }}
-      />
-
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28">
         <div className="grid items-center gap-12 lg:grid-cols-2">
