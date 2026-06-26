@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { Users, BarChart2, TrendingUp, Settings, LogOut, X } from "lucide-react";
-import { getSession, clearSession, type ClientInfo } from "@/lib/api";
+import { getSession, logout, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
 import { LogoutModal, SidebarBottom } from "@/app/components/sidebar-shared";
@@ -198,7 +198,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {showLogoutModal && (
         <LogoutModal
-          onConfirm={() => { clearSession(); router.replace("/login"); }}
+          onConfirm={logout}
           onCancel={() => setShowLogoutModal(false)}
         />
       )}

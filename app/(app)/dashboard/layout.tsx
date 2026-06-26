@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { KeyRound, BarChart2, Wallet, Code2, Settings, X, Users, TrendingUp, LogOut } from "lucide-react";
-import { getSession, clearSession, type ClientInfo } from "@/lib/api";
+import { getSession, logout, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
 import { LogoutModal, SidebarBottom } from "@/app/components/sidebar-shared";
@@ -131,10 +131,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [client, pathname, router]);
 
-  function logout() {
-    clearSession();
-    router.replace("/login");
-  }
 
   if (!client || !token) {
     return (

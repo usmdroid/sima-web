@@ -100,7 +100,18 @@ export function getSession(): AuthResult | null {
 export function clearSession() {
   if (typeof window === "undefined") return;
   localStorage.removeItem(KEY);
-  document.cookie = buildCookieString("", 0);
+  // Delete with and without domain — covers mismatch cases
+  const base = [`${KEY}=`, "Path=/", "Max-Age=0", "SameSite=Lax"];
+  document.cookie = base.join("; ");
+  if (COOKIE_DOMAIN) {
+    document.cookie = [...base, `Domain=${COOKIE_DOMAIN}`, "Secure"].join("; ");
+  }
+}
+
+/** Session tozalab, sahifani to'liq qayta yuklaydi (stale React state yo'q). */
+export function logout() {
+  clearSession();
+  window.location.href = "/login";
 }
 
 // ---- API Kalitlar ----
