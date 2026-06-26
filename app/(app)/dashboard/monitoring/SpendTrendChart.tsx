@@ -24,7 +24,7 @@ export default function SpendTrendChart({
     return <Skeleton className="h-64 w-full rounded-xl" />;
   }
 
-  if (!buckets || buckets.length === 0) {
+  if (!buckets || buckets.length === 0 || buckets.every((b) => b.spentSim === 0)) {
     return (
       <div className="flex h-64 items-center justify-center text-sm text-muted">
         Ma&apos;lumot yo&apos;q
@@ -47,8 +47,9 @@ export default function SpendTrendChart({
     <div className="w-full overflow-x-auto">
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        preserveAspectRatio="none"
-        className="h-64 w-full min-w-full"
+        width={W}
+        height={H}
+        style={{ display: "block", minHeight: 240 }}
         role="img"
         aria-label="Kredit sarfi diagrammasi"
       >

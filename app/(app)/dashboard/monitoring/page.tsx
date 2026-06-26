@@ -21,6 +21,30 @@ import { Skeleton } from "@/app/components/Skeleton";
 import { Spinner } from "@/app/components/Spinner";
 import { useTranslations } from "next-intl";
 
+// ---- Demo data (real ma'lumot bo'lmaganda ko'rsatiladi) ----
+
+const DEMO_COUNTS: Record<MonitoringRange, number[]> = {
+  hourly:  [2, 1, 0, 1, 3, 8, 15, 22, 28, 31, 29, 24, 26, 30, 27, 22, 18, 14, 10, 8, 6, 4, 3, 2],
+  daily:   [15, 23, 18, 32, 45, 38, 12, 27, 41, 55, 48, 36, 62, 71],
+  weekly:  [48, 65, 72, 58, 89, 104, 95, 118],
+  monthly: [120, 185, 240, 195, 310, 428],
+};
+
+function generateDemoBuckets(range: MonitoringRange): MonitoringBucket[] {
+  const now = new Date();
+  return DEMO_COUNTS[range].map((count, i) => {
+    const d = new Date(now);
+    const offset = DEMO_COUNTS[range].length - 1 - i;
+    if (range === "hourly")       { d.setHours(d.getHours() - offset, 0, 0, 0); }
+    else if (range === "daily")   { d.setDate(d.getDate() - offset); d.setHours(0, 0, 0, 0); }
+    else if (range === "weekly")  { d.setDate(d.getDate() - offset * 7); d.setHours(0, 0, 0, 0); }
+    else                          { d.setMonth(d.getMonth() - offset); d.setDate(1); d.setHours(0, 0, 0, 0); }
+    return { ts: d.toISOString(), count, spentSim: count };
+  });
+}
+
+// ---- Helpers ----
+
 function fmtDate(iso: string | null) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("uz-UZ", {
@@ -384,43 +408,56 @@ export default function MonitoringPage() {
       </section>
 
       {/* Chart */}
-      <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h3 className="font-semibold text-primary">{t("chart")}</h3>
-            <p className="mt-1 text-xs text-muted">
-              {selectedKeyId === null
-                ? t("allKeys")
-                : byKey.find((r) => r.apiKeyId === selectedKeyId)?.name ?? t("selectedKey")}{" "}
-              · {t("usageCount")}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {RANGES.map((r) => (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => setRange(r.id)}
-                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
-                  range === r.id
-                    ? "border-accent bg-beige text-accent"
-                    : "border-line text-muted hover:border-accent"
-                }`}
-              >
-                {r.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-6">
-          {chartError ? (
-            <p className="text-sm text-red-500">{chartError}</p>
-          ) : (
-            <UsageChart buckets={buckets} range={range} loading={chartLoading} />
-          )}
-        </div>
-      </section>
+      {(() => {
+        const hasReal = !chartLoading && !chartError && buckets.length > 0 && buckets.some(b => b.count > 0);
+        const isDemo = !chartLoading && !chartError && !hasReal;
+        const displayBuckets = isDemo ? generateDemoBuckets(range) : buckets;
+        return (
+          <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <div>
+                  <h3 className="font-semibold text-primary">{t("chart")}</h3>
+                  <p className="mt-1 text-xs text-muted">
+                    {selectedKeyId === null
+                      ? t("allKeys")
+                      : byKey.find((r) => r.apiKeyId === selectedKeyId)?.name ?? t("selectedKey")}{" "}
+                    · {t("usageCount")}
+                  </p>
+                </div>
+                {isDemo && (
+                  <span className="rounded-full border border-line px-2 py-0.5 text-xs font-medium text-muted">
+                    Demo
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {RANGES.map((r) => (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => setRange(r.id)}
+                    className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+                      range === r.id
+                        ? "border-accent bg-beige text-accent"
+                        : "border-line text-muted hover:border-accent"
+                    }`}
+                  >
+                    {r.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="mt-6">
+              {chartError ? (
+                <p className="text-sm text-red-500">{chartError}</p>
+              ) : (
+                <UsageChart buckets={displayBuckets} range={range} loading={chartLoading} />
+              )}
+            </div>
+          </section>
+        );
+      })()}
     </div>
   );
 }
