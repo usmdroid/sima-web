@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { BRAND, BRAND_EMAIL } from "@/lib/brand";
+import { BRAND } from "@/lib/brand";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
 
@@ -15,6 +15,17 @@ const WIDGET_CODE = `<!-- Sima widget -->
 export default function LandingPage() {
   const t = useTranslations("marketing");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const textureRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (textureRef.current) {
+        textureRef.current.style.transform = `translateY(${window.scrollY * 0.35}px)`;
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const features = [
     { title: t("feature0Title"), text: t("feature0Text") },
@@ -54,8 +65,9 @@ export default function LandingPage() {
       {/* Hero */}
       <div className="relative overflow-hidden">
         <div
-          className="pointer-events-none absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/texture.webp')" }}
+          ref={textureRef}
+          className="pointer-events-none absolute inset-x-0 bg-cover bg-center will-change-transform"
+          style={{ backgroundImage: "url('/texture.webp')", top: "-30%", bottom: "-30%" }}
         />
         <section className="relative mx-auto max-w-4xl px-6 pt-24 pb-20 text-center sm:pt-32">
           <span className="inline-block rounded-full border border-line bg-beige px-4 py-1 text-xs font-medium uppercase tracking-wider text-accent">
@@ -162,74 +174,46 @@ export default function LandingPage() {
 
       {/* Pricing */}
       <section id="pricing" className="py-20">
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-4xl px-6">
           <h2 className="text-center font-serif text-3xl font-bold tracking-tight text-primary">
             {t("pricingHeading")}
           </h2>
           <p className="mt-4 text-center text-muted">{t("pricingDesc")}</p>
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {/* Trial */}
-            <div className="rounded-2xl border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted">{t("pricingTrial")}</p>
-              <p className="mt-3 font-serif text-2xl font-bold text-primary">{t("pricingTrialCredits")}</p>
-              <p className="text-sm text-muted">{t("pricingTrialDesc")}</p>
-              <ul className="mt-6 space-y-3 text-sm text-muted">
-                {[t("pricingTrialFeature0"), t("pricingTrialFeature1"), t("pricingTrialFeature2")].map((f) => (
-                  <li key={f} className="flex items-center gap-2">
-                    <span className="font-bold text-accent">✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/register"
-                className="mt-8 block rounded-full bg-accent px-4 py-3 text-center font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0 active:shadow-none"
+          <div className="mt-12 grid gap-4 sm:grid-cols-3">
+            {[
+              { name: t("pricingTrial"),    price: t("pricingTrialCredits"),    range: t("pricingTrialDesc"),    accent: false },
+              { name: t("pricingStandard"), price: t("pricingStandardCredits"), range: t("pricingStandardDesc"), accent: true  },
+              { name: t("pricingPro"),      price: t("pricingProCredits"),      range: t("pricingProDesc"),      accent: false },
+            ].map((tier) => (
+              <div
+                key={tier.name}
+                className={`rounded-2xl p-8 text-center ${
+                  tier.accent
+                    ? "border-2 border-accent bg-surface shadow-[0_4px_24px_rgba(176,141,87,0.15)]"
+                    : "border border-line bg-surface shadow-[0_1px_2px_rgba(29,29,29,0.04)]"
+                }`}
               >
-                {t("pricingTrialCta")}
-              </Link>
-            </div>
-
-            {/* Standard — highlighted */}
-            <div className="relative rounded-2xl border-2 border-accent bg-surface p-8 shadow-[0_4px_24px_rgba(176,141,87,0.15)]">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent px-4 py-0.5 text-xs font-semibold text-white">
-                {t("pricingPopular")}
-              </span>
-              <p className="text-xs font-semibold uppercase tracking-wider text-accent">{t("pricingStandard")}</p>
-              <p className="mt-3 font-serif text-2xl font-bold text-primary">{t("pricingStandardCredits")}</p>
-              <p className="text-sm text-muted">{t("pricingStandardDesc")}</p>
-              <ul className="mt-6 space-y-3 text-sm text-muted">
-                {[t("pricingStandardFeature0"), t("pricingStandardFeature1"), t("pricingStandardFeature2")].map((f) => (
-                  <li key={f} className="flex items-center gap-2">
-                    <span className="font-bold text-accent">✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <button
-                disabled
-                className="mt-8 w-full cursor-not-allowed rounded-full border border-line px-4 py-3 text-center font-medium text-muted"
-              >
-                {t("pricingStandardCta")}
-              </button>
-            </div>
-
-            {/* Pro */}
-            <div className="rounded-2xl border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted">{t("pricingPro")}</p>
-              <p className="mt-3 font-serif text-2xl font-bold text-primary">{t("pricingProCredits")}</p>
-              <p className="text-sm text-muted">{t("pricingProDesc")}</p>
-              <ul className="mt-6 space-y-3 text-sm text-muted">
-                {[t("pricingProFeature0"), t("pricingProFeature1"), t("pricingProFeature2")].map((f) => (
-                  <li key={f} className="flex items-center gap-2">
-                    <span className="font-bold text-accent">✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href={`mailto:${BRAND_EMAIL}`}
-                className="mt-8 block rounded-full border border-accent px-4 py-3 text-center font-medium text-accent transition hover:bg-accent hover:text-white"
-              >
-                {t("pricingProCta")}
-              </a>
-            </div>
+                <p className={`text-xs font-semibold uppercase tracking-wider ${tier.accent ? "text-accent" : "text-muted"}`}>
+                  {tier.name}
+                </p>
+                <div className="mt-4 flex items-baseline justify-center gap-1">
+                  <span className="font-serif text-4xl font-bold text-primary">{tier.price}</span>
+                  <span className="text-base font-medium text-accent">SIM</span>
+                </div>
+                <p className="mt-1 text-sm text-muted">{t("pricingPerRequest")}</p>
+                <div className="mt-5 border-t border-line pt-5">
+                  <p className="text-sm font-medium text-primary">{tier.range}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link
+              href="/register"
+              className="inline-block rounded-full bg-accent px-8 py-3 font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0 active:shadow-none"
+            >
+              {t("pricingTrialCta")}
+            </Link>
           </div>
         </div>
       </section>
