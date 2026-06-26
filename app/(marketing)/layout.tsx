@@ -28,6 +28,7 @@ function Header() {
         <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
           <Link href="/#features" className="nav-link hover:text-accent transition-colors">{t("features")}</Link>
           <Link href="/#how" className="nav-link hover:text-accent transition-colors">{t("how")}</Link>
+          <Link href="/#pricing" className="nav-link hover:text-accent transition-colors">{t("pricing")}</Link>
           <Link href="/#partner" className="nav-link hover:text-accent transition-colors">{t("partner")}</Link>
           <Link href="/example" className="font-medium text-accent hover:text-hover transition-colors">{t("example")}</Link>
         </nav>
