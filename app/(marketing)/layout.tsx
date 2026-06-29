@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { BRAND, BRAND_EMAIL } from "@/lib/brand";
 import AuthNavButton from "./AuthNavButton";
@@ -19,19 +20,30 @@ function BrandLogo() {
 
 function Header() {
   const t = useTranslations("marketing");
+  const [isAdminHost, setIsAdminHost] = useState(false);
+
+  useEffect(() => {
+    // Admin subdomain'da marketing nav-anchorlar sahifa yo'q joyga olib boradi,
+    // shuning uchun ularni yashiramiz. Marketing site'da esa ular scroll qiladi.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsAdminHost(window.location.hostname.startsWith("admin."));
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-bg">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="text-xl font-bold tracking-tight text-primary">
           <BrandLogo />
         </Link>
-        <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
-          <Link href="/#features" className="nav-link hover:text-accent transition-colors">{t("features")}</Link>
-          <Link href="/#how" className="nav-link hover:text-accent transition-colors">{t("how")}</Link>
-          <Link href="/#pricing" className="nav-link hover:text-accent transition-colors">{t("pricing")}</Link>
-          <Link href="/#partner" className="nav-link hover:text-accent transition-colors">{t("partner")}</Link>
-          <Link href="/example" className="font-medium text-accent hover:text-hover transition-colors">{t("example")}</Link>
-        </nav>
+        {!isAdminHost && (
+          <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
+            <Link href="/#features" className="nav-link hover:text-accent transition-colors">{t("features")}</Link>
+            <Link href="/#how" className="nav-link hover:text-accent transition-colors">{t("how")}</Link>
+            <Link href="/#pricing" className="nav-link hover:text-accent transition-colors">{t("pricing")}</Link>
+            <Link href="/#partner" className="nav-link hover:text-accent transition-colors">{t("partner")}</Link>
+            <Link href="/example" className="font-medium text-accent hover:text-hover transition-colors">{t("example")}</Link>
+          </nav>
+        )}
         <div className="flex items-center gap-2">
           <ThemeSwitcher />
           <LanguageSwitcher />
