@@ -1,19 +1,61 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { login, saveSession } from "@/lib/api";
+import { login, saveSession, ApiError } from "@/lib/api";
 import { Spinner } from "@/app/components/Spinner";
 import { useTranslations } from "next-intl";
 
+const SUPPORT_TG = "https://t.me/simasupportbot";
+
+function SuspendedModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+      <style>{`@keyframes modalIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}`}</style>
+      <div className="absolute inset-0 bg-primary/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div
+        className="relative w-full max-w-sm rounded-2xl border border-line bg-surface px-6 py-6 shadow-xl"
+        style={{ animation: "modalIn 200ms cubic-bezier(0.16,1,0.3,1) both" }}
+      >
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+          <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+        </div>
+        <h2 className="font-serif text-lg font-bold text-primary">Foydalanishda muammo mavjud</h2>
+        <p className="mt-2 text-sm text-muted">
+          Hisobingiz vaqtincha to'xtatilgan. Yordam uchun iltimos administrator bilan bog'laning.
+        </p>
+        <a
+          href={SUPPORT_TG}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white transition hover:bg-hover"
+        >
+          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295l.213-3.053 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.66-.643.135-.953l11.566-4.458c.538-.196 1.006.128.832.953l.001-.015z"/>
+          </svg>
+          @simasupportbot
+        </a>
+        <button
+          onClick={onClose}
+          className="mt-3 w-full rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition hover:bg-bg hover:text-primary"
+        >
+          Yopish
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function LoginContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [suspended, setSuspended] = useState(false);
   const t = useTranslations("login");
 
   async function onSubmit(e: React.FormEvent) {
@@ -43,7 +85,11 @@ function LoginContent() {
         window.location.href = "/dashboard";
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("errorRequired"));
+      if (err instanceof ApiError && err.code === "SUSPENDED") {
+        setSuspended(true);
+      } else {
+        setError(err instanceof Error ? err.message : t("errorRequired"));
+      }
     } finally {
       setLoading(false);
     }
@@ -92,6 +138,8 @@ function LoginContent() {
         {t("noAccount")}{" "}
         <Link href="/register" className="font-medium text-accent hover:text-hover transition-colors">{t("register")}</Link>
       </p>
+
+      {suspended && <SuspendedModal onClose={() => setSuspended(false)} />}
     </section>
   );
 }

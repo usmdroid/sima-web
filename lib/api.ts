@@ -55,8 +55,33 @@ export function register(data: {
   return postJson("/auth/register", data);
 }
 
-export function login(identifier: string, password: string): Promise<AuthResult> {
-  return postJson("/auth/login", { identifier, password });
+/** Login xatolari uchun maxsus error — `code` orqali UI bloklangan akkauntni alohida ko'rsatadi. */
+export class ApiError extends Error {
+  code?: string;
+  status: number;
+  constructor(message: string, status: number, code?: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+  }
+}
+
+export async function login(identifier: string, password: string): Promise<AuthResult> {
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ identifier, password }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new ApiError(
+      json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.",
+      res.status,
+      json.code,
+    );
+  }
+  return json as AuthResult;
 }
 
 // ---- Sessiya (cookie + localStorage) ----
