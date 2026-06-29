@@ -76,6 +76,74 @@ html {
     to   { opacity: 1; transform: scale(1); }
   }
 
+  /* ── Entrance / scroll-reveal motion ───────────────────────────── */
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUpSm {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
+
+  @keyframes shineSweep {
+    0%   { transform: translateX(-120%) skewX(-20deg); }
+    100% { transform: translateX(220%) skewX(-20deg); }
+  }
+
+  /* Hero on-load entrance — staggered via inline animation-delay */
+  .anim-fade-up {
+    opacity: 0;
+    animation: fadeUp 700ms var(--ease-out) forwards;
+  }
+
+  /* Scroll-reveal: hidden until .is-visible is toggled by IntersectionObserver */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 650ms var(--ease-out), transform 650ms var(--ease-out);
+    will-change: opacity, transform;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Soft continuous float (decorative elements) */
+  .anim-float {
+    animation: floatY 6s ease-in-out infinite;
+  }
+
+  /* Button shine sweep on hover */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .btn-shine::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  .btn-shine:hover::before {
+    animation: shineSweep 750ms var(--ease-out);
+  }
+
   /* Thin luxe scrollbar */
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: var(--color-beige); }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BRAND } from "@/lib/brand";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
+import Reveal from "@/app/components/Reveal";
 
 const WIDGET_CODE = `<!-- Sima widget -->
 <script
@@ -70,25 +71,37 @@ export default function LandingPage() {
           style={{ backgroundImage: "url('/texture.webp')", top: "-30%", bottom: "-30%" }}
         />
         <section className="relative mx-auto max-w-4xl px-6 pt-24 pb-20 text-center sm:pt-32">
-          <span className="inline-block rounded-full border border-line bg-beige px-4 py-1 text-xs font-medium uppercase tracking-wider text-accent">
+          <span
+            className="anim-fade-up inline-block rounded-full border border-line bg-beige px-4 py-1 text-xs font-medium uppercase tracking-wider text-accent"
+            style={{ animationDelay: "60ms" }}
+          >
             {t("heroBadge")}
           </span>
-          <h1 className="mt-6 font-serif text-4xl font-bold leading-tight tracking-tight text-primary sm:text-6xl">
+          <h1
+            className="anim-fade-up mt-6 font-serif text-4xl font-bold leading-tight tracking-tight text-primary sm:text-6xl"
+            style={{ animationDelay: "160ms" }}
+          >
             {t("heroHeading")}
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted">
+          <p
+            className="anim-fade-up mx-auto mt-6 max-w-2xl text-lg text-muted"
+            style={{ animationDelay: "280ms" }}
+          >
             {t("heroDesc", { brand: BRAND })}
           </p>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
+          <div
+            className="anim-fade-up mt-9 flex flex-wrap items-center justify-center gap-4"
+            style={{ animationDelay: "400ms" }}
+          >
             <a
               href="#partner"
-              className="rounded-full bg-accent px-6 py-3 font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0 active:shadow-none"
+              className="btn-shine rounded-full bg-accent px-6 py-3 font-medium text-white transition hover:bg-hover hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(176,141,87,0.35)] active:translate-y-0 active:shadow-none"
             >
               {t("heroCta")}
             </a>
             <Link
               href="/login"
-              className="rounded-full border border-line px-6 py-3 font-medium text-primary transition hover:border-accent hover:text-accent"
+              className="rounded-full border border-line px-6 py-3 font-medium text-primary transition hover:-translate-y-0.5 hover:border-accent hover:text-accent"
             >
               {t("heroLogin")}
             </Link>
@@ -99,21 +112,22 @@ export default function LandingPage() {
       {/* Features */}
       <section id="features" className="border-t border-line bg-beige py-20">
         <div className="mx-auto max-w-6xl px-6">
-          <h2 className="text-center font-serif text-3xl font-bold tracking-tight text-primary">
-            {t("featuresHeading", { brand: BRAND })}
-          </h2>
+          <Reveal>
+            <h2 className="text-center font-serif text-3xl font-bold tracking-tight text-primary">
+              {t("featuresHeading", { brand: BRAND })}
+            </h2>
+          </Reveal>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className="rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)] transition-[border-color,box-shadow] hover:border-accent/60 hover:shadow-[0_4px_16px_rgba(176,141,87,0.12)]"
-              >
-                <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
-                  <span className="h-2 w-2 rounded-full bg-accent" />
+            {features.map((f, i) => (
+              <Reveal key={f.title} delay={i * 90}>
+                <div className="group h-full rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)] transition duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_10px_28px_rgba(176,141,87,0.16)]">
+                  <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-full bg-accent/10 transition-transform duration-300 group-hover:scale-110">
+                    <span className="h-2 w-2 rounded-full bg-accent" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-primary">{f.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">{f.text}</p>
                 </div>
-                <h3 className="text-lg font-semibold text-primary">{f.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted">{f.text}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -122,18 +136,22 @@ export default function LandingPage() {
       {/* How it works */}
       <section id="how" className="py-20">
         <div className="mx-auto max-w-6xl px-6">
-          <h2 className="text-center font-serif text-3xl font-bold tracking-tight text-primary">
-            {t("howHeading")}
-          </h2>
+          <Reveal>
+            <h2 className="text-center font-serif text-3xl font-bold tracking-tight text-primary">
+              {t("howHeading")}
+            </h2>
+          </Reveal>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {steps.map((s) => (
-              <div key={s.n} className="text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent text-lg font-bold text-white">
-                  {s.n}
+            {steps.map((s, i) => (
+              <Reveal key={s.n} delay={i * 120}>
+                <div className="group text-center">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent text-lg font-bold text-white shadow-[0_4px_12px_rgba(176,141,87,0.25)] transition-transform duration-300 group-hover:scale-110">
+                    {s.n}
+                  </div>
+                  <h3 className="mt-5 text-lg font-semibold text-primary">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">{s.text}</p>
                 </div>
-                <h3 className="mt-5 text-lg font-semibold text-primary">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{s.text}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -143,31 +161,33 @@ export default function LandingPage() {
       <section id="integration" className="border-t border-line bg-beige py-20">
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid items-start gap-12 lg:grid-cols-2">
-            <div>
-              <h2 className="font-serif text-3xl font-bold tracking-tight text-primary">
-                {t("integrationHeading")}
-              </h2>
-              <p className="mt-4 text-muted">{t("integrationDesc")}</p>
-              <div className="mt-8 space-y-6">
-                {integrationSteps.map((s) => (
-                  <div key={s.n} className="flex gap-4">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-white">
-                      {s.n}
+            <Reveal>
+              <div>
+                <h2 className="font-serif text-3xl font-bold tracking-tight text-primary">
+                  {t("integrationHeading")}
+                </h2>
+                <p className="mt-4 text-muted">{t("integrationDesc")}</p>
+                <div className="mt-8 space-y-6">
+                  {integrationSteps.map((s) => (
+                    <div key={s.n} className="group flex gap-4">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-white transition-transform duration-300 group-hover:scale-110">
+                        {s.n}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-primary">{s.title}</h3>
+                        <p className="mt-1 text-sm text-muted">{s.text}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-primary">{s.title}</h3>
-                      <p className="mt-1 text-sm text-muted">{s.text}</p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                <p className="mt-6 text-xs text-muted/70">{t("integrationNote")}</p>
               </div>
-              <p className="mt-6 text-xs text-muted/70">{t("integrationNote")}</p>
-            </div>
-            <div>
-              <pre className="overflow-x-auto rounded-2xl bg-[#1D1D1D] px-6 py-6 font-mono text-sm leading-relaxed text-[#E6DFD0]">
+            </Reveal>
+            <Reveal delay={150}>
+              <pre className="overflow-x-auto rounded-2xl bg-[#1D1D1D] px-6 py-6 font-mono text-sm leading-relaxed text-[#E6DFD0] shadow-[0_8px_30px_rgba(29,29,29,0.18)]">
                 <code>{WIDGET_CODE}</code>
               </pre>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -175,73 +195,89 @@ export default function LandingPage() {
       {/* Pricing */}
       <section id="pricing" className="py-20">
         <div className="mx-auto max-w-4xl px-6">
-          <h2 className="text-center font-serif text-3xl font-bold tracking-tight text-primary">
-            {t("pricingHeading")}
-          </h2>
-          <p className="mt-4 text-center text-muted">{t("pricingDesc")}</p>
+          <Reveal>
+            <h2 className="text-center font-serif text-3xl font-bold tracking-tight text-primary">
+              {t("pricingHeading")}
+            </h2>
+            <p className="mt-4 text-center text-muted">{t("pricingDesc")}</p>
+          </Reveal>
           <div className="mt-12 grid gap-4 sm:grid-cols-3">
             {[
               { name: t("pricingTrial"),    price: t("pricingTrialCredits"),    range: t("pricingTrialDesc"),    accent: false },
               { name: t("pricingStandard"), price: t("pricingStandardCredits"), range: t("pricingStandardDesc"), accent: true  },
               { name: t("pricingPro"),      price: t("pricingProCredits"),      range: t("pricingProDesc"),      accent: false },
-            ].map((tier) => (
-              <div
-                key={tier.name}
-                className={`rounded-2xl p-8 text-center ${
-                  tier.accent
-                    ? "border-2 border-accent bg-surface shadow-[0_4px_24px_rgba(176,141,87,0.15)]"
-                    : "border border-line bg-surface shadow-[0_1px_2px_rgba(29,29,29,0.04)]"
-                }`}
-              >
-                <p className={`text-xs font-semibold uppercase tracking-wider ${tier.accent ? "text-accent" : "text-muted"}`}>
-                  {tier.name}
-                </p>
-                <div className="mt-4 flex items-baseline justify-center gap-1">
-                  <span className="font-serif text-4xl font-bold text-primary">{tier.price}</span>
-                  <span className="text-base font-medium text-accent">SIM</span>
+            ].map((tier, i) => (
+              <Reveal key={tier.name} delay={i * 110}>
+                <div
+                  className={`h-full rounded-2xl p-8 text-center transition duration-300 hover:-translate-y-1.5 ${
+                    tier.accent
+                      ? "border-2 border-accent bg-surface shadow-[0_4px_24px_rgba(176,141,87,0.15)] hover:shadow-[0_14px_38px_rgba(176,141,87,0.28)] sm:-translate-y-2 sm:hover:-translate-y-3.5"
+                      : "border border-line bg-surface shadow-[0_1px_2px_rgba(29,29,29,0.04)] hover:border-accent/60 hover:shadow-[0_12px_30px_rgba(176,141,87,0.14)]"
+                  }`}
+                >
+                  <p className={`text-xs font-semibold uppercase tracking-wider ${tier.accent ? "text-accent" : "text-muted"}`}>
+                    {tier.name}
+                  </p>
+                  <div className="mt-4 flex items-baseline justify-center gap-1">
+                    <span className="font-serif text-4xl font-bold text-primary">{tier.price}</span>
+                    <span className="text-base font-medium text-accent">SIM</span>
+                  </div>
+                  <p className="mt-1 text-sm text-muted">{t("pricingPerRequest")}</p>
+                  <div className="mt-5 border-t border-line pt-5">
+                    <p className="text-sm font-medium text-primary">{tier.range}</p>
+                  </div>
                 </div>
-                <p className="mt-1 text-sm text-muted">{t("pricingPerRequest")}</p>
-                <div className="mt-5 border-t border-line pt-5">
-                  <p className="text-sm font-medium text-primary">{tier.range}</p>
-                </div>
-              </div>
+              </Reveal>
             ))}
           </div>
-          <div className="mt-8 text-center">
-            <Link
-              href="/register"
-              className="inline-block rounded-full bg-accent px-8 py-3 font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0 active:shadow-none"
-            >
-              {t("pricingTrialCta")}
-            </Link>
-          </div>
+          <Reveal delay={150}>
+            <div className="mt-8 text-center">
+              <Link
+                href="/register"
+                className="btn-shine inline-block rounded-full bg-accent px-8 py-3 font-medium text-white transition hover:bg-hover hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(176,141,87,0.35)] active:translate-y-0 active:shadow-none"
+              >
+                {t("pricingTrialCta")}
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* FAQ */}
       <section id="faq" className="border-t border-line bg-beige py-20">
         <div className="mx-auto max-w-3xl px-6">
-          <h2 className="text-center font-serif text-3xl font-bold tracking-tight text-primary">
-            {t("faqHeading")}
-          </h2>
+          <Reveal>
+            <h2 className="text-center font-serif text-3xl font-bold tracking-tight text-primary">
+              {t("faqHeading")}
+            </h2>
+          </Reveal>
           <div className="mt-10 space-y-2">
-            {faqItems.map((item, i) => (
-              <div key={i} className="overflow-hidden rounded-xl border border-line bg-surface">
-                <button
-                  className="flex w-full items-center justify-between px-6 py-4 text-left font-medium text-primary transition-colors hover:text-accent"
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                >
-                  <span>{item.q}</span>
-                  <ChevronDown
-                    size={18}
-                    className={`shrink-0 text-muted transition-transform duration-200 ${openFaq === i ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {openFaq === i && (
-                  <div className="px-6 pb-5 text-sm leading-relaxed text-muted">{item.a}</div>
-                )}
-              </div>
-            ))}
+            {faqItems.map((item, i) => {
+              const open = openFaq === i;
+              return (
+                <Reveal key={i} delay={i * 60}>
+                  <div className="overflow-hidden rounded-xl border border-line bg-surface transition-colors hover:border-accent/50">
+                    <button
+                      className="flex w-full items-center justify-between px-6 py-4 text-left font-medium text-primary transition-colors hover:text-accent"
+                      onClick={() => setOpenFaq(open ? null : i)}
+                    >
+                      <span>{item.q}</span>
+                      <ChevronDown
+                        size={18}
+                        className={`shrink-0 text-muted transition-transform duration-300 ${open ? "rotate-180 text-accent" : ""}`}
+                      />
+                    </button>
+                    <div
+                      className={`grid transition-[grid-template-rows] duration-300 ease-out ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                    >
+                      <div className="overflow-hidden">
+                        <p className="px-6 pb-5 text-sm leading-relaxed text-muted">{item.a}</p>
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -249,33 +285,37 @@ export default function LandingPage() {
       {/* Partnership / Registration */}
       <section id="partner" className="border-t border-line bg-beige py-20">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
-          <div>
-            <h2 className="font-serif text-3xl font-bold tracking-tight text-primary">{t("partnerHeading")}</h2>
-            <p className="mt-4 text-muted">{t("partnerDesc", { brand: BRAND })}</p>
-            <ul className="mt-6 space-y-3 text-sm text-muted">
-              {partnerFeatures.map((f) => (
-                <li key={f} className="flex items-center gap-2">
-                  <span className="font-bold text-accent">✓</span> {f}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-2xl border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
-            <h3 className="text-xl font-semibold text-primary">{t("partnerCtaTitle")}</h3>
-            <p className="mt-2 text-sm text-muted">{t("partnerCtaDesc")}</p>
-            <Link
-              href="/register"
-              className="mt-6 block rounded-full bg-accent px-4 py-3 text-center font-medium text-white transition hover:bg-hover hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(176,141,87,0.3)] active:translate-y-0 active:shadow-none"
-            >
-              {t("partnerCta")}
-            </Link>
-            <p className="mt-4 text-center text-sm text-muted">
-              {t("partnerHaveAccount")}{" "}
-              <Link href="/login" className="font-medium text-accent transition-colors hover:text-hover">
-                {t("partnerLogin")}
+          <Reveal>
+            <div>
+              <h2 className="font-serif text-3xl font-bold tracking-tight text-primary">{t("partnerHeading")}</h2>
+              <p className="mt-4 text-muted">{t("partnerDesc", { brand: BRAND })}</p>
+              <ul className="mt-6 space-y-3 text-sm text-muted">
+                {partnerFeatures.map((f) => (
+                  <li key={f} className="flex items-center gap-2">
+                    <span className="font-bold text-accent">✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
+          <Reveal delay={150}>
+            <div className="rounded-2xl border border-line bg-surface p-8 shadow-[0_1px_2px_rgba(29,29,29,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_14px_38px_rgba(176,141,87,0.16)]">
+              <h3 className="text-xl font-semibold text-primary">{t("partnerCtaTitle")}</h3>
+              <p className="mt-2 text-sm text-muted">{t("partnerCtaDesc")}</p>
+              <Link
+                href="/register"
+                className="btn-shine mt-6 block rounded-full bg-accent px-4 py-3 text-center font-medium text-white transition hover:bg-hover hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(176,141,87,0.35)] active:translate-y-0 active:shadow-none"
+              >
+                {t("partnerCta")}
               </Link>
-            </p>
-          </div>
+              <p className="mt-4 text-center text-sm text-muted">
+                {t("partnerHaveAccount")}{" "}
+                <Link href="/login" className="font-medium text-accent transition-colors hover:text-hover">
+                  {t("partnerLogin")}
+                </Link>
+              </p>
+            </div>
+          </Reveal>
         </div>
       </section>
     </>
