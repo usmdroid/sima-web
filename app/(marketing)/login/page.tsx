@@ -29,9 +29,18 @@ function LoginContent() {
       saveSession(res);
       const redirect = searchParams.get("redirect");
       if (redirect && redirect.startsWith("/")) {
-        router.push(redirect);
+        window.location.href = redirect;
+        return;
+      }
+      const isStaff = res.client.role === "SUPER_ADMIN" || res.client.role === "MODERATOR";
+      const adminOrigin = process.env.NEXT_PUBLIC_ADMIN_ORIGIN;
+      if (isStaff && adminOrigin) {
+        window.location.href = adminOrigin;
+      } else if (isStaff) {
+        // Lokal/preview: alohida origin yo'q — admin yo'liga full reload.
+        window.location.href = "/admin";
       } else {
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : t("errorRequired"));

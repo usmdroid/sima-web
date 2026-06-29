@@ -41,15 +41,18 @@ export function proxy(request: NextRequest) {
       return NextResponse.rewrite(new URL("/login", request.url));
     }
 
-    if (session.client.role !== "SUPER_ADMIN") {
-      // Logged-in non-admin: send them to the user site (prod only).
+    const isStaff =
+      session.client.role === "SUPER_ADMIN" || session.client.role === "MODERATOR";
+
+    if (!isStaff) {
+      // Logged-in non-staff: send them to the user site (prod only).
       if (isProdHost(host)) {
         return NextResponse.redirect(`${USER_ORIGIN}/dashboard`);
       }
       return NextResponse.rewrite(new URL("/login", request.url));
     }
 
-    // SUPER_ADMIN on admin host: rewrite root to /admin, leave everything else untouched.
+    // Staff on admin host: rewrite root to /admin, leave everything else untouched.
     if (pathname === "/") {
       return NextResponse.rewrite(new URL("/admin", request.url));
     }
@@ -57,8 +60,10 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // User host: redirect SUPER_ADMIN away from authenticated areas (prod only).
-  if (session?.client.role === "SUPER_ADMIN" && isProdHost(host)) {
+  // User host: redirect staff (SUPER_ADMIN/MODERATOR) away from authenticated areas (prod only).
+  const isStaff =
+    session?.client.role === "SUPER_ADMIN" || session?.client.role === "MODERATOR";
+  if (isStaff && isProdHost(host)) {
     const isAuthArea =
       pathname === "/dashboard" ||
       pathname.startsWith("/dashboard/") ||
