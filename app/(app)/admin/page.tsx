@@ -8,6 +8,7 @@ import {
   creditAdminClient,
   suspendAdminClient,
   activateAdminClient,
+  setClientRole,
   type AdminStats,
   type AdminClient,
 } from "@/lib/api";
@@ -17,6 +18,7 @@ import { Skeleton } from "@/app/components/Skeleton";
 
 export default function AdminPage() {
   const [token, setToken] = useState<string | null>(null);
+  const [viewerRole, setViewerRole] = useState<string | null>(null);
 
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [clients, setClients] = useState<AdminClient[]>([]);
@@ -28,10 +30,12 @@ export default function AdminPage() {
   const [actionBusy, setActionBusy] = useState<string | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
 
+  const isSuperAdmin = viewerRole === "SUPER_ADMIN";
+
   useEffect(() => {
     const s = getSession();
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (s) setToken(s.token);
+    if (s) { setToken(s.token); setViewerRole(s.client.role); }
   }, []);
 
   const load = useCallback(async (t: string) => {
@@ -91,6 +95,20 @@ export default function AdminPage() {
     }
   }
 
+  async function changeRole(id: string, role: "CLIENT" | "MODERATOR") {
+    if (!token) return;
+    setActionBusy(id);
+    setError(null);
+    try {
+      await setClientRole(token, id, role);
+      await load(token);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Xatolik yuz berdi.");
+    } finally {
+      setActionBusy(null);
+    }
+  }
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
         <h1 className="text-2xl font-bold text-primary font-serif">Admin panel</h1>
@@ -142,6 +160,7 @@ export default function AdminPage() {
                     <th className="py-2 pr-3 text-right">Balans</th>
                     <th className="py-2 pr-3 text-right">So&apos;rovlar</th>
                     <th className="py-2 pr-3">Holat</th>
+                    <th className="py-2 pr-3">Rol</th>
                     <th className="py-2 pr-3 text-right">Amallar</th>
                   </tr>
                 </thead>
@@ -171,6 +190,27 @@ export default function AdminPage() {
                         </span>
                       </td>
                       <td className="py-3 pr-3">
+                        {c.role === "SUPER_ADMIN" ? (
+                          <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
+                            Super Admin
+                          </span>
+                        ) : isSuperAdmin ? (
+                          <select
+                            value={c.role}
+                            disabled={actionBusy === c.id}
+                            onChange={(e) => changeRole(c.id, e.target.value as "CLIENT" | "MODERATOR")}
+                            className="rounded-lg border border-line bg-bg px-2 py-1 text-xs text-primary transition hover:border-accent focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 disabled:opacity-50"
+                          >
+                            <option value="CLIENT">Mijoz</option>
+                            <option value="MODERATOR">Moderator</option>
+                          </select>
+                        ) : (
+                          <span className="text-xs text-muted">
+                            {c.role === "MODERATOR" ? "Moderator" : "Mijoz"}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 pr-3">
                         <div className="flex flex-col items-end gap-2">
                           <div className="flex flex-wrap items-center justify-end gap-2">
                             <button
@@ -179,14 +219,16 @@ export default function AdminPage() {
                             >
                               Batafsil
                             </button>
-                            <button
-                              onClick={() =>
-                                setCreditFor(creditFor === c.id ? null : c.id)
-                              }
-                              className="rounded-lg border border-line px-3 py-1.5 text-xs font-medium text-muted transition hover:border-accent hover:text-accent"
-                            >
-                              Balans
-                            </button>
+                            {isSuperAdmin && (
+                              <button
+                                onClick={() =>
+                                  setCreditFor(creditFor === c.id ? null : c.id)
+                                }
+                                className="rounded-lg border border-line px-3 py-1.5 text-xs font-medium text-muted transition hover:border-accent hover:text-accent"
+                              >
+                                Balans
+                              </button>
+                            )}
                             <button
                               onClick={() => toggleStatus(c)}
                               disabled={actionBusy === c.id}
@@ -199,7 +241,7 @@ export default function AdminPage() {
                               {c.status === "ACTIVE" ? "Bloklash" : "Faollashtirish"}
                             </button>
                           </div>
-                          {creditFor === c.id && (
+                          {isSuperAdmin && creditFor === c.id && (
                             <div className="flex items-center gap-2">
                               <input
                                 type="number"

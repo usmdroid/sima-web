@@ -10,7 +10,7 @@ export interface ClientInfo {
   name: string;
   phone: string;
   email?: string | null;
-  role: "CLIENT" | "SUPER_ADMIN";
+  role: "CLIENT" | "MODERATOR" | "SUPER_ADMIN";
 }
 
 export interface AuthResult {
@@ -377,7 +377,7 @@ export interface AdminClient {
   balanceSim: number;
   totalRequests: number;
   status: "ACTIVE" | "SUSPENDED";
-  role: "CLIENT" | "SUPER_ADMIN";
+  role: "CLIENT" | "MODERATOR" | "SUPER_ADMIN";
   createdAt: string;
 }
 
@@ -394,7 +394,7 @@ export interface AdminClientDetail {
   name: string;
   phone: string;
   email?: string | null;
-  role: "CLIENT" | "SUPER_ADMIN";
+  role: "CLIENT" | "MODERATOR" | "SUPER_ADMIN";
   status: "ACTIVE" | "SUSPENDED";
   createdAt: string;
   balanceSim: number;
@@ -472,6 +472,24 @@ export async function activateAdminClient(
   const json = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(json.error || "Mijozni faollashtirib bo'lmadi.");
   return json as { status: "ACTIVE" };
+}
+
+export async function setClientRole(
+  token: string,
+  id: string,
+  role: "CLIENT" | "MODERATOR"
+): Promise<{ role: string }> {
+  const res = await fetch(`${API_BASE}/admin/clients/${id}/role`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ role }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || "Rolni o'zgartirib bo'lmadi.");
+  return json as { role: string };
 }
 
 export async function getAdminStats(token: string): Promise<AdminStats> {

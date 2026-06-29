@@ -28,7 +28,8 @@ function SidebarContent({
   onClose?: () => void;
 }) {
   const t = useTranslations("nav");
-  const isSuperAdmin = client.role === "SUPER_ADMIN";
+  const isStaff = client.role === "SUPER_ADMIN" || client.role === "MODERATOR";
+  const roleLabel = client.role === "SUPER_ADMIN" ? "Super Admin" : "Moderator";
 
   return (
     <div className="flex h-full flex-col">
@@ -42,12 +43,12 @@ function SidebarContent({
           >
             {BRAND}
           </Link>
-          {isSuperAdmin && (
+          {isStaff && (
             <span
               className="mt-1 block w-fit rounded-full px-2 py-0.5 text-xs font-semibold"
               style={{ backgroundColor: "rgba(176,141,87,0.12)", color: "#B08D57" }}
             >
-              Super Admin
+              {roleLabel}
             </span>
           )}
         </div>
@@ -89,7 +90,7 @@ function SidebarContent({
 
       <SidebarBottom
         client={client}
-        token={!isSuperAdmin ? token : undefined}
+        token={!isStaff ? token : undefined}
         settingsHref="/dashboard/settings"
         onClose={onClose}
       />
@@ -120,10 +121,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setDrawerOpen(false); }, [pathname]);
 
-  // Route guard: SUPER_ADMIN hitting CLIENT-only routes → redirect /admin
+  // Route guard: staff (SUPER_ADMIN/MODERATOR) hitting CLIENT-only routes → redirect /admin
   useEffect(() => {
     if (!client) return;
-    if (client.role === "SUPER_ADMIN") {
+    if (client.role === "SUPER_ADMIN" || client.role === "MODERATOR") {
       const clientOnly = ["/dashboard/keys", "/dashboard/wallet", "/dashboard/developers"];
       if (clientOnly.some((r) => pathname === r || pathname.startsWith(r + "/"))) {
         router.replace("/admin");
@@ -140,9 +141,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     );
   }
 
-  const isSuperAdmin = client.role === "SUPER_ADMIN";
+  const isStaff = client.role === "SUPER_ADMIN" || client.role === "MODERATOR";
 
-  const navItems = isSuperAdmin
+  const navItems = isStaff
     ? [
         { href: "/admin", label: t("users"), exact: false, icon: Users },
         { href: "/dashboard/monitoring", label: t("monitoring"), exact: false, icon: BarChart2 },

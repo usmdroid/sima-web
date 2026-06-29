@@ -43,3 +43,6 @@ next-env.d.ts
 # IDE
 .idea/
 .DS_Store
+
+# Paperclip Service commit-log accumulator (auto-cleared on push)
+.paperclip-commit.txt

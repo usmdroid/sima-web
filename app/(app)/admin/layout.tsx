@@ -28,6 +28,7 @@ function SidebarContent({
   isActive: (href: string, exact: boolean) => boolean;
   onLogoutRequest: () => void;
 }) {
+  const roleLabel = client.role === "SUPER_ADMIN" ? "Super Admin" : "Moderator";
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
@@ -41,7 +42,7 @@ function SidebarContent({
             {BRAND}
           </Link>
           <span className="mt-1 block w-fit rounded-full px-2 py-0.5 text-xs font-semibold bg-accent/10 text-accent">
-            Super Admin
+            {roleLabel}
           </span>
         </div>
         {drawerClose && (
@@ -87,7 +88,7 @@ function SidebarContent({
       <SidebarBottom
         client={client}
         settingsHref="/admin/settings"
-        roleLabel="Sizning rolingiz: Super Admin"
+        roleLabel={`Sizning rolingiz: ${roleLabel}`}
         onClose={drawerClose}
       />
     </div>
@@ -104,7 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     const s = getSession();
     if (!s) { router.replace("/login"); return; }
-    if (s.client.role !== "SUPER_ADMIN") { router.replace("/dashboard"); return; }
+    if (s.client.role !== "SUPER_ADMIN" && s.client.role !== "MODERATOR") { router.replace("/dashboard"); return; }
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setClient(s.client);
   }, [router]);
