@@ -3,7 +3,7 @@
 // Bu — vidjet token oqimining haqiqiy (server bilan) sinovi.
 
 const API_BASE = (
-  process.env.SIMA_API_BASE || "https://tryon-backend-production-92ad.up.railway.app/api"
+  process.env.SIMA_API_BASE || "https://api.trysima.uz/api"
 ).replace(/\/+$/, "");
 
 // Demo uchun sotuvchi siri. Production'da SIMA_DEMO_SK env bilan bering.

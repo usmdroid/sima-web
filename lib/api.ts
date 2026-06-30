@@ -3,7 +3,7 @@
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ??
-  "https://tryon-backend-production-92ad.up.railway.app/api";
+  "https://api.trysima.uz/api";
 
 export interface ClientInfo {
   id: string;

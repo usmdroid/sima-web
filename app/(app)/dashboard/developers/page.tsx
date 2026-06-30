@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
-const SIMA_API = "https://tryon-backend-production-92ad.up.railway.app/api";
+const SIMA_API = "https://api.trysima.uz/api";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
