@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { clearSession, type AuthErrorType } from "@/lib/api";
+import { ModalShell } from "@/app/components/sidebar-shared";
 
 const SUPPORT_TG = "https://t.me/simasupportbot";
 
@@ -34,7 +35,7 @@ export default function AuthErrorListener() {
 
   if (type === "SUSPENDED") {
     return (
-      <ModalShell>
+      <ModalShell onBackdropClick={undefined}>
         <IconCircle color="red">
           <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
@@ -67,7 +68,7 @@ export default function AuthErrorListener() {
 
   // EXPIRED
   return (
-    <ModalShell>
+    <ModalShell onBackdropClick={undefined}>
       <IconCircle color="accent">
         <svg className="h-6 w-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -84,21 +85,6 @@ export default function AuthErrorListener() {
         Qayta kirish
       </button>
     </ModalShell>
-  );
-}
-
-function ModalShell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <style>{`@keyframes modalIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}`}</style>
-      <div className="absolute inset-0 bg-primary/40 backdrop-blur-[2px]" />
-      <div
-        className="relative w-full max-w-sm rounded-2xl border border-line bg-surface px-6 py-6 shadow-xl"
-        style={{ animation: "modalIn 200ms cubic-bezier(0.16,1,0.3,1) both" }}
-      >
-        {children}
-      </div>
-    </div>
   );
 }
 

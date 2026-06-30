@@ -12,7 +12,8 @@ import {
   type AdminStats,
   type AdminClient,
 } from "@/lib/api";
-import ClientDetailPanel from "./ClientDetailPanel";
+import dynamic from "next/dynamic";
+const ClientDetailPanel = dynamic(() => import("./ClientDetailPanel"), { ssr: false });
 import SimIcon from "@/app/components/SimIcon";
 import { Skeleton } from "@/app/components/Skeleton";
 

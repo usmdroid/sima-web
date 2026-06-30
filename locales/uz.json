@@ -35,7 +35,7 @@
     "totalSpent": "Umumiy sarf",
     "balance": "Balans",
     "keysCount": "Kalitlar soni",
-    "detailSection": "Batafsil — SK kalitlar bo'yicha",
+    "detailSection": "Batafsil — API kalitlar bo'yicha",
     "filterHint": "Diagrammani filtrlash uchun qatorni tanlang.",
     "noData": "Hali ma'lumot yo'q.",
     "all": "Barchasi",
@@ -210,7 +210,7 @@
     "feature1Title": "AI yaroqlilik tekshiruvi",
     "feature1Text": "Rasm avtomatik tekshiriladi: odam bormi, poza yaroqlimi, tana ko'rinadimi — sifatsiz natijalarning oldi olinadi.",
     "feature2Title": "Xavfsiz",
-    "feature2Text": "Bir martali, qisqa muddatli token. Maxfiy kalit hech qachon brauzerga chiqmaydi.",
+    "feature2Text": "Xavfsizlik ta'minlangan: sizning maxfiy ma'lumotlaringiz hech qachon brauzeringizga o'tkazilmaydi.",
     "feature3Title": "Har qanday platforma",
     "feature3Text": "Custom sayt, WordPress, Shopify — hammasida ishlaydi. Kod yozish shart emas.",
     "howHeading": "Qanday ishlaydi",
@@ -224,7 +224,7 @@
     "partnerDesc": "Do'koningizni {brand}ga ulang. Ro'yxatdan o'ting, kalitingizni oling va xizmatni saytingizda ishga tushiring.",
     "partnerFeature0": "Bir qatorlik integratsiya",
     "partnerFeature1": "Dashboard: foydalanish va tarix",
-    "partnerFeature2": "Xavfsiz token tizimi",
+    "partnerFeature2": "Xavfsiz kirish tizimi",
     "partnerCtaTitle": "Hoziroq boshlang",
     "partnerCtaDesc": "Bir necha daqiqada ro'yxatdan o'tib, do'koningizni ulang.",
     "partnerCta": "Ro'yxatdan o'tish",
@@ -232,7 +232,7 @@
     "partnerLogin": "Kirish",
     "exampleDemoShop": "Demo do'kon",
     "exampleTitle": "Atlas — namuna integratsiya",
-    "exampleDesc": "Bu sahifa Sima vidjeti do'kon saytiga qanday ulanishini ko'rsatadi. \"Sinab ko'rish\" tugmasi vidjetni ochadi; token Sima serveridan (sk_ brauzerga chiqmaydi) olinadi.",
+    "exampleDesc": "Bu sahifa Sima vidjetining do'kon saytida qanday ko'rinishini namoyish etadi. «Sinab ko'rish» tugmasini bosib ko'ring — u haqiqiy vidjetni ochadi.",
     "exampleTryOn": "Sinab ko'rish",
     "pricing": "Tariflar",
     "pricingHeading": "Narxlar",
@@ -266,7 +266,7 @@
     "faq2A": "Custom sayt, WordPress, Shopify, Tilda — har qanday HTML sahifaga ulash mumkin.",
     "faq3Q": "Sinov davri bormi?",
     "faq3A": "Ha. Ro'yxatdan o'tganingizda 100 ta bepul kredit beriladi — hech qanday karta talab qilinmaydi.",
-    "faq4Q": "API qanday himoyalangan?",
-    "faq4A": "Maxfiy kalit (sk_) server tomonida saqlanadi. Brauzerga faqat qisqa muddatli session token chiqadi."
+    "faq4Q": "Ma'lumotlarim qanday himoyalangan?",
+    "faq4A": "Barcha maxfiy ma'lumotlar server tomonida xavfsiz saqlanadi. Brauzeringizga faqat vaqtinchalik ruxsatnoma keladi."
   }
 }

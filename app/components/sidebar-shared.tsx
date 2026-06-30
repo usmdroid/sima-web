@@ -11,6 +11,31 @@ import { ThemeSwitcher } from "@/app/components/ThemeSwitcher";
 import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
 
+// ─── Shared modal shell ───────────────────────────────────────────────────────
+
+export function ModalShell({
+  children,
+  onBackdropClick,
+}: {
+  children: React.ReactNode;
+  onBackdropClick?: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-primary/40 backdrop-blur-[2px]"
+        onClick={onBackdropClick}
+      />
+      <div
+        className="relative w-full max-w-sm rounded-2xl border border-line bg-surface px-6 py-6 shadow-xl"
+        style={{ animation: "modalIn 200ms cubic-bezier(0.16,1,0.3,1) both" }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 // ─── Logout confirmation modal ───────────────────────────────────────────────
 
 export function LogoutModal({
@@ -21,31 +46,24 @@ export function LogoutModal({
   onCancel: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <style>{`@keyframes modalIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}`}</style>
-      <div className="absolute inset-0 bg-primary/40 backdrop-blur-[2px]" onClick={onCancel} />
-      <div
-        className="relative w-full max-w-sm rounded-2xl border border-line bg-surface px-6 py-6 shadow-xl"
-        style={{ animation: "modalIn 200ms cubic-bezier(0.16,1,0.3,1) both" }}
-      >
-        <h2 className="font-serif text-lg font-bold text-primary">Chiqishni tasdiqlang</h2>
-        <p className="mt-2 text-sm text-muted">Hisobingizdan chiqishga ishonchingiz komilmi?</p>
-        <div className="mt-5 flex gap-3">
-          <button
-            onClick={onCancel}
-            className="flex-1 rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition hover:bg-bg hover:text-primary"
-          >
-            Bekor qilish
-          </button>
-          <button
-            onClick={onConfirm}
-            className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
-          >
-            Chiqish
-          </button>
-        </div>
+    <ModalShell onBackdropClick={onCancel}>
+      <h2 className="font-serif text-lg font-bold text-primary">Chiqishni tasdiqlang</h2>
+      <p className="mt-2 text-sm text-muted">Hisobingizdan chiqishga ishonchingiz komilmi?</p>
+      <div className="mt-5 flex gap-3">
+        <button
+          onClick={onCancel}
+          className="flex-1 rounded-lg border border-line px-4 py-2 text-sm font-medium text-muted transition hover:bg-bg hover:text-primary"
+        >
+          Bekor qilish
+        </button>
+        <button
+          onClick={onConfirm}
+          className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+        >
+          Chiqish
+        </button>
       </div>
-    </div>
+    </ModalShell>
   );
 }
 

@@ -35,7 +35,7 @@
     "totalSpent": "Total Spent",
     "balance": "Balance",
     "keysCount": "Keys",
-    "detailSection": "Details — by SK Keys",
+    "detailSection": "Details — by API Key",
     "filterHint": "Click a row to filter the chart.",
     "noData": "No data yet.",
     "all": "All",
@@ -210,7 +210,7 @@
     "feature1Title": "AI Quality Check",
     "feature1Text": "Images are checked automatically: is there a person, is the pose suitable, is the body visible — poor results are prevented.",
     "feature2Title": "Secure",
-    "feature2Text": "Single-use, short-lived token. Secret key never reaches the browser.",
+    "feature2Text": "Secure by design. Your credentials are never exposed to the browser.",
     "feature3Title": "Any Platform",
     "feature3Text": "Custom site, WordPress, Shopify — works everywhere. No coding required.",
     "howHeading": "How It Works",
@@ -224,7 +224,7 @@
     "partnerDesc": "Connect your store to {brand}. Register, get your key, and launch the service.",
     "partnerFeature0": "One-line integration",
     "partnerFeature1": "Dashboard: usage and history",
-    "partnerFeature2": "Secure token system",
+    "partnerFeature2": "Secure access system",
     "partnerCtaTitle": "Get Started Now",
     "partnerCtaDesc": "Register in minutes and connect your store.",
     "partnerCta": "Register",
@@ -232,7 +232,7 @@
     "partnerLogin": "Sign In",
     "exampleDemoShop": "Demo Store",
     "exampleTitle": "Atlas — Example Integration",
-    "exampleDesc": "This page shows how the Sima widget connects to a store. The \"Try On\" button opens the widget; the token comes from the Sima server (sk_ never reaches the browser).",
+    "exampleDesc": "This page shows how the Sima widget looks on a real store. Click the «Try On» button to see it in action.",
     "exampleTryOn": "Try On",
     "pricing": "Pricing",
     "pricingHeading": "Pricing",
@@ -266,7 +266,7 @@
     "faq2A": "Custom sites, WordPress, Shopify, Tilda — any HTML page.",
     "faq3Q": "Is there a free trial?",
     "faq3A": "Yes. You get 100 free credits when you sign up — no credit card required.",
-    "faq4Q": "How is the API secured?",
-    "faq4A": "Your secret key (sk_) stays on the server. Only a short-lived session token reaches the browser."
+    "faq4Q": "How is my data protected?",
+    "faq4A": "All credentials are stored securely on the server. Only a short-lived access code is sent to your browser."
   }
 }
