@@ -8,6 +8,7 @@ import { getSession, logout, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
 import { LogoutModal, SidebarBottom } from "@/app/components/sidebar-shared";
+import AuthErrorListener from "@/app/components/AuthErrorListener";
 
 const ADMIN_NAV = [
   { href: "/admin", label: "Foydalanuvchilar", exact: true, icon: Users },
@@ -203,6 +204,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           onCancel={() => setShowLogoutModal(false)}
         />
       )}
+
+      <AuthErrorListener />
     </div>
   );
 }

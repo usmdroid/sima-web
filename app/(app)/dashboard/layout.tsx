@@ -9,6 +9,7 @@ import { getSession, logout, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
 import { LogoutModal, SidebarBottom } from "@/app/components/sidebar-shared";
+import AuthErrorListener from "@/app/components/AuthErrorListener";
 import { useTranslations } from "next-intl";
 
 
@@ -232,6 +233,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           onCancel={() => setShowLogoutModal(false)}
         />
       )}
+
+      <AuthErrorListener />
     </div>
   );
 }

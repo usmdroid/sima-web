@@ -18,6 +18,27 @@ export interface AuthResult {
   client: ClientInfo;
 }
 
+/**
+ * Backend autentikatsiya xatolarini global modal orqali ko'rsatish uchun event.
+ * - 403 + code:"SUSPENDED" — akkaunt bloklangan → SuspendedModal
+ * - 401 — token eskirgan/yaroqsiz → SessionExpiredModal
+ * Listener: dashboard/admin layoutdagi AuthErrorListener.
+ */
+export type AuthErrorType = "SUSPENDED" | "EXPIRED";
+export function emitAuthError(res: Response, json: { error?: string; code?: string } | null): void {
+  if (typeof window === "undefined") return;
+  // Auth endpoint'larining o'zida 401 normal hodisa (parol noto'g'ri) — ularda chaqirilmaydi.
+  if (res.status === 403 && json?.code === "SUSPENDED") {
+    window.dispatchEvent(new CustomEvent<{ type: AuthErrorType; message?: string }>("sima:auth-error", {
+      detail: { type: "SUSPENDED", message: json.error },
+    }));
+  } else if (res.status === 401) {
+    window.dispatchEvent(new CustomEvent<{ type: AuthErrorType }>("sima:auth-error", {
+      detail: { type: "EXPIRED" },
+    }));
+  }
+}
+
 async function postJson(path: string, body: unknown): Promise<AuthResult> {
   const res = await fetch(`${API_BASE}${path}`, {
     method: "POST",
@@ -165,7 +186,7 @@ export async function listApiKeys(token: string): Promise<ApiKey[]> {
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring."); }
   return json as ApiKey[];
 }
 
@@ -179,7 +200,7 @@ export async function createApiKey(token: string, name: string): Promise<Created
     body: JSON.stringify({ name }),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring."); }
   return json as CreatedApiKey;
 }
 
@@ -189,7 +210,7 @@ export async function revokeApiKey(token: string, id: string): Promise<void> {
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Xatolik yuz berdi. Qaytadan urinib ko'ring."); }
 }
 
 // ---- Connect (OAuth-uslubida kalit ulash) ----
@@ -211,7 +232,7 @@ export async function connectAuthorize(
     body: JSON.stringify(payload),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Ulanishda xatolik yuz berdi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Ulanishda xatolik yuz berdi."); }
   return json as ConnectAuthorizeResult;
 }
 
@@ -246,7 +267,7 @@ export interface PricingInfo {
 export async function getPricing(): Promise<PricingInfo> {
   const res = await fetch(`${API_BASE}/pricing`);
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Narxlarni yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Narxlarni yuklab bo'lmadi."); }
   return json as PricingInfo;
 }
 
@@ -255,7 +276,7 @@ export async function getWallet(token: string): Promise<WalletInfo> {
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Hamyonni yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Hamyonni yuklab bo'lmadi."); }
   return json as WalletInfo;
 }
 
@@ -267,7 +288,7 @@ export async function getWalletTransactions(
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Tranzaksiyalarni yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Tranzaksiyalarni yuklab bo'lmadi."); }
   return json as WalletTransaction[];
 }
 
@@ -284,7 +305,7 @@ export async function purchaseCredits(
     body: JSON.stringify({ amountUsd }),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Sim sotib olishda xatolik.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Sim sotib olishda xatolik."); }
   return json as WalletInfo;
 }
 
@@ -327,7 +348,7 @@ export async function getMonitoringSummary(
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Monitoringni yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Monitoringni yuklab bo'lmadi."); }
   return json as MonitoringSummary;
 }
 
@@ -338,7 +359,7 @@ export async function getMonitoringByKey(
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Monitoringni yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Monitoringni yuklab bo'lmadi."); }
   return json as MonitoringByKey[];
 }
 
@@ -353,7 +374,7 @@ export async function getMonitoringTimeseries(
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Diagrammani yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Diagrammani yuklab bo'lmadi."); }
   return json as MonitoringTimeseries;
 }
 
@@ -389,7 +410,7 @@ export async function getMonitoringHistory(
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Tarixni yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Tarixni yuklab bo'lmadi."); }
   return json as MonitoringHistory;
 }
 
@@ -439,7 +460,7 @@ export async function getAdminClients(token: string): Promise<AdminClient[]> {
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Mijozlarni yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Mijozlarni yuklab bo'lmadi."); }
   return json as AdminClient[];
 }
 
@@ -451,7 +472,7 @@ export async function getAdminClient(
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Mijozni yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Mijozni yuklab bo'lmadi."); }
   return json as AdminClientDetail;
 }
 
@@ -469,7 +490,7 @@ export async function creditAdminClient(
     body: JSON.stringify({ amountSim }),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Balansni to'ldirib bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Balansni to'ldirib bo'lmadi."); }
   return json as { balanceSim: number };
 }
 
@@ -482,7 +503,7 @@ export async function suspendAdminClient(
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Mijozni bloklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Mijozni bloklab bo'lmadi."); }
   return json as { status: "SUSPENDED" };
 }
 
@@ -495,7 +516,7 @@ export async function activateAdminClient(
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Mijozni faollashtirib bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Mijozni faollashtirib bo'lmadi."); }
   return json as { status: "ACTIVE" };
 }
 
@@ -513,7 +534,7 @@ export async function setClientRole(
     body: JSON.stringify({ role }),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Rolni o'zgartirib bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Rolni o'zgartirib bo'lmadi."); }
   return json as { role: string };
 }
 
@@ -522,7 +543,7 @@ export async function getAdminStats(token: string): Promise<AdminStats> {
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Statistikani yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Statistikani yuklab bo'lmadi."); }
   return json as AdminStats;
 }
 
@@ -557,7 +578,7 @@ export async function getAdminGlobalMonitoring(
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Global monitoringni yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Global monitoringni yuklab bo'lmadi."); }
   return json as AdminGlobalMonitoring;
 }
 
@@ -587,7 +608,7 @@ export async function phoneChangeRequest(
     body: JSON.stringify({ newPhone }),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "OTP yuborib bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "OTP yuborib bo'lmadi."); }
   return json as OtpSentResult;
 }
 
@@ -602,7 +623,7 @@ export async function phoneVerify(
     body: JSON.stringify({ code, newPhone }),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Kod noto'g'ri yoki muddati o'tgan.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Kod noto'g'ri yoki muddati o'tgan."); }
   return json as { phone: string };
 }
 
@@ -616,7 +637,7 @@ export async function emailChangeRequest(
     body: JSON.stringify({ newEmail }),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "OTP yuborib bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "OTP yuborib bo'lmadi."); }
   return json as OtpSentResult;
 }
 
@@ -631,7 +652,7 @@ export async function emailVerify(
     body: JSON.stringify({ code, newEmail }),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Kod noto'g'ri yoki muddati o'tgan.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Kod noto'g'ri yoki muddati o'tgan."); }
   return json as { email: string };
 }
 
@@ -640,7 +661,7 @@ export async function getSecondaryEmails(token: string): Promise<SecondaryEmail[
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Email manzillarni yuklab bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Email manzillarni yuklab bo'lmadi."); }
   return json as SecondaryEmail[];
 }
 
@@ -654,7 +675,7 @@ export async function emailAdd(
     body: JSON.stringify({ email }),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "OTP yuborib bo'lmadi.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "OTP yuborib bo'lmadi."); }
   return json as OtpSentResult;
 }
 
@@ -669,7 +690,7 @@ export async function emailVerifySecondary(
     body: JSON.stringify({ code, email }),
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.error || "Kod noto'g'ri yoki muddati o'tgan.");
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Kod noto'g'ri yoki muddati o'tgan."); }
   return json as { id: string; email: string; verified: boolean };
 }
 
