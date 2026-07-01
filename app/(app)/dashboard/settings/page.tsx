@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CheckCircle, Mail, Phone, ShieldCheck, Bell } from "lucide-react";
+import { CheckCircle, Mail, Phone, ShieldCheck, Bell, PlayCircle } from "lucide-react";
+import { ONBOARDING_OPEN_EVENT, ONBOARDING_STORAGE_KEY } from "@/app/components/Onboarding";
 import {
   getSession,
   saveSession,
@@ -551,6 +552,18 @@ export default function SettingsPage() {
             >
               <span className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${notifEmail ? "translate-x-6" : "translate-x-1"}`} />
             </button>
+          </div>
+        </Card>
+
+        <Card title="Onboarding" icon={<PlayCircle size={18} />} animDelay={180}>
+          <div className="flex items-center justify-between py-2">
+            <p className="text-sm text-muted">{t("reViewOnboarding")}</p>
+            <GhostBtn onClick={() => {
+              localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+              window.dispatchEvent(new Event(ONBOARDING_OPEN_EVENT));
+            }}>
+              ▶ {t("reViewOnboarding")}
+            </GhostBtn>
           </div>
         </Card>
       </div>

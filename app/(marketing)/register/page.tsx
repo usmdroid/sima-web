@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register, sendOtp, saveSession } from "@/lib/api";
@@ -33,11 +33,36 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
+  }, []);
+
+  function startCountdown() {
+    setResendCountdown(60);
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    countdownRef.current = setInterval(() => {
+      setResendCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdownRef.current!);
+          showToast(t("resendAvailable"), 5000);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+
+  function showToast(msg: string, duration = 6000) {
+    setToast(msg);
+    setTimeout(() => setToast(null), duration);
+  }
 
   function showCode(devCode?: string) {
     if (!devCode) return;
-    setToast(t("devOtp", { code: devCode }));
-    setTimeout(() => setToast(null), 8000);
+    showToast(t("devOtp", { code: devCode }), 8000);
   }
 
   async function onContinue(e: React.FormEvent) {
@@ -71,7 +96,9 @@ export default function RegisterPage() {
     try {
       const r = await sendOtp(email.trim());
       showCode(r.devCode);
+      showToast(t("codeSent"), 4000);
       setStep(2);
+      startCountdown();
     } catch (err) {
       setError(err instanceof Error ? err.message : t("errorRequired"));
     } finally {
@@ -99,10 +126,13 @@ export default function RegisterPage() {
   }
 
   async function onResend() {
+    if (resendCountdown > 0) return;
     setError(null);
     try {
       const r = await sendOtp(email.trim());
       showCode(r.devCode);
+      showToast(t("codeSent"), 4000);
+      startCountdown();
     } catch (err) {
       setError(err instanceof Error ? err.message : t("errorRequired"));
     }
@@ -151,7 +181,7 @@ export default function RegisterPage() {
               type="button"
               disabled={code.trim().length === 0}
               onClick={() => {
-                navigator.clipboard.writeText(code);
+                if (navigator.clipboard) navigator.clipboard.writeText(code);
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
               }}
@@ -169,8 +199,15 @@ export default function RegisterPage() {
             {loading ? t("verifying") : t("verifyAndRegister")}
           </button>
           <div className="flex justify-between text-sm">
-            <button type="button" onClick={() => { setStep(1); setError(null); }} className="text-muted hover:text-primary transition-colors">{t("back")}</button>
-            <button type="button" onClick={onResend} className="text-accent hover:text-hover transition-colors">{t("resend")}</button>
+            <button type="button" onClick={() => { setStep(1); setError(null); setResendCountdown(0); if (countdownRef.current) clearInterval(countdownRef.current); }} className="text-muted hover:text-primary transition-colors">{t("back")}</button>
+            <button
+              type="button"
+              onClick={onResend}
+              disabled={resendCountdown > 0}
+              className="text-accent hover:text-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {resendCountdown > 0 ? t("resendIn", { sec: resendCountdown }) : t("resend")}
+            </button>
           </div>
         </form>
       )}

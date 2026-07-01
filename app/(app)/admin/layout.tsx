@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { Users, BarChart2, TrendingUp, Settings, LogOut, X } from "lucide-react";
+import { Users, BarChart2, TrendingUp, Settings, LogOut, X, ShieldAlert } from "lucide-react";
 import { getSession, logout, type ClientInfo } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
@@ -13,6 +13,7 @@ import AuthErrorListener from "@/app/components/AuthErrorListener";
 const ADMIN_NAV = [
   { href: "/admin", label: "Foydalanuvchilar", exact: true, icon: Users },
   { href: "/admin/monitoring", label: "Monitoring", exact: false, icon: BarChart2 },
+  { href: "/admin/moderation", label: "Moderatsiya", exact: false, icon: ShieldAlert },
   { href: "/admin/stats", label: "Statistika", exact: false, icon: TrendingUp },
   { href: "/admin/settings", label: "Sozlamalar", exact: false, icon: Settings },
 ];

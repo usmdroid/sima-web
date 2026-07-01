@@ -114,7 +114,8 @@
     "close": "Close",
     "devCode": "Dev code: {code}",
     "codeSentTo": "Code sent to {email}.",
-    "back": "← Back"
+    "back": "← Back",
+    "reViewOnboarding": "Review onboarding"
   },
   "keys": {
     "title": "API Keys",
@@ -188,7 +189,40 @@
     "errorPasswordMatch": "Passwords do not match.",
     "errorCodeRequired": "Enter the verification code.",
     "copyCode": "Copy code",
-    "copied": "Copied ✓"
+    "copied": "Copied ✓",
+    "codeSent": "Code sent",
+    "resendIn": "Resend in {sec}s",
+    "codeExpired": "Code expired",
+    "resendAvailable": "You can request a new code"
+  },
+  "onboarding": {
+    "step1Title": "Welcome to Sima!",
+    "step1Text": "This is your partner cabinet. Manage your store integration, track usage, and handle payments — all from here.",
+    "step2Title": "API Keys",
+    "step2Text": "Find your API keys in the sidebar. Copy a key and add it to your store to enable the virtual try-on widget.",
+    "step3Title": "Credits & Balance",
+    "step3Text": "Your credit balance appears at the bottom of the sidebar. Top up anytime from the Wallet section.",
+    "step4Title": "Monitoring",
+    "step4Text": "Track real-time try-on usage, request counts, and error rates in the Monitoring section.",
+    "step5Title": "Need Help?",
+    "step5Text": "Our support team is available on Telegram. Contact us at @simasupportbot for any questions.",
+    "skip": "Skip",
+    "next": "Next →",
+    "done": "Get Started",
+    "of": "Step {step} of {total}"
+  },
+  "admin": {
+    "modTitle": "Moderation",
+    "modDesc": "Recent client activity and moderation tools",
+    "modAll": "All",
+    "modHighError": "High Error Rate",
+    "modLast24h": "Last 24h",
+    "modViewClient": "View",
+    "modNoData": "No data.",
+    "modRequests": "Requests",
+    "modSpent": "Spent",
+    "modGlobalError": "Global error rate",
+    "modName": "Name"
   },
   "marketing": {
     "features": "Features",
@@ -200,6 +234,7 @@
     "footerService": "Virtual Try-On Service",
     "heroBadge": "Virtual Try-On",
     "heroHeading": "Let your customers try on clothes in their own photos",
+    "heroHeadingB": "Virtual try-on that converts: let shoppers see themselves in your clothes",
     "heroAccent": "in their own photos",
     "heroDesc": "{brand} is a virtual try-on service for online fashion stores. Integrate in one line — customers see, not imagine.",
     "heroCta": "Become a Partner",

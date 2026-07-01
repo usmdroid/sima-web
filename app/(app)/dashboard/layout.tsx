@@ -10,6 +10,7 @@ import { BRAND } from "@/lib/brand";
 import { Spinner } from "@/app/components/Spinner";
 import { LogoutModal, SidebarBottom } from "@/app/components/sidebar-shared";
 import AuthErrorListener from "@/app/components/AuthErrorListener";
+import Onboarding from "@/app/components/Onboarding";
 import { useTranslations } from "next-intl";
 
 
@@ -235,6 +236,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       <AuthErrorListener />
+      <Onboarding />
     </div>
   );
 }

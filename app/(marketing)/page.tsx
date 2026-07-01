@@ -6,6 +6,8 @@ import { BRAND } from "@/lib/brand";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
 import Reveal from "@/app/components/Reveal";
+import { useVariant } from "@/app/hooks/useVariant";
+import { logVariant } from "@/app/lib/ab";
 
 const WIDGET_CODE = `<!-- Sima widget -->
 <script
@@ -15,6 +17,7 @@ const WIDGET_CODE = `<!-- Sima widget -->
 
 export default function LandingPage() {
   const t = useTranslations("marketing");
+  const heroVariant = useVariant("hero-heading");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const textureRef = useRef<HTMLDivElement>(null);
 
@@ -80,8 +83,9 @@ export default function LandingPage() {
           <h1
             className="anim-fade-up mt-6 font-serif text-4xl font-bold leading-tight tracking-tight text-primary sm:text-6xl"
             style={{ animationDelay: "160ms" }}
+            onMouseEnter={() => logVariant("hero-heading", heroVariant, "hover")}
           >
-            {t("heroHeading")}
+            {heroVariant === "B" ? t("heroHeadingB") : t("heroHeading")}
           </h1>
           <p
             className="anim-fade-up mx-auto mt-6 max-w-2xl text-lg text-muted"

@@ -114,7 +114,8 @@
     "close": "Yopish",
     "devCode": "Dev kodi: {code}",
     "codeSentTo": "{email} manziliga kod yuborildi.",
-    "back": "← Orqaga"
+    "back": "← Orqaga",
+    "reViewOnboarding": "Onboardingni qayta ko'rish"
   },
   "keys": {
     "title": "API kalitlar",
@@ -188,7 +189,40 @@
     "errorPasswordMatch": "Parollar mos kelmadi.",
     "errorCodeRequired": "Tasdiqlash kodini kiriting.",
     "copyCode": "Nusxa olish",
-    "copied": "Nusxalandi ✓"
+    "copied": "Nusxalandi ✓",
+    "codeSent": "Kod yuborildi",
+    "resendIn": "{sec}s da qayta yuborish",
+    "codeExpired": "Kod muddati o'tdi",
+    "resendAvailable": "Yangi kod so'rash mumkin"
+  },
+  "onboarding": {
+    "step1Title": "Sima kabinetiga xush kelibsiz!",
+    "step1Text": "Bu sizning hamkor kabinetingiz. Do'kon integratsiyasini boshqaring, foydalanishni kuzating va to'lovlarni bajarishingiz mumkin.",
+    "step2Title": "API kalitlar",
+    "step2Text": "API kalitlaringiz yon menyuda joylashgan. Kalitni nusxalab, do'koningizga qo'shing — virtual kiyib ko'rish vidjeti faollashadi.",
+    "step3Title": "Kredit va balans",
+    "step3Text": "Kredit balansingiz yon panel pastida ko'rinadi. Hamyon bo'limidan istalgan vaqt to'ldirishingiz mumkin.",
+    "step4Title": "Monitoring",
+    "step4Text": "Monitoring bo'limida real vaqtda kiyib ko'rish statistikasi, so'rovlar soni va xato darajasini kuzating.",
+    "step5Title": "Yordam kerakmi?",
+    "step5Text": "Qo'llab-quvvatlash jamoamiz Telegramda. Istalgan savolingiz bo'lsa: @simasupportbot.",
+    "skip": "O'tkazib yuborish",
+    "next": "Keyingisi →",
+    "done": "Boshlash",
+    "of": "{step}-qadam / {total}"
+  },
+  "admin": {
+    "modTitle": "Moderatsiya",
+    "modDesc": "So'nggi mijoz faolligi va moderatsiya vositalari",
+    "modAll": "Barchasi",
+    "modHighError": "Yuqori xato darajasi",
+    "modLast24h": "So'nggi 24 soat",
+    "modViewClient": "Ko'rish",
+    "modNoData": "Ma'lumot yo'q.",
+    "modRequests": "So'rovlar",
+    "modSpent": "Sarf",
+    "modGlobalError": "Umumiy xato darajasi",
+    "modName": "Ism"
   },
   "marketing": {
     "features": "Imkoniyatlar",
@@ -200,6 +234,7 @@
     "footerService": "Virtual kiyib ko'rish xizmati",
     "heroBadge": "Virtual kiyib ko'rish",
     "heroHeading": "Mijozlaringiz kiyimni o'z rasmida sinab ko'rsin",
+    "heroHeadingB": "Virtual kiyib ko'rish — sotuvni oshiradi: xaridorlar o'z rasmlarida kiyimni ko'radi",
     "heroAccent": "o'z rasmida",
     "heroDesc": "{brand} — onlayn kiyim do'konlari uchun virtual kiyib ko'rish xizmati. Saytingizga bir qatorda ulang, mijozlar tasavvur qilmasdan ko'rsin.",
     "heroCta": "Hamkor bo'lish",
