@@ -302,6 +302,11 @@
     "faq3Q": "Sinov davri bormi?",
     "faq3A": "Ha. Ro'yxatdan o'tganingizda 100 ta bepul kredit beriladi — hech qanday karta talab qilinmaydi.",
     "faq4Q": "Ma'lumotlarim qanday himoyalangan?",
-    "faq4A": "Barcha maxfiy ma'lumotlar server tomonida xavfsiz saqlanadi. Brauzeringizga faqat vaqtinchalik ruxsatnoma keladi."
+    "faq4A": "Barcha maxfiy ma'lumotlar server tomonida xavfsiz saqlanadi. Brauzeringizga faqat vaqtinchalik ruxsatnoma keladi.",
+    "statsPartnersLabel": "Hamkor",
+    "statsTryOnsLabel": "Try-on",
+    "statsMonthsSuffix": " oy",
+    "statsMonthsLabel": "Ish tajribasi",
+    "statsUptimeLabel": "Uptime"
   }
 }

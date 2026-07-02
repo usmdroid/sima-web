@@ -1,6 +1,8 @@
 // Backend API bilan aloqa (auth) + sessiya saqlash.
 // Eslatma: hozircha token localStorage'da. Keyingi bosqich — httpOnly cookie (BFF).
 
+import * as Sentry from "@sentry/nextjs";
+
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ??
   "https://api.trysima.uz/api";
@@ -130,6 +132,8 @@ export function saveSession(r: AuthResult) {
   const json = JSON.stringify(r);
   localStorage.setItem(KEY, json);
   document.cookie = buildCookieString(json);
+  // Sentry'ga faqat clientId (UUID) — PII (ism/email/telefon) yuborilmaydi.
+  if (r.client?.id) Sentry.setUser({ id: r.client.id });
 }
 
 export function getSession(): AuthResult | null {
@@ -145,6 +149,7 @@ export function getSession(): AuthResult | null {
 
 export function clearSession() {
   if (typeof window === "undefined") return;
+  Sentry.setUser(null);
   localStorage.removeItem(KEY);
   // Delete with and without domain — covers mismatch cases
   const base = [`${KEY}=`, "Path=/", "Max-Age=0", "SameSite=Lax"];
