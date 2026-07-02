@@ -52,7 +52,18 @@
     "hourly": "Soatlik",
     "daily": "Kunlik",
     "weekly": "Haftalik",
-    "monthly": "Oylik"
+    "monthly": "Oylik",
+    "successBreakdown": "Muvaffaqiyat / Xato",
+    "successCount": "Muvaffaqiyatli",
+    "failedCount": "Xato",
+    "successRate": "Muvaffaqiyat darajasi",
+    "noRequests": "So'rovlar yo'q.",
+    "recentActivity": "So'nggi faoliyat",
+    "activityTime": "Vaqt",
+    "activityType": "Turi",
+    "activityStatus": "Holat",
+    "statusOk": "ok",
+    "statusError": "xato"
   },
   "wallet": {
     "title": "Hamyon",
@@ -115,7 +126,9 @@
     "devCode": "Dev kodi: {code}",
     "codeSentTo": "{email} manziliga kod yuborildi.",
     "back": "← Orqaga",
-    "reViewOnboarding": "Onboardingni qayta ko'rish"
+    "reViewOnboarding": "Onboardingni qayta ko'rish",
+    "helpCard": "Yordam / Qo'llanma",
+    "replayOnboardingBtn": "Ishga tushirish qo'llanmasini qaytadan ko'rish"
   },
   "keys": {
     "title": "API kalitlar",
@@ -209,7 +222,33 @@
     "skip": "O'tkazib yuborish",
     "next": "Keyingisi →",
     "done": "Boshlash",
-    "of": "{step}-qadam / {total}"
+    "of": "{step}-qadam / {total}",
+    "client": {
+      "step1Title": "Sima kabinetiga xush kelibsiz!",
+      "step1Text": "Bu sizning hamkor kabinetingiz. Do'kon integratsiyasini boshqaring, foydalanishni kuzating va to'lovlarni bajarishingiz mumkin.",
+      "step2Title": "API kalitlar",
+      "step2Text": "Yon menyudagi «API kalitlar» bo'limiga o'ting. Kalit yarating, nusxalab server kodingizga qo'shing — vidjet faollashadi.",
+      "step3Title": "Dasturchilar uchun",
+      "step3Text": "«Dasturchilar» bo'limida saytingizga vidjetni ulash uchun tayyor integratsiya kodi va qo'llanma mavjud.",
+      "step4Title": "Hamyon va balans",
+      "step4Text": "Yon panel pastida joriy kredit balansingiz ko'rinadi. Hamyon bo'limidan istalgan vaqt to'ldirishingiz mumkin.",
+      "step5Title": "Monitoring",
+      "step5Text": "Monitoring bo'limida real vaqtda kiyib ko'rish statistikasi, so'rovlar soni va xato darajasini kuzating.",
+      "step6Title": "Sozlamalar",
+      "step6Text": "Sozlamalar bo'limida profil ma'lumotlarini, tilni va interfeys mavzusini o'zgartirish mumkin.",
+      "step7Title": "Yordam kerakmi?",
+      "step7Text": "Qo'llab-quvvatlash jamoamiz Telegramda. Istalgan savolingiz bo'lsa: @simasupportbot."
+    },
+    "staff": {
+      "step1Title": "Admin paneliga xush kelibsiz!",
+      "step1Text": "Bu Sima admin paneli. Siz platforma faoliyatini nazorat qilasiz, foydalanuvchilarni boshqarasiz va global statistikani kuzatasiz.",
+      "step2Title": "Foydalanuvchilar",
+      "step2Text": "Foydalanuvchilar bo'limida barcha hamkorlar ro'yxatini ko'ring, hisobni bloklay yoki faollashtiring, rollarni o'zgartiring.",
+      "step3Title": "Global monitoring",
+      "step3Text": "Monitoring bo'limida butun platforma bo'yicha real vaqtda statistika: so'rovlar soni, xato darajasi va yetakchi mijozlar.",
+      "step4Title": "Statistika",
+      "step4Text": "Statistika sahifasida daromad dinamikasi, eng faol hamkorlar va platformaning umumiy holati ko'rsatiladi."
+    }
   },
   "admin": {
     "modTitle": "Moderatsiya",
@@ -222,7 +261,22 @@
     "modRequests": "So'rovlar",
     "modSpent": "Sarf",
     "modGlobalError": "Umumiy xato darajasi",
-    "modName": "Ism"
+    "modName": "Ism",
+    "modResultsTitle": "Natijalar moderatsiyasi",
+    "modTxAll": "Barchasi",
+    "modTxFlagged": "Belgilangan",
+    "modTxHidden": "Yashirilgan",
+    "modBtnHide": "Yashirish",
+    "modBtnFlag": "Belgilash",
+    "modBtnRestore": "Tiklash",
+    "modTxStatus": "Holat",
+    "modTxAmount": "Miqdor",
+    "modTxType": "Turi",
+    "modTxClient": "Mijoz",
+    "modTxCreatedAt": "Vaqt",
+    "modToastHidden": "Yashirildi",
+    "modToastFlagged": "Flag qo'yildi",
+    "modToastRestored": "Tiklandi"
   },
   "marketing": {
     "features": "Imkoniyatlar",

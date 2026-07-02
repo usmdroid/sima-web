@@ -2,23 +2,36 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { getSession } from "@/lib/api";
 
 export const ONBOARDING_STORAGE_KEY = "sima_onboarding_done";
 export const ONBOARDING_OPEN_EVENT = "sima:show-onboarding";
 
-const STEPS = ["step1", "step2", "step3", "step4", "step5"] as const;
+const CLIENT_STEP_COUNT = 7;
+const STAFF_STEP_COUNT = 4;
+
+type StepSet = "client" | "staff";
+
+function resolveStepSet(): StepSet {
+  const session = getSession();
+  const role = session?.client?.role;
+  return role === "SUPER_ADMIN" || role === "MODERATOR" ? "staff" : "client";
+}
 
 export default function Onboarding() {
   const t = useTranslations("onboarding");
   const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
+  const [stepSet, setStepSet] = useState<StepSet>("client");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    setStepSet(resolveStepSet());
     if (localStorage.getItem(ONBOARDING_STORAGE_KEY) !== "true") {
       setVisible(true);
     }
     function onOpen() {
+      setStepSet(resolveStepSet());
       setStep(0);
       setVisible(true);
     }
@@ -33,8 +46,10 @@ export default function Onboarding() {
 
   if (!visible) return null;
 
-  const key = STEPS[step];
-  const isLast = step === STEPS.length - 1;
+  const totalSteps = stepSet === "staff" ? STAFF_STEP_COUNT : CLIENT_STEP_COUNT;
+  const stepNum = step + 1;
+  const isLast = step === totalSteps - 1;
+  const stepKey = `step${stepNum}`;
 
   return (
     <>
@@ -56,7 +71,7 @@ export default function Onboarding() {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={t(`${key}Title`)}
+        aria-label={t(`${stepSet}.${stepKey}Title`)}
         className="fixed inset-0 z-[9001] flex items-center justify-center px-4 pointer-events-none"
       >
         <div
@@ -65,7 +80,7 @@ export default function Onboarding() {
         >
           {/* Progress dots */}
           <div className="flex gap-1.5 mb-6">
-            {STEPS.map((_, i) => (
+            {Array.from({ length: totalSteps }).map((_, i) => (
               <div
                 key={i}
                 className="h-1 flex-1 rounded-full transition-colors duration-300"
@@ -76,17 +91,17 @@ export default function Onboarding() {
 
           {/* Step label */}
           <p className="text-xs font-semibold uppercase tracking-widest text-accent mb-2">
-            {t("of", { step: step + 1, total: STEPS.length })}
+            {t("of", { step: stepNum, total: totalSteps })}
           </p>
 
           {/* Title */}
           <h2 className="font-serif text-xl font-bold text-primary mb-3">
-            {t(`${key}Title`)}
+            {t(`${stepSet}.${stepKey}Title`)}
           </h2>
 
           {/* Description */}
           <p className="text-sm text-muted leading-relaxed mb-8">
-            {t(`${key}Text`)}
+            {t(`${stepSet}.${stepKey}Text`)}
           </p>
 
           {/* Actions */}

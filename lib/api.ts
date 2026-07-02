@@ -383,6 +383,42 @@ export async function getMonitoringTimeseries(
   return json as MonitoringTimeseries;
 }
 
+// ---- Self stats (/api/stats/self) ----
+
+export interface StatsTopKey {
+  keyId: string;
+  name: string;
+  requests: number;
+}
+
+export interface StatsRecentActivity {
+  ts: string;
+  type: string;
+  status: "ok" | "error";
+}
+
+export interface StatsResult {
+  period: string;
+  requests: {
+    total: number;
+    success: number;
+    failed: number;
+  };
+  creditsSpentSim: number;
+  balanceSim: number;
+  topKeys: StatsTopKey[];
+  recentActivity: StatsRecentActivity[];
+}
+
+export async function getSelfStats(token: string): Promise<StatsResult> {
+  const res = await fetch(`${API_BASE}/stats/self`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Statistikani yuklab bo'lmadi."); }
+  return json as StatsResult;
+}
+
 // ---- Tarix (history) ----
 
 export interface MonitoringHistoryItem {
@@ -585,6 +621,85 @@ export async function getAdminGlobalMonitoring(
   const json = await res.json().catch(() => ({}));
   if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Global monitoringni yuklab bo'lmadi."); }
   return json as AdminGlobalMonitoring;
+}
+
+// ---- Admin Moderation ----
+
+export type ModerationStatus = "VISIBLE" | "HIDDEN" | "FLAGGED";
+export type ModerationFilter = "all" | "flagged" | "hidden";
+
+export interface ModerationItem {
+  id: string;
+  clientId: string;
+  clientName: string | null;
+  type: string;
+  amountSim: number;
+  moderationStatus: ModerationStatus;
+  meta: string | null;
+  createdAt: string;
+}
+
+export interface ModerationListResponse {
+  items: ModerationItem[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export async function getModerationList(
+  token: string,
+  filter: ModerationFilter = "all",
+  limit?: number,
+  offset?: number
+): Promise<ModerationListResponse> {
+  const params = new URLSearchParams({ filter });
+  if (limit != null) params.set("limit", String(limit));
+  if (offset != null) params.set("offset", String(offset));
+  const res = await fetch(`${API_BASE}/admin/moderation?${params}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Moderatsiya ro'yxatini yuklab bo'lmadi."); }
+  return json as ModerationListResponse;
+}
+
+export async function hideModeration(
+  token: string,
+  id: string
+): Promise<{ id: string; moderationStatus: ModerationStatus }> {
+  const res = await fetch(`${API_BASE}/admin/moderation/${id}/hide`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Yashirib bo'lmadi."); }
+  return json as { id: string; moderationStatus: ModerationStatus };
+}
+
+export async function flagModeration(
+  token: string,
+  id: string
+): Promise<{ id: string; moderationStatus: ModerationStatus }> {
+  const res = await fetch(`${API_BASE}/admin/moderation/${id}/flag`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Flag qo'yib bo'lmadi."); }
+  return json as { id: string; moderationStatus: ModerationStatus };
+}
+
+export async function restoreModeration(
+  token: string,
+  id: string
+): Promise<{ id: string; moderationStatus: ModerationStatus }> {
+  const res = await fetch(`${API_BASE}/admin/moderation/${id}/restore`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) { emitAuthError(res, json); throw new Error(json.error || "Tiklab bo'lmadi."); }
+  return json as { id: string; moderationStatus: ModerationStatus };
 }
 
 // ---- Hisob sozlamalari (Account Settings) ----

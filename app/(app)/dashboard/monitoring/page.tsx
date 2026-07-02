@@ -7,12 +7,14 @@ import {
   getMonitoringByKey,
   getMonitoringTimeseries,
   getAdminGlobalMonitoring,
+  getSelfStats,
   type MonitoringSummary,
   type MonitoringByKey,
   type MonitoringBucket,
   type MonitoringRange,
   type AdminGlobalMonitoring,
   type AdminMonitoringRange,
+  type StatsResult,
 } from "@/lib/api";
 import UsageChart from "./UsageChart";
 import SpendTrendChart from "./SpendTrendChart";
@@ -51,6 +53,15 @@ function fmtDate(iso: string | null) {
     year: "numeric",
     month: "short",
     day: "numeric",
+  });
+}
+
+function fmtDateTime(iso: string) {
+  return new Date(iso).toLocaleString("uz-UZ", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
@@ -221,6 +232,10 @@ export default function MonitoringPage() {
   const [chartLoading, setChartLoading] = useState(true);
   const [chartError, setChartError] = useState<string | null>(null);
 
+  const [selfStats, setSelfStats] = useState<StatsResult | null>(null);
+  const [selfStatsLoading, setSelfStatsLoading] = useState(true);
+  const [selfStatsError, setSelfStatsError] = useState<string | null>(null);
+
   const RANGES: { id: MonitoringRange; label: string }[] = [
     { id: "hourly", label: t("hourly") },
     { id: "daily", label: t("daily") },
@@ -238,6 +253,8 @@ export default function MonitoringPage() {
 
   const loadTop = useCallback(async (tk: string) => {
     setTopError(null);
+    setSelfStatsError(null);
+    setSelfStatsLoading(true);
     try {
       const [s, k] = await Promise.all([
         getMonitoringSummary(tk),
@@ -250,12 +267,16 @@ export default function MonitoringPage() {
     } finally {
       setTopLoading(false);
     }
+    getSelfStats(tk)
+      .then((stats) => setSelfStats(stats))
+      .catch((e) => setSelfStatsError(e instanceof Error ? e.message : tCommon("error")))
+      .finally(() => setSelfStatsLoading(false));
   }, [tCommon]);
 
   useEffect(() => {
     // CLIENT path only
     if (token && role && role !== "SUPER_ADMIN") loadTop(token);
-    else if (role === "SUPER_ADMIN") setTopLoading(false);
+    else if (role === "SUPER_ADMIN") { setTopLoading(false); setSelfStatsLoading(false); }
   }, [token, role, loadTop]);
 
   useEffect(() => {
@@ -405,6 +426,93 @@ export default function MonitoringPage() {
             </div>
           )}
         </div>
+      </section>
+
+      {/* Success/failed breakdown + success rate */}
+      <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+        <h3 className="font-semibold text-primary">{t("successBreakdown")}</h3>
+        {selfStatsLoading ? (
+          <div className="mt-4 space-y-2">
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="mt-2 h-3 w-full" />
+          </div>
+        ) : selfStatsError ? (
+          <p className="mt-4 text-sm text-red-500">{selfStatsError}</p>
+        ) : selfStats ? (
+          <div className="mt-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted">
+                {t("successCount")}:{" "}
+                <span className="font-semibold text-primary">{selfStats.requests.success.toLocaleString()}</span>
+              </span>
+              <span className="text-muted">
+                {t("failedCount")}:{" "}
+                <span className="font-semibold text-red-500">{selfStats.requests.failed.toLocaleString()}</span>
+              </span>
+            </div>
+            {selfStats.requests.total === 0 ? (
+              <p className="mt-3 text-sm text-muted">{t("noRequests")}</p>
+            ) : (
+              <>
+                <div className="mt-3 h-3 overflow-hidden rounded-full bg-line">
+                  <div
+                    className="h-full rounded-full bg-accent transition-all"
+                    style={{ width: `${Math.round((selfStats.requests.success / selfStats.requests.total) * 100)}%` }}
+                  />
+                </div>
+                <p className="mt-1.5 text-xs text-muted">
+                  {t("successRate")}:{" "}
+                  <span className="font-semibold text-primary">
+                    {Math.round((selfStats.requests.success / selfStats.requests.total) * 100)}%
+                  </span>
+                </p>
+              </>
+            )}
+          </div>
+        ) : null}
+      </section>
+
+      {/* Recent activity */}
+      <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-[0_1px_2px_rgba(29,29,29,0.04)]">
+        <h3 className="font-semibold text-primary">{t("recentActivity")}</h3>
+        {selfStatsLoading ? (
+          <div className="mt-4 space-y-2">
+            {[0, 1, 2].map((i) => <Skeleton key={i} className="h-11 w-full" />)}
+          </div>
+        ) : selfStatsError ? (
+          <p className="mt-4 text-sm text-red-500">{selfStatsError}</p>
+        ) : selfStats && selfStats.recentActivity.length === 0 ? (
+          <p className="mt-4 text-sm text-muted">{t("noData")}</p>
+        ) : selfStats ? (
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
+                  <th className="py-2 pr-3 font-medium">{t("activityTime")}</th>
+                  <th className="py-2 pr-3 font-medium">{t("activityType")}</th>
+                  <th className="py-2 font-medium">{t("activityStatus")}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-line">
+                {selfStats.recentActivity.map((item, i) => (
+                  <tr key={i} className="transition hover:bg-bg">
+                    <td className="py-3 pr-3 text-muted">{fmtDateTime(item.ts)}</td>
+                    <td className="py-3 pr-3 font-mono text-xs text-primary">{item.type}</td>
+                    <td className="py-3">
+                      <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium ${
+                        item.status === "ok"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-600"
+                      }`}>
+                        {item.status === "ok" ? t("statusOk") : t("statusError")}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
       </section>
 
       {/* Chart */}

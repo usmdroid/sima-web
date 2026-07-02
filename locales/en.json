@@ -52,7 +52,18 @@
     "hourly": "Hourly",
     "daily": "Daily",
     "weekly": "Weekly",
-    "monthly": "Monthly"
+    "monthly": "Monthly",
+    "successBreakdown": "Success / Failed",
+    "successCount": "Successful",
+    "failedCount": "Failed",
+    "successRate": "Success Rate",
+    "noRequests": "No requests yet.",
+    "recentActivity": "Recent Activity",
+    "activityTime": "Time",
+    "activityType": "Type",
+    "activityStatus": "Status",
+    "statusOk": "ok",
+    "statusError": "error"
   },
   "wallet": {
     "title": "Wallet",
@@ -115,7 +126,9 @@
     "devCode": "Dev code: {code}",
     "codeSentTo": "Code sent to {email}.",
     "back": "← Back",
-    "reViewOnboarding": "Review onboarding"
+    "reViewOnboarding": "Review onboarding",
+    "helpCard": "Help / Guide",
+    "replayOnboardingBtn": "Replay the getting-started guide"
   },
   "keys": {
     "title": "API Keys",
@@ -209,7 +222,33 @@
     "skip": "Skip",
     "next": "Next →",
     "done": "Get Started",
-    "of": "Step {step} of {total}"
+    "of": "Step {step} of {total}",
+    "client": {
+      "step1Title": "Welcome to Sima!",
+      "step1Text": "This is your partner cabinet. Manage your store integration, track usage, and handle payments — all from here.",
+      "step2Title": "API Keys",
+      "step2Text": "Go to the API Keys section in the sidebar. Create a key, copy it, and add it to your server code — the widget will activate.",
+      "step3Title": "Developers",
+      "step3Text": "In the Developers section you'll find ready-made integration code and guides for connecting the widget to your site.",
+      "step4Title": "Wallet & Balance",
+      "step4Text": "Your current credit balance is shown at the bottom of the sidebar. Top up at any time from the Wallet section.",
+      "step5Title": "Monitoring",
+      "step5Text": "Track real-time try-on stats, request counts, and error rates in the Monitoring section.",
+      "step6Title": "Settings",
+      "step6Text": "In the Settings section you can update your profile, change the language, and customize the interface theme.",
+      "step7Title": "Need Help?",
+      "step7Text": "Our support team is available on Telegram. Contact us at @simasupportbot for any questions."
+    },
+    "staff": {
+      "step1Title": "Welcome to the Admin Panel!",
+      "step1Text": "This is the Sima admin panel. You monitor platform activity, manage users, and track global statistics.",
+      "step2Title": "Users",
+      "step2Text": "In the Users section you can view all partners, block or activate accounts, and change user roles.",
+      "step3Title": "Global Monitoring",
+      "step3Text": "In the Monitoring section, view real-time platform-wide statistics: request counts, error rates, and top clients.",
+      "step4Title": "Statistics",
+      "step4Text": "The Statistics page shows revenue trends, most active partners, and the overall state of the platform."
+    }
   },
   "admin": {
     "modTitle": "Moderation",
@@ -222,7 +261,22 @@
     "modRequests": "Requests",
     "modSpent": "Spent",
     "modGlobalError": "Global error rate",
-    "modName": "Name"
+    "modName": "Name",
+    "modResultsTitle": "Results Moderation",
+    "modTxAll": "All",
+    "modTxFlagged": "Flagged",
+    "modTxHidden": "Hidden",
+    "modBtnHide": "Hide",
+    "modBtnFlag": "Flag",
+    "modBtnRestore": "Restore",
+    "modTxStatus": "Status",
+    "modTxAmount": "Amount",
+    "modTxType": "Type",
+    "modTxClient": "Client",
+    "modTxCreatedAt": "Time",
+    "modToastHidden": "Hidden",
+    "modToastFlagged": "Flagged",
+    "modToastRestored": "Restored"
   },
   "marketing": {
     "features": "Features",

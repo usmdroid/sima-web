@@ -555,14 +555,14 @@ export default function SettingsPage() {
           </div>
         </Card>
 
-        <Card title="Onboarding" icon={<PlayCircle size={18} />} animDelay={180}>
+        <Card title={t("helpCard")} icon={<PlayCircle size={18} />} animDelay={180}>
           <div className="flex items-center justify-between py-2">
             <p className="text-sm text-muted">{t("reViewOnboarding")}</p>
             <GhostBtn onClick={() => {
               localStorage.removeItem(ONBOARDING_STORAGE_KEY);
               window.dispatchEvent(new Event(ONBOARDING_OPEN_EVENT));
             }}>
-              ▶ {t("reViewOnboarding")}
+              ▶ {t("replayOnboardingBtn")}
             </GhostBtn>
           </div>
         </Card>
