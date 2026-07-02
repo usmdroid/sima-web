@@ -84,6 +84,41 @@ curl_close($ch);
 header("Content-Type: application/json");
 echo json_encode(["token" => $body["token"]]);`;
 
+const pythonTokenEndpoint = `# app.py — Flask (Django/FastAPI ham shu mantiq)
+import os, requests
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+@app.post("/sima-token")
+def sima_token():
+    sk = os.environ["SIMA_SK"]  # sk_ ni faqat serverda saqlang
+    r = requests.post("${SIMA_API}/session", headers={"X-Api-Key": sk})
+    if not r.ok:
+        return jsonify(error="token xatosi"), 502
+    return jsonify(token=r.json()["token"])`;
+
+const javaTokenEndpoint = `// TokenController.java — Spring Boot
+@RestController
+public class TokenController {
+  private final String sk = System.getenv("SIMA_SK"); // sk_ faqat serverda
+
+  @PostMapping("/sima-token")
+  public ResponseEntity<?> token() throws Exception {
+    var req = HttpRequest.newBuilder()
+        .uri(URI.create("${SIMA_API}/session"))
+        .header("X-Api-Key", sk)
+        .POST(HttpRequest.BodyPublishers.noBody())
+        .build();
+    var res = HttpClient.newHttpClient()
+        .send(req, HttpResponse.BodyHandlers.ofString());
+    if (res.statusCode() != 200)
+      return ResponseEntity.status(502).body(Map.of("error", "token xatosi"));
+    // Jackson: { "token": "..." } ni o'qib qaytaring
+    return ResponseEntity.ok(new ObjectMapper().readTree(res.body()));
+  }
+}`;
+
 const htmlWidget = `<!-- 1. Widget skriptini head yoki body oxiriga qo'shing -->
 <script
   src="https://YOUR-CDN/widget.js"
@@ -190,7 +225,49 @@ const shopifySnippet = `<!-- theme.liquid ichida </body> oldidan qo'shing -->
   POST /apps/sima-proxy/token → X-Api-Key bilan ${SIMA_API}/session chaqirib { token } qaytaradi.
 {%- endcomment -%}`;
 
-const flutterSnippet = `// Flutter — Dart
+const flutterSdkSnippet = `// pubspec.yaml
+//   dependencies:
+//     sima_tryon: ^0.1.0
+//     http: ^1.2.0
+
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:sima_tryon/sima_tryon.dart';
+
+class ProductPage extends StatelessWidget {
+  const ProductPage({super.key});
+
+  // 1. Token o'z serveringizdan olinadi — sk_ hech qachon ilovada bo'lmaydi.
+  Future<String> _getToken() async {
+    final res = await http.post(Uri.parse("https://YOUR-SERVER/sima-token"));
+    return jsonDecode(res.body)["token"] as String;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          // 2. Tugma bosilganda tayyor ekran ochiladi — rasm tanlash,
+          //    /check va /tryon hammasi SDK ichida.
+          onPressed: () => SimaTryOn.open(
+            context,
+            config: SimaConfig(getToken: _getToken),
+            product: const SimaProduct(
+              clothUrl: "https://example.com/cloth.jpg", // yoki SimaProduct.bytes(...)
+              clothType: "upper", // ixtiyoriy: upper | lower | overall
+              name: "Ko'k ko'ylak", // ixtiyoriy
+            ),
+          ),
+          child: const Text("Kiyib ko'rish"),
+        ),
+      ),
+    );
+  }
+}`;
+
+const flutterSnippet = `// Flutter — Dart (SDKsiz, to'g'ridan HTTP)
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -350,6 +427,12 @@ export default function DevelopersPage() {
         <SubSection title="Server token endpoint — PHP">
           <CodeBlock code={phpTokenEndpoint} lang="php" />
         </SubSection>
+        <SubSection title="Server token endpoint — Python (Flask)">
+          <CodeBlock code={pythonTokenEndpoint} lang="python" />
+        </SubSection>
+        <SubSection title="Server token endpoint — Java (Spring Boot)">
+          <CodeBlock code={javaTokenEndpoint} lang="java" />
+        </SubSection>
       </Section>
 
       {/* ===== B. React / Next.js ===== */}
@@ -392,7 +475,13 @@ export default function DevelopersPage() {
         <p className="text-sm text-muted">
           Token oqimi bir xil: ilova <strong className="text-primary">o&apos;z backendidan</strong> token oladi, so&apos;ng Sima&apos;ga to&apos;g&apos;ridan-to&apos;g&apos;ri <code className="font-mono">Bearer</code> token bilan multipart so&apos;rov yuboradi.
         </p>
-        <SubSection title="Flutter / Dart">
+        <SubSection title="Flutter — sima_tryon SDK (tavsiya)">
+          <CodeBlock code={flutterSdkSnippet} lang="dart" />
+          <p className="mt-2 text-xs text-muted">
+            Rasmiy paket tayyor UI, rasm tanlash va <code className="font-mono">/check</code> + <code className="font-mono">/tryon</code> oqimini o&apos;zi boshqaradi.
+          </p>
+        </SubSection>
+        <SubSection title="Flutter — SDKsiz (to'g'ridan HTTP)">
           <CodeBlock code={flutterSnippet} lang="dart" />
         </SubSection>
         <SubSection title="Android — Kotlin (OkHttp)">
